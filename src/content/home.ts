@@ -57,7 +57,7 @@ export const clips: Video[] = [
 ];
 
 export const stills = {
-  title: "ורגעים שתפסתי בעדשה",
+  title: "רגעים שתפסתי בעדשה",
   text: "צילומי משפחה, בריתות ובר ובת מצווה, בטבע, בבית או בסטודיו. אני אוהבת לצלם אנשים בסביבה שבה הם מרגישים בנוח ולתפוס את הרגעים שקורים באופן טבעי.",
   /** Order sets the mosaic: the 2nd and 4th slots are narrow/tall, so portrait photos go there. */
   photos: [
