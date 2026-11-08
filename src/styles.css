@@ -727,6 +727,14 @@
   background: var(--ink-deep);
   color: var(--cream);
 }
+/* Contact submit: the logo's dark olive with cream text, so it stands out on the brown. */
+.btn-primary.submit-btn {
+  background: var(--olive);
+  color: var(--cream);
+}
+.btn-primary.submit-btn:hover {
+  background: var(--olive-hover);
+}
 .submit-btn:focus-visible,
 .call-btn:focus-visible {
   outline-color: var(--ink-deep);
