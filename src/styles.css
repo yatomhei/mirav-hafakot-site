@@ -589,10 +589,14 @@
 }
 
 /* ---------- About ---------- */
+/* Sits in the text column beside the portrait on desktop, full width when stacked. */
 .about-title {
-  font-size: clamp(42px, 10vw, 72px);
-  max-width: 1085px;
-  margin-inline: auto;
+  font-size: clamp(40px, 5vw, 68px);
+}
+@media (max-width: 900px) {
+  .about-title {
+    font-size: clamp(42px, 10vw, 64px);
+  }
 }
 
 /* ---------- Works carousel ---------- */
