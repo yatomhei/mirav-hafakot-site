@@ -2,12 +2,10 @@ import { useEffect, useRef } from "react";
 import { hero } from "@/content/home";
 import { site } from "@/content/site";
 import { asset, image } from "@/lib/asset";
-import { HomeLink } from "@/components/ui/HomeLink";
-import { ArrowLeft, Play } from "@/components/ui/icons";
 
 /**
  * Desktop: rounded full-height frame, looping video under a 40% dark-blue overlay, cream
- * logo, title and buttons centred on top. ≤760px: text and buttons first on cream, then the
+ * logo and title centred on top. ≤760px: text and buttons first on cream, then the
  * video as a 16:9 rounded rectangle, brightened, without the overlay. Reduced motion → poster.
  */
 export function Hero() {
@@ -84,16 +82,6 @@ export function Hero() {
             <br />
             {hero.title[1]}
           </h1>
-          <div className="flex flex-wrap justify-center gap-3">
-            <HomeLink hash="contact" className="btn hero-primary !min-h-[54px]">
-              {hero.primary}
-              <ArrowLeft />
-            </HomeLink>
-            <HomeLink hash="clips" className="btn hero-ghost !min-h-[54px]">
-              <Play />
-              {hero.secondary}
-            </HomeLink>
-          </div>
         </div>
       </div>
     </section>

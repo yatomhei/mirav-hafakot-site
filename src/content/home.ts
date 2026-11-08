@@ -4,13 +4,17 @@ import type { Faq, Photo, IncludeItem, StillPhoto, StripPhoto, Testimonial, Vide
 
 export const hero = {
   title: ["הפקות סרטים", "וצילום אמנותי"],
-  primary: "דברו איתי",
-  secondary: "צפו בעבודות שלי",
   video: "video/hero.mp4",
   poster: "hero-poster",
 };
 
-export const about: { caption: string; portrait: Photo; title: string[]; body: string } = {
+export const about: {
+  caption: string;
+  portrait: Photo;
+  title: string[];
+  body: string;
+  cta: string;
+} = {
   caption: "01 / נעים להכיר",
   portrait: {
     name: "about-portrait",
@@ -20,6 +24,7 @@ export const about: { caption: string; portrait: Photo; title: string[]; body: s
   title: ["אני מרב ורנר,", "צלמת, עורכת וידאו ומפיקה."],
   /** **bold** marks the highlighted phrase. */
   body: "בהפקת המרב אני יוצרת **קליפים אישיים, סרטי תדמית ופרסומת, ומצלמת משפחות ורגעים מיוחדים**. אני מלווה פרויקטים משלב הרעיון ועד לתוצאה המוגמרת, ואוהבת במיוחד לצלם אנשים בסביבה הטבעית שלהם, בחוץ בטבע או בבית, באור טבעי ובאווירה נינוחה.",
+  cta: "ספרו לי על הסרט או האירוע שלכם",
 };
 
 export const works = {

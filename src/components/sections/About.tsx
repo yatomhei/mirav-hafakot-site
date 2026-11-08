@@ -1,6 +1,8 @@
 import { Fragment } from "react";
 import { about } from "@/content/home";
 import { Picture } from "@/components/ui/Picture";
+import { HomeLink } from "@/components/ui/HomeLink";
+import { ArrowLeft } from "@/components/ui/icons";
 
 /** Renders **bold** spans from content text. */
 export function RichText({ text }: { text: string }) {
@@ -40,6 +42,13 @@ export function About() {
           <p className="max-w-[940px] text-[clamp(20px,2.1vw,27px)] leading-[1.65] font-light max-[900px]:mx-auto">
             <RichText text={about.body} />
           </p>
+          <HomeLink
+            hash="contact"
+            className="btn btn-primary mt-10 !min-h-[62px] !px-10 !text-[19px] !font-normal max-[640px]:!px-6 max-[640px]:!text-[17px] max-[640px]:whitespace-normal"
+          >
+            {about.cta}
+            <ArrowLeft />
+          </HomeLink>
         </div>
       </div>
     </section>
