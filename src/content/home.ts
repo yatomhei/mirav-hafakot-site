@@ -54,18 +54,18 @@ export const clips: Video[] = [
 export const stills = {
   title: "ורגעים שתפסתי בעדשה",
   text: "צילומי משפחה, בריתות ובר ובת מצווה, בטבע, בבית או בסטודיו. אני אוהבת לצלם אנשים בסביבה שבה הם מרגישים בנוח ולתפוס את הרגעים שקורים באופן טבעי.",
+  /** Order sets the mosaic: the 2nd and 4th slots are narrow/tall, so portrait photos go there. */
   photos: [
+    {
+      name: "still-bat-mitzvah-sea",
+      label: "בת מצווה",
+      alt: "ילדה בכובע קש ושמלה לבנה על שפת הים",
+    },
     {
       name: "still-family-stairs",
       label: "משפחה",
       alt: "משפחה מורחבת מצטלמת יחד על מדרגות הבית",
       pos: "center 40%",
-      tall: true,
-    },
-    {
-      name: "still-bat-mitzvah-sea",
-      label: "בת מצווה",
-      alt: "ילדה בכובע קש ושמלה לבנה על שפת הים",
     },
     {
       name: "still-lifestyle-bed",
@@ -73,14 +73,13 @@ export const stills = {
       alt: "משפחה צוחקת יחד על המיטה בבית",
       pos: "center 30%",
     },
-    { name: "still-bar-mitzvah-stream", label: "בר מצווה", alt: "נער משיט ספינה בנחל" },
     {
       name: "still-brit",
       label: "ברית",
       alt: "הורים מחזיקים תינוק ביום הברית",
       pos: "center 45%",
-      tall: true,
     },
+    { name: "still-bar-mitzvah-stream", label: "בר מצווה", alt: "נער משיט ספינה בנחל" },
     {
       name: "still-family-sunset",
       label: "משפחה",
@@ -91,7 +90,6 @@ export const stills = {
       name: "still-newborn",
       label: "ניו בורן",
       alt: "תינוק ישן בכובע ארנב עם גזר סרוג",
-      last: true,
     },
   ] satisfies StillPhoto[],
 };

@@ -1,10 +1,8 @@
+import type { CSSProperties } from "react";
 import { stills } from "@/content/home";
 import { Picture } from "@/components/ui/Picture";
 
-/** Photos per row on desktop: the grid shows two full rows, topped up with placeholders. */
-const PER_ROW = 4;
-
-/** Stills band under the works: centred heading and text, then two rows of photos. */
+/** Stills band under the works: centred heading and text, then a full-width photo mosaic. */
 export function Stills() {
   return (
     <section
@@ -23,19 +21,39 @@ export function Stills() {
   );
 }
 
+/**
+ * Mosaic slots, by position (design, not content). Desktop: 12 columns, two rows of equal
+ * height and mixed widths — 4·2·4·2 then 3·5·4. Phones: 2 columns; the first photo spans
+ * both, the 2nd and 4th are tall (two rows), the rest fill in around them.
+ */
+const SLOTS = [
+  { c: 4, mc: 2, mr: 1 },
+  { c: 2, mc: 1, mr: 2 },
+  { c: 4, mc: 1, mr: 1 },
+  { c: 2, mc: 1, mr: 2 },
+  { c: 3, mc: 1, mr: 1 },
+  { c: 5, mc: 1, mr: 1 },
+  { c: 4, mc: 1, mr: 1 },
+];
+
 export function StillsGrid() {
-  const slots = Math.max(PER_ROW * 2, Math.ceil(stills.photos.length / PER_ROW) * PER_ROW);
+  const slots = Math.ceil(stills.photos.length / SLOTS.length) * SLOTS.length;
   const placeholders = slots - stills.photos.length;
+  const slot = (k: number) => {
+    const s = SLOTS[k % SLOTS.length]!;
+    return { "--c": s.c, "--mc": s.mc, "--mr": s.mr } as CSSProperties;
+  };
 
   return (
     <ul className="stills-grid m-0 list-none p-0" aria-label="דוגמאות לצילומי סטילס">
-      {stills.photos.map((p) => (
+      {stills.photos.map((p, k) => (
         <li
           key={p.name}
+          style={slot(k)}
           className="still img-zoom relative overflow-hidden rounded-[clamp(12px,1.2vw,18px)] bg-beige"
         >
           <figure className="m-0 h-full">
-            <Picture photo={p} sizes="(max-width: 640px) 50vw, 25vw" />
+            <Picture photo={p} sizes="(max-width: 640px) 92vw, 40vw" />
             <div
               aria-hidden="true"
               className="absolute inset-x-0 bottom-0 z-[1] h-[45%] bg-gradient-to-t from-[rgb(46_49_40/0.55)] to-transparent"
@@ -49,6 +67,7 @@ export function StillsGrid() {
       {Array.from({ length: placeholders }, (_, k) => (
         <li
           key={`ph-${k}`}
+          style={slot(stills.photos.length + k)}
           aria-hidden="true"
           className="relative flex items-end overflow-hidden rounded-[clamp(12px,1.2vw,18px)] bg-beige px-[clamp(12px,1.4vw,18px)] py-[clamp(10px,1.2vw,16px)] text-[13px] tracking-[0.14em] text-ink/60"
         >

@@ -53,5 +53,5 @@ export type Service = {
 export type Testimonial = { quote: string; name: string; role: string };
 export type Faq = { q: string; a: string };
 export type IncludeItem = { num: string; title: string; meta: string; desc: string };
-export type StillPhoto = Photo & { label: string; tall?: boolean; last?: boolean };
+export type StillPhoto = Photo & { label: string };
 export type StripPhoto = Photo & { ratio: number };
