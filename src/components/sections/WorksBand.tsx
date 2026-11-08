@@ -3,21 +3,21 @@ import { Works } from "./Works";
 import { Stills } from "./Stills";
 
 /**
- * The works and stills sections share one background: cream at first, turning olive-soft
- * (fading over 700ms) once the works title reaches the top of the screen — and back to
- * cream when scrolling up past that point.
+ * The works and stills sections share one background: cream at first, switching straight
+ * to olive-soft (no fade) once the works section's top reaches the top of the screen — and
+ * back to cream when scrolling up past that point.
  */
 export function WorksBand() {
   const band = useRef<HTMLDivElement>(null);
   const [olive, setOlive] = useState(false);
 
   useEffect(() => {
-    const title = band.current?.querySelector<HTMLElement>("#clips h2");
-    if (!title) return;
+    const section = band.current?.querySelector<HTMLElement>("#clips");
+    if (!section) return;
     let raf = 0;
     const check = () => {
       raf = 0;
-      setOlive(title.getBoundingClientRect().top <= 0);
+      setOlive(section.getBoundingClientRect().top <= 0);
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(check);
@@ -33,10 +33,7 @@ export function WorksBand() {
   }, []);
 
   return (
-    <div
-      ref={band}
-      className={`${olive ? "bg-olive-soft" : "bg-cream"} transition-colors duration-700 ease-out`}
-    >
+    <div ref={band} className={olive ? "bg-olive-soft" : "bg-cream"}>
       <Works />
       <Stills />
     </div>
