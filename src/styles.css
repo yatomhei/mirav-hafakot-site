@@ -580,12 +580,8 @@
     color: var(--btn-ink);
   }
 }
-/* As the hero scrolls away its frame shrinks in a little from the bottom (scale anchored at
-   the top edge, set from scroll in Hero.tsx; desktop frame only). */
-.hero {
-  transform-origin: 50% 0;
-  will-change: transform;
-}
+/* As the hero scrolls away its lower part shrinks in (clip-path set from scroll in Hero.tsx;
+   desktop frame only). */
 
 /* ---------- About: scrolls slower than the page, so the works section catches up and
    slides over it (offset set from scroll in About.tsx) ---------- */
