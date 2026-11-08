@@ -42,9 +42,10 @@ export function About() {
           <p className="max-w-[940px] text-[clamp(20px,2.1vw,27px)] leading-[1.65] font-light max-[900px]:mx-auto">
             <RichText text={about.body} />
           </p>
+          {/* On phones this button moves under the hero video (Hero.tsx). */}
           <HomeLink
             hash="contact"
-            className="btn btn-primary mt-10 !min-h-[62px] !px-10 !text-[19px] !font-normal max-[640px]:!min-h-[50px] max-[640px]:!px-5 max-[640px]:!text-[15px] max-[640px]:whitespace-normal"
+            className="btn btn-primary mt-10 !min-h-[62px] !px-10 !text-[19px] !font-normal max-[760px]:!hidden"
           >
             {about.cta}
             <ArrowLeft />

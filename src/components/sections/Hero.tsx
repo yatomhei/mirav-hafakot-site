@@ -1,7 +1,9 @@
 import { useEffect, useRef } from "react";
-import { hero } from "@/content/home";
+import { about, hero } from "@/content/home";
 import { site } from "@/content/site";
 import { asset, image } from "@/lib/asset";
+import { HomeLink } from "@/components/ui/HomeLink";
+import { ArrowLeft } from "@/components/ui/icons";
 
 /**
  * Desktop: rounded full-height frame, looping video under a 40% dark-blue overlay, cream
@@ -82,6 +84,16 @@ export function Hero() {
             <br />
             {hero.title[1]}
           </h1>
+        </div>
+        {/* Phones only: the intro's contact button sits under the hero video instead. */}
+        <div className="hidden justify-center max-[760px]:flex">
+          <HomeLink
+            hash="contact"
+            className="btn btn-primary !min-h-[50px] !px-5 !text-[15px] !font-normal"
+          >
+            {about.cta}
+            <ArrowLeft />
+          </HomeLink>
         </div>
       </div>
     </section>
