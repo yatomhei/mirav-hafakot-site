@@ -94,7 +94,10 @@ export function Services() {
             {servicesIntro.ctaText[0]}
             <br className="min-[761px]:hidden" /> {servicesIntro.ctaText[1]}
           </p>
-          <HomeLink hash="contact" className="btn btn-primary !font-normal">
+          <HomeLink
+            hash="contact"
+            className="btn btn-primary !min-h-[62px] !px-10 !text-[19px] !font-normal"
+          >
             {servicesIntro.cta}
             <ArrowLeft />
           </HomeLink>
