@@ -738,6 +738,26 @@
   color: var(--btn-ink);
 }
 
+/* ---------- Testimonials: full screen, pinned briefly before it scrolls away ---------- */
+.t-spacer {
+  height: 30vh; /* the pause, in scroll distance (padding would not count for sticky) */
+}
+.t-pin {
+  position: sticky;
+  top: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+@media (max-width: 760px) {
+  .t-spacer {
+    height: 20svh;
+  }
+}
+
 /* ---------- Testimonials controls ---------- */
 .t-prev:hover {
   background: var(--cream);

@@ -40,8 +40,11 @@ export function Testimonials() {
     let frame = 0;
     const update = () => {
       frame = 0;
-      const top = sec.getBoundingClientRect().top;
       const vh = window.innerHeight;
+      // Pin with the whole section on screen; if it is taller than the screen, pin it with
+      // its bottom edge at the screen's bottom instead of its top at the top.
+      sec.style.top = `${Math.min(0, vh - sec.offsetHeight)}px`;
+      const top = sec.getBoundingClientRect().top;
       // Only while the section is entering from below: hold the photo at the screen's top.
       const hold = top > 0 && top < vh ? -top : 0;
       layer.style.transform = reduce ? "" : `translate3d(0, ${hold.toFixed(1)}px, 0)`;
@@ -61,120 +64,125 @@ export function Testimonials() {
   }, []);
 
   return (
-    <section
-      ref={section}
-      id="testimonials"
-      aria-labelledby="t-title"
-      className="relative overflow-hidden bg-olive-deep py-[clamp(88px,11vw,140px)]"
-    >
-      <div
-        ref={photo}
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-full min-h-[100vh] will-change-transform"
+    // The spacer after the section (CSS .t-spacer) is the hold distance, so the
+    // full-screen section pins at the top for a moment before it scrolls away.
+    <div className="t-hold bg-olive-deep">
+      <section
+        ref={section}
+        id="testimonials"
+        aria-labelledby="t-title"
+        className="t-pin overflow-hidden bg-olive-deep py-[clamp(56px,7vw,96px)]"
       >
-        <Picture
-          photo={{ name: testimonials.background, alt: "", pos: "center 60%" }}
-          decorative
-          sizes="100vw"
-          className="brightness-[0.8] contrast-[1.05] saturate-[0.95] sepia-[0.06]"
-        />
-      </div>
-      <div aria-hidden="true" className="absolute inset-0 bg-[rgb(52_68_74/0.46)]" />
-
-      <div
-        ref={content}
-        data-reveal="late"
-        className="relative mx-auto max-w-[var(--content-max)] px-[var(--gutter)]"
-      >
-        <p className="caption mb-6 text-center !text-beige">{testimonials.caption}</p>
-        <h2 id="t-title" className="heading-testimonials mb-14 text-center text-cream">
-          {testimonials.title}
-        </h2>
+        <div
+          ref={photo}
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 h-full min-h-[100vh] will-change-transform"
+        >
+          <Picture
+            photo={{ name: testimonials.background, alt: "", pos: "center 60%" }}
+            decorative
+            sizes="100vw"
+            className="brightness-[0.8] contrast-[1.05] saturate-[0.95] sepia-[0.06]"
+          />
+        </div>
+        <div aria-hidden="true" className="absolute inset-0 bg-[rgb(52_68_74/0.46)]" />
 
         <div
-          role="region"
-          aria-roledescription="קרוסלה"
-          aria-label="המלצות לקוחות"
-          className="mx-auto max-w-[980px]"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          onFocus={() => setPaused(true)}
-          onBlur={() => setPaused(false)}
-          onTouchStart={(e) => {
-            touchX.current = e.touches[0]!.clientX;
-          }}
-          onTouchEnd={(e) => {
-            if (touchX.current == null) return;
-            const dx = e.changedTouches[0]!.clientX - touchX.current;
-            touchX.current = null;
-            if (Math.abs(dx) > 40) go(i + (dx > 0 ? 1 : -1));
-          }}
+          ref={content}
+          data-reveal="late"
+          className="relative mx-auto max-w-[var(--content-max)] px-[var(--gutter)]"
         >
-          <div className="overflow-hidden" aria-live={paused ? "polite" : "off"}>
-            <div
-              className="flex transition-transform duration-700 ease-[cubic-bezier(.4,0,.2,1)]"
-              style={{ transform: `translateX(${i * 100}%)` }}
-            >
-              {items.map((t, k) => (
-                <figure
-                  key={k}
-                  aria-roledescription="שקופית"
-                  aria-label={`${k + 1} מתוך ${items.length}`}
-                  aria-hidden={k !== i || undefined}
-                  className="m-0 box-border flex flex-[0_0_100%] flex-col items-center gap-9 px-[clamp(24px,7vw,96px)] py-[clamp(36px,6vw,80px)] text-center text-cream"
-                >
-                  <blockquote className="m-0 text-[clamp(22px,2.6vw,34px)] leading-[1.55] font-light tracking-[-0.005em]">
-                    {t.quote}
-                  </blockquote>
-                  <figcaption className="flex flex-col gap-1.5 text-[16px]">
-                    <strong className="font-medium">{t.name}</strong>
-                    <span>{t.role}</span>
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
-          </div>
+          <p className="caption mb-6 text-center !text-beige">{testimonials.caption}</p>
+          <h2 id="t-title" className="heading-testimonials mb-14 text-center text-cream">
+            {testimonials.title}
+          </h2>
 
-          <div className="mt-7 flex items-center justify-between gap-5">
-            <button
-              type="button"
-              className="icon-btn t-prev text-cream"
-              aria-label="ההמלצה הקודמת"
-              onClick={() => go(i - 1)}
-            >
-              <ArrowRight size={20} />
-            </button>
-            <div className="flex items-center gap-1">
-              {items.map((_, k) => (
-                <button
-                  key={k}
-                  type="button"
-                  className="inline-flex h-11 w-11 items-center justify-center"
-                  aria-label={`המלצה ${k + 1} מתוך ${items.length}`}
-                  aria-current={k === i || undefined}
-                  onClick={() => go(k)}
-                >
-                  <span
-                    className="block h-[3px] rounded-sm transition-[width,background-color] duration-[400ms]"
-                    style={{
-                      width: k === i ? 28 : 12,
-                      background: k === i ? "var(--beige)" : "rgb(250 240 235 / 0.5)",
-                    }}
-                  />
-                </button>
-              ))}
+          <div
+            role="region"
+            aria-roledescription="קרוסלה"
+            aria-label="המלצות לקוחות"
+            className="mx-auto max-w-[980px]"
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+            onFocus={() => setPaused(true)}
+            onBlur={() => setPaused(false)}
+            onTouchStart={(e) => {
+              touchX.current = e.touches[0]!.clientX;
+            }}
+            onTouchEnd={(e) => {
+              if (touchX.current == null) return;
+              const dx = e.changedTouches[0]!.clientX - touchX.current;
+              touchX.current = null;
+              if (Math.abs(dx) > 40) go(i + (dx > 0 ? 1 : -1));
+            }}
+          >
+            <div className="overflow-hidden" aria-live={paused ? "polite" : "off"}>
+              <div
+                className="flex transition-transform duration-700 ease-[cubic-bezier(.4,0,.2,1)]"
+                style={{ transform: `translateX(${i * 100}%)` }}
+              >
+                {items.map((t, k) => (
+                  <figure
+                    key={k}
+                    aria-roledescription="שקופית"
+                    aria-label={`${k + 1} מתוך ${items.length}`}
+                    aria-hidden={k !== i || undefined}
+                    className="m-0 box-border flex flex-[0_0_100%] flex-col items-center gap-9 px-[clamp(24px,7vw,96px)] py-[clamp(36px,6vw,80px)] text-center text-cream"
+                  >
+                    <blockquote className="m-0 text-[clamp(22px,2.6vw,34px)] leading-[1.55] font-light tracking-[-0.005em]">
+                      {t.quote}
+                    </blockquote>
+                    <figcaption className="flex flex-col gap-1.5 text-[16px]">
+                      <strong className="font-medium">{t.name}</strong>
+                      <span>{t.role}</span>
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
             </div>
-            <button
-              type="button"
-              className="icon-btn t-next !border-0 bg-cream text-ink"
-              aria-label="ההמלצה הבאה"
-              onClick={() => go(i + 1)}
-            >
-              <ArrowLeft size={20} />
-            </button>
+
+            <div className="mt-7 flex items-center justify-between gap-5">
+              <button
+                type="button"
+                className="icon-btn t-prev text-cream"
+                aria-label="ההמלצה הקודמת"
+                onClick={() => go(i - 1)}
+              >
+                <ArrowRight size={20} />
+              </button>
+              <div className="flex items-center gap-1">
+                {items.map((_, k) => (
+                  <button
+                    key={k}
+                    type="button"
+                    className="inline-flex h-11 w-11 items-center justify-center"
+                    aria-label={`המלצה ${k + 1} מתוך ${items.length}`}
+                    aria-current={k === i || undefined}
+                    onClick={() => go(k)}
+                  >
+                    <span
+                      className="block h-[3px] rounded-sm transition-[width,background-color] duration-[400ms]"
+                      style={{
+                        width: k === i ? 28 : 12,
+                        background: k === i ? "var(--beige)" : "rgb(250 240 235 / 0.5)",
+                      }}
+                    />
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="icon-btn t-next !border-0 bg-cream text-ink"
+                aria-label="ההמלצה הבאה"
+                onClick={() => go(i + 1)}
+              >
+                <ArrowLeft size={20} />
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+      <div className="t-spacer" aria-hidden="true" />
+    </div>
   );
 }
