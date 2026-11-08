@@ -44,7 +44,7 @@ export function About() {
           </p>
           <HomeLink
             hash="contact"
-            className="btn btn-primary mt-10 !min-h-[62px] !px-10 !text-[19px] !font-normal max-[640px]:!px-6 max-[640px]:!text-[17px] max-[640px]:whitespace-normal"
+            className="btn btn-primary mt-10 !min-h-[62px] !px-10 !text-[19px] !font-normal max-[640px]:!min-h-[50px] max-[640px]:!px-5 max-[640px]:!text-[15px] max-[640px]:whitespace-normal"
           >
             {about.cta}
             <ArrowLeft />
