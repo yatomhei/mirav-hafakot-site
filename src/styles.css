@@ -587,23 +587,12 @@
   will-change: transform;
 }
 
-/* ---------- About: intro pins in the middle of the screen, then the works slide over it ---------- */
-/* top is set from the intro's height in About.tsx so it pins exactly centred; this fallback
-   pins it a little below the header. */
+/* ---------- About: scrolls slower than the page, so the works section catches up and
+   slides over it (offset set from scroll in About.tsx) ---------- */
 .about-pin {
-  position: sticky;
-  top: 15vh;
+  position: relative;
   z-index: 0;
-}
-/* Transparent gap after the intro: it holds pinned in view this long before the works
-   section reaches it and starts covering it. */
-.about-hold {
-  height: 30vh;
-}
-@media (max-width: 760px) {
-  .about-hold {
-    height: 20svh;
-  }
+  will-change: transform;
 }
 .about-title {
   font-size: clamp(42px, 10vw, 72px);
