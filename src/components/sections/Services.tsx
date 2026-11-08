@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { servicesIntro } from "@/content/home";
 import { services } from "@/content/services";
+import { useRise } from "@/hooks/useRise";
 import { Picture } from "@/components/ui/Picture";
 import { HomeLink } from "@/components/ui/HomeLink";
 import { ArrowLeft, ArrowUpLeft } from "@/components/ui/icons";
@@ -14,6 +15,8 @@ import { ArrowLeft, ArrowUpLeft } from "@/components/ui/icons";
 export function Services() {
   const title = useRef<HTMLHeadingElement>(null);
   const [cream, setCream] = useState(false);
+  // Cards rise as they scroll in; the second card of each row a beat after the first.
+  const grid = useRise<HTMLUListElement>(":scope > li", { delay: (k) => (k % 2) * 90 });
 
   useEffect(() => {
     const el = title.current;
@@ -42,8 +45,8 @@ export function Services() {
       id="services"
       className={`${cream ? "bg-cream" : "bg-olive-soft"} px-[var(--gutter)] py-[clamp(88px,11vw,120px)] transition-colors duration-700 ease-out`}
     >
-      <div data-reveal className="mx-auto w-full max-w-[var(--content-max)]">
-        <div className="mb-[52px] flex flex-col gap-[18px] text-center">
+      <div className="mx-auto w-full max-w-[var(--content-max)]">
+        <div data-reveal className="mb-[52px] flex flex-col gap-[18px] text-center">
           <p className="caption">{servicesIntro.caption}</p>
           <h2 ref={title} className="heading-section">
             {servicesIntro.title}
@@ -51,7 +54,10 @@ export function Services() {
           <p className="lead mx-auto max-w-[36em]">{servicesIntro.lead}</p>
         </div>
 
-        <ul className="svc-grid m-0 grid list-none grid-cols-2 gap-x-[clamp(16px,2vw,28px)] gap-y-[clamp(36px,4vw,56px)] p-0 max-[640px]:grid-cols-1">
+        <ul
+          ref={grid}
+          className="svc-grid m-0 grid list-none grid-cols-2 gap-x-[clamp(16px,2vw,28px)] gap-y-[clamp(36px,4vw,56px)] p-0 max-[640px]:grid-cols-1"
+        >
           {services.map((s) => (
             <li key={s.slug}>
               <Link
@@ -80,7 +86,7 @@ export function Services() {
           ))}
         </ul>
 
-        <div className="mt-[clamp(48px,6vw,72px)] flex flex-col items-center gap-5 text-center">
+        <div data-reveal className="mt-[clamp(48px,6vw,72px)] flex flex-col items-center gap-5 text-center">
           <p className="text-[clamp(22px,2.2vw,30px)] leading-[1.3] font-light">
             {servicesIntro.ctaText[0]}
             <br className="min-[761px]:hidden" /> {servicesIntro.ctaText[1]}

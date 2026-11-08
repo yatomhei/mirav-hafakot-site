@@ -713,6 +713,11 @@
   opacity: 0.5; /* mostly a rise, only a light fade */
   transition-duration: 450ms, 250ms;
 }
+.rise-card {
+  transform: translateY(90px);
+  opacity: 0.5;
+  transition-duration: 500ms, 250ms;
+}
 .rise.is-up {
   transform: none;
   opacity: 1;
