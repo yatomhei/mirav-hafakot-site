@@ -1,18 +1,53 @@
 import { Link } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import { servicesIntro } from "@/content/home";
 import { services } from "@/content/services";
 import { Picture } from "@/components/ui/Picture";
 import { HomeLink } from "@/components/ui/HomeLink";
 import { ArrowLeft, ArrowUpLeft } from "@/components/ui/icons";
 
-/** Six service cards in two columns, one blue duotone; each opens its service page. */
+/**
+ * Six service cards in two columns under a dark olive veil; each opens its service page.
+ * The section starts in the works band's olive-soft and fades to cream once its title has
+ * risen past the middle of the screen (and back again when scrolling up).
+ */
 export function Services() {
+  const title = useRef<HTMLHeadingElement>(null);
+  const [cream, setCream] = useState(false);
+
+  useEffect(() => {
+    const el = title.current;
+    if (!el) return;
+    // Cream once the title's top has crossed the middle of the screen.
+    let frame = 0;
+    const check = () => {
+      frame = 0;
+      setCream(el.getBoundingClientRect().top < window.innerHeight / 2);
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(check);
+    };
+    check();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
   return (
-    <section id="services" className="bg-cream px-[var(--gutter)] py-[clamp(88px,11vw,120px)]">
+    <section
+      id="services"
+      className={`${cream ? "bg-cream" : "bg-olive-soft"} px-[var(--gutter)] py-[clamp(88px,11vw,120px)] transition-colors duration-700 ease-out`}
+    >
       <div data-reveal className="mx-auto w-full max-w-[var(--content-max)]">
         <div className="mb-[52px] flex flex-col gap-[18px] text-center">
           <p className="caption">{servicesIntro.caption}</p>
-          <h2 className="heading-section">{servicesIntro.title}</h2>
+          <h2 ref={title} className="heading-section">
+            {servicesIntro.title}
+          </h2>
           <p className="lead mx-auto max-w-[36em]">{servicesIntro.lead}</p>
         </div>
 
