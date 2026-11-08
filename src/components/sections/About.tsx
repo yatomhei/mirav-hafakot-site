@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import { about } from "@/content/home";
+import { Picture } from "@/components/ui/Picture";
 
 /** Renders **bold** spans from content text. */
 export function RichText({ text }: { text: string }) {
@@ -25,6 +26,9 @@ export function About() {
         data-reveal
         className="mx-auto max-w-[1080px] px-[clamp(16px,4vw,48px)] pt-[clamp(120px,15vw,220px)] pb-[clamp(72px,10vw,120px)] text-center"
       >
+        <div className="relative mx-auto mb-10 aspect-[3/4] w-[clamp(180px,20vw,280px)] overflow-hidden rounded-[clamp(12px,1.2vw,18px)] bg-beige">
+          <Picture photo={about.portrait} sizes="(max-width: 760px) 50vw, 280px" />
+        </div>
         <p className="caption mb-8">{about.caption}</p>
         <h2 className="about-title mb-10 font-light leading-none tracking-[-0.015em]">
           {about.title[0]}
