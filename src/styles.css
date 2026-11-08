@@ -601,15 +601,22 @@
 }
 
 /* ---------- About: full-viewport intro that pins while the works slide over it ---------- */
+/* Negative top: the intro first scrolls up part of the way, then pins, then the next
+   section starts covering it. Kept smaller on phones so the text never goes under the edge. */
 .about-pin {
   position: sticky;
-  top: 0;
+  top: -16vh;
   z-index: 0;
   min-height: 100vh;
   min-height: 100svh;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+@media (max-width: 760px) {
+  .about-pin {
+    top: -8svh;
+  }
 }
 .about-title {
   font-size: clamp(42px, 10vw, 72px);
