@@ -600,7 +600,17 @@
   }
 }
 
-/* ---------- About ---------- */
+/* ---------- About: full-viewport intro that pins while the works slide over it ---------- */
+.about-pin {
+  position: sticky;
+  top: 0;
+  z-index: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .about-title {
   font-size: clamp(42px, 10vw, 72px);
   max-width: 1085px;

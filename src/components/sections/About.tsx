@@ -18,21 +18,27 @@ export function RichText({ text }: { text: string }) {
   );
 }
 
+/**
+ * Full-viewport intro. It sticks to the top once it has scrolled into place, and the works
+ * section (next sibling, higher z-index, opaque) slides up over it — see routes/index.tsx,
+ * where the two share a wrapper so the stick ends with the works section.
+ */
 export function About() {
   return (
-    <section
-      id="about"
-      data-reveal
-      className="mx-auto max-w-[1080px] px-[clamp(16px,4vw,48px)] py-[clamp(96px,12vw,200px)] text-center"
-    >
-      <p className="caption mb-8">{about.caption}</p>
-      <h2 className="about-title mb-10 font-light leading-none tracking-[-0.015em]">
-        {about.title[0]}
-        <br className="max-[760px]:hidden" /> {about.title[1]}
-      </h2>
-      <p className="mx-auto max-w-[940px] text-[clamp(20px,2.1vw,27px)] leading-[1.65] font-light">
-        <RichText text={about.body} />
-      </p>
+    <section id="about" className="about-pin bg-cream">
+      <div
+        data-reveal
+        className="mx-auto max-w-[1080px] px-[clamp(16px,4vw,48px)] py-[clamp(72px,10vw,120px)] text-center"
+      >
+        <p className="caption mb-8">{about.caption}</p>
+        <h2 className="about-title mb-10 font-light leading-none tracking-[-0.015em]">
+          {about.title[0]}
+          <br className="max-[760px]:hidden" /> {about.title[1]}
+        </h2>
+        <p className="mx-auto max-w-[940px] text-[clamp(20px,2.1vw,27px)] leading-[1.65] font-light">
+          <RichText text={about.body} />
+        </p>
+      </div>
     </section>
   );
 }
