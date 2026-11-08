@@ -4,6 +4,7 @@ import type { Video } from "@/content/types";
 import { Picture } from "@/components/ui/Picture";
 import { useVideoLink } from "@/components/ui/VideoPlayer";
 import { ArrowLeft, ArrowRight, Play } from "@/components/ui/icons";
+import { useRise } from "@/hooks/useRise";
 
 /** 2.5 thumbnails per view on desktop (edge to edge above 1000px), one per view at ≤640px. */
 function usePerView() {
@@ -48,6 +49,8 @@ function Slide({ clip, visible, basis }: { clip: Video; visible: boolean; basis:
 
 export function Works() {
   const pv = usePerView();
+  // The title rises up quickly as it comes into view.
+  const head = useRise<HTMLDivElement>(":scope > h2", { at: 0.92 });
   const pages = Math.ceil(clips.length - pv) + 1;
   const [page, setPage] = useState(0);
   const current = Math.min(page, pages - 1);
@@ -62,16 +65,20 @@ export function Works() {
   return (
     <section
       id="clips"
-      className="overflow-hidden pt-[clamp(72px,11vw,120px)] pb-[clamp(48px,11vw,72px)]"
+      className="overflow-hidden pt-[clamp(120px,15vw,200px)] pb-[clamp(48px,11vw,72px)]"
     >
-      <div data-reveal className="works-wrap mx-auto max-w-[var(--content-max)] px-[var(--gutter)]">
-        <div className="works-head mx-auto mb-[clamp(20px,3vw,44px)] max-w-[760px] text-center">
+      <div className="works-wrap mx-auto max-w-[var(--content-max)] px-[var(--gutter)]">
+        <div
+          ref={head}
+          className="works-head mx-auto mb-[clamp(20px,3vw,44px)] max-w-[760px] text-center"
+        >
           <p className="caption mb-6">{works.caption}</p>
           <h2 className="heading-section mb-5">{works.title}</h2>
           <p className="lead">{works.lead}</p>
         </div>
 
         <div
+          data-reveal
           className="car mt-[clamp(12px,2.5vw,32px)]"
           role="region"
           aria-roledescription="קרוסלה"

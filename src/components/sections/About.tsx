@@ -23,7 +23,7 @@ export function About() {
     <section id="about" className="bg-cream">
       <div
         data-reveal
-        className="mx-auto max-w-[1080px] px-[clamp(16px,4vw,48px)] pt-[clamp(72px,10vw,120px)] pb-[clamp(120px,15vw,220px)] text-center"
+        className="mx-auto max-w-[1080px] px-[clamp(16px,4vw,48px)] pt-[clamp(120px,15vw,220px)] pb-[clamp(72px,10vw,120px)] text-center"
       >
         <p className="caption mb-8">{about.caption}</p>
         <h2 className="about-title mb-10 font-light leading-none tracking-[-0.015em]">
