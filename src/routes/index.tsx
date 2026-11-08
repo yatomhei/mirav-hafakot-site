@@ -9,7 +9,6 @@ import { Process } from "@/components/sections/Process";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { Faq } from "@/components/sections/Faq";
 import { PhotoStrip } from "@/components/sections/PhotoStrip";
-import { Contact } from "@/components/sections/Contact";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -17,7 +16,7 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   return (
-    <PageShell beforeFooter={<Contact />}>
+    <PageShell>
       <Hero />
       <About />
       <Works />
