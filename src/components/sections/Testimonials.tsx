@@ -90,7 +90,7 @@ export function Testimonials() {
         <div
           ref={content}
           data-reveal="late"
-          className="relative mx-auto max-w-[var(--content-max)] px-[var(--gutter)]"
+          className="relative mx-auto w-full max-w-[var(--content-max)] px-[var(--gutter)]"
         >
           <p className="caption mb-6 text-center !text-beige">{testimonials.caption}</p>
           <h2 id="t-title" className="heading-testimonials mb-14 text-center text-cream">
