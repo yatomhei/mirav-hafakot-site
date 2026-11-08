@@ -706,6 +706,7 @@
 }
 .rise-band {
   transform: translateY(160px);
+  transition-duration: 450ms;
 }
 .rise-row {
   transform: translateY(80px);
