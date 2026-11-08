@@ -3,7 +3,7 @@ import { faq } from "@/content/home";
 import { HomeLink } from "@/components/ui/HomeLink";
 import { ArrowLeft, Minus, Plus } from "@/components/ui/icons";
 
-/** One answer open at a time; the icon fills olive while open. */
+/** One answer open at a time; the icon fills with the button green while open. */
 export function Faq() {
   const [open, setOpen] = useState(-1);
 
@@ -41,7 +41,7 @@ export function Faq() {
                     {f.q}
                     <span
                       aria-hidden="true"
-                      className={`faq-icon inline-flex h-12 w-12 flex-none items-center justify-center rounded-full border border-olive ${isOpen ? "bg-olive text-cream" : "text-ink"}`}
+                      className={`faq-icon inline-flex h-12 w-12 flex-none items-center justify-center rounded-full border border-olive ${isOpen ? "border-btn bg-btn text-btn-ink" : "text-ink"}`}
                     >
                       {isOpen ? <Minus /> : <Plus />}
                     </span>

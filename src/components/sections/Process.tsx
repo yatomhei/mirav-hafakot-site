@@ -2,7 +2,7 @@ import { useState } from "react";
 import { process } from "@/content/home";
 import { Minus, Plus } from "@/components/ui/icons";
 
-/** "הרבה מעבר לצילום": sage band, dark ink, numbered rows that open one at a time. */
+/** "הרבה מעבר לצילום": olive band (#656C51), cream text, numbered rows that open one at a time. */
 export function Process() {
   const [open, setOpen] = useState(-1);
 
@@ -10,11 +10,11 @@ export function Process() {
     <section
       id="process"
       aria-labelledby="process-title"
-      className="bg-sage px-[var(--gutter)] py-[clamp(88px,11vw,150px)] text-ink"
+      className="bg-olive px-[var(--gutter)] py-[clamp(88px,11vw,150px)] text-cream"
     >
       <div data-reveal className="mx-auto max-w-[var(--content-max)]">
         <div className="mx-auto mb-[clamp(48px,6vw,88px)] max-w-[820px] text-center">
-          <p className="caption mb-6 !text-ink">{process.caption}</p>
+          <p className="caption mb-6 !text-cream">{process.caption}</p>
           <h2 id="process-title" className="heading-section-lg mb-6">
             {process.title[0]}
             <br />
@@ -26,11 +26,11 @@ export function Process() {
           </p>
         </div>
 
-        <div className="border-t border-[rgb(46_49_40/0.22)]">
+        <div className="border-t border-[rgb(250_240_235/0.25)]">
           {process.items.map((it, k) => {
             const isOpen = open === k;
             return (
-              <div key={it.num} className="border-b border-[rgb(46_49_40/0.22)]">
+              <div key={it.num} className="border-b border-[rgb(250_240_235/0.25)]">
                 <h3 className="m-0">
                   <button
                     type="button"
@@ -51,7 +51,7 @@ export function Process() {
                     </span>
                     <span
                       aria-hidden="true"
-                      className="incl-icon inline-flex h-12 w-12 flex-none items-center justify-center rounded-full border border-[rgb(46_49_40/0.55)]"
+                      className="incl-icon inline-flex h-12 w-12 flex-none items-center justify-center rounded-full border border-[rgb(250_240_235/0.6)]"
                     >
                       {isOpen ? <Minus /> : <Plus />}
                     </span>

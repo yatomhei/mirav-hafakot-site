@@ -52,6 +52,8 @@
   --color-sage: var(--sage);
   --color-olive: var(--olive);
   --color-olive-hover: var(--olive-hover);
+  --color-btn: var(--btn);
+  --color-btn-ink: var(--btn-ink);
   --color-olive-deep: var(--olive-deep);
   --color-blue: var(--blue);
   --color-ink: var(--ink);
@@ -76,8 +78,11 @@
   --beige: oklch(0.843 0.019 62.4); /* #D5C9BF dividers, focus ring, image placeholders */
   --brown: oklch(0.657 0.046 51.8); /* #A98A78 contact section, nav underline */
   --sage: oklch(0.713 0.031 113.5); /* #A2A58F green surfaces, always dark text */
-  --olive: oklch(0.518 0.042 119.7); /* #656C51 logo olive: buttons */
-  --olive-hover: oklch(0.459 0.037 119.7); /* #555B44 button hover */
+  --olive: oklch(0.518 0.042 119.7); /* #656C51 logo olive: "הרבה מעבר לצילום" band, outline borders */
+  --olive-hover: oklch(0.459 0.037 119.7); /* #555B44 */
+  --btn: var(--sage); /* #A2A58F buttons, always dark text */
+  --btn-hover: oklch(0.645 0.031 113.5); /* #8E927A button hover */
+  --btn-ink: var(--ink);
   --olive-deep: oklch(0.497 0.041 120.1); /* #5F664C section captions; testimonials backdrop */
   --blue: oklch(0.516 0.024 203.9); /* #586C6E: dark version used for photo overlays only */
   --ink: oklch(0.307 0.016 122.4); /* #2E3128 text */
@@ -90,8 +95,8 @@
   --card-foreground: var(--ink);
   --popover: var(--cream);
   --popover-foreground: var(--ink);
-  --primary: var(--olive);
-  --primary-foreground: var(--cream);
+  --primary: var(--btn);
+  --primary-foreground: var(--btn-ink);
   --secondary: var(--olive-soft);
   --secondary-foreground: var(--ink);
   --muted: var(--paper);
@@ -256,11 +261,11 @@
     transform: translateY(-1px);
   }
   .btn-primary {
-    background: var(--olive);
-    color: var(--cream);
+    background: var(--btn);
+    color: var(--btn-ink);
   }
   .btn-primary:hover {
-    background: var(--olive-hover);
+    background: var(--btn-hover);
   }
   .btn-outline {
     background: transparent;
@@ -268,8 +273,9 @@
     border-color: var(--olive);
   }
   .btn-outline:hover {
-    background: var(--olive);
-    color: var(--cream);
+    background: var(--btn);
+    border-color: var(--btn);
+    color: var(--btn-ink);
   }
   .btn-light {
     background: var(--cream);
@@ -460,8 +466,8 @@
   z-index: 60;
   padding: 12px 20px;
   border-radius: 999px;
-  background: var(--olive);
-  color: var(--cream);
+  background: var(--btn);
+  color: var(--btn-ink);
   text-decoration: none;
   transform: translateY(-200%);
   transition: transform 200ms ease;
@@ -558,19 +564,20 @@
     padding: clamp(36px, 10vw, 56px) 8px 0;
   }
   .hero-primary {
-    background: var(--olive);
-    color: var(--cream);
+    background: var(--btn);
+    color: var(--btn-ink);
   }
   .hero-primary:hover {
-    background: var(--olive-hover);
+    background: var(--btn-hover);
   }
   .hero-ghost {
     border-color: var(--olive);
     color: var(--ink);
   }
   .hero-ghost:hover {
-    background: var(--olive);
-    color: var(--cream);
+    background: var(--btn);
+    border-color: var(--btn);
+    color: var(--btn-ink);
   }
 }
 /* The hero eases out as it scrolls away (browsers with scroll timelines only). */
@@ -633,9 +640,9 @@
   color: var(--ink);
 }
 .car-arrow:hover {
-  background: var(--olive);
-  border-color: var(--olive);
-  color: var(--cream);
+  background: var(--btn);
+  border-color: var(--btn);
+  color: var(--btn-ink);
 }
 @media (max-width: 640px) {
   .car-arrow {
@@ -673,8 +680,8 @@
     color 200ms ease;
 }
 .incl-head:hover .incl-icon {
-  background: var(--ink);
-  color: var(--sage);
+  background: var(--cream);
+  color: var(--olive);
 }
 .faq-icon {
   transition:
@@ -682,8 +689,8 @@
     color 200ms ease;
 }
 .faq-q:hover .faq-icon {
-  background: var(--olive);
-  color: var(--cream);
+  background: var(--btn);
+  color: var(--btn-ink);
 }
 
 /* ---------- Testimonials controls ---------- */
@@ -759,7 +766,7 @@
     transform 250ms ease;
 }
 .wa-float:hover {
-  background: var(--olive-hover);
+  background: var(--btn-hover);
   transform: translateY(-2px);
 }
 

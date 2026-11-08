@@ -5,7 +5,7 @@ import { image } from "@/lib/asset";
 import { isPlaceholder, mailHref, telHref } from "@/lib/contact";
 import { ArrowUp, Facebook, YouTube } from "@/components/ui/icons";
 
-/** Sage footer with dark ink (never the blue). Three columns, centred on mobile. */
+/** Cream footer with dark ink (never the blue). Three columns, centred on mobile. */
 export function SiteFooter() {
   const socials = [
     { label: "יוטיוב", href: site.youtubeUrl, Icon: YouTube },
@@ -13,7 +13,7 @@ export function SiteFooter() {
   ];
 
   return (
-    <footer data-reveal className="bg-sage px-[var(--gutter)] pt-16 pb-[108px] text-ink">
+    <footer data-reveal className="bg-cream px-[var(--gutter)] pt-16 pb-[108px] text-ink">
       <div
         aria-hidden="true"
         className="mx-auto mb-12 hidden max-w-[var(--content-max)] border-t border-[rgb(46_49_40/0.18)] max-[760px]:block"
