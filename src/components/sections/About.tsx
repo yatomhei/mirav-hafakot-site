@@ -19,37 +19,27 @@ export function RichText({ text }: { text: string }) {
 }
 
 /**
- * Intro that drifts: once it nears the top of the screen it scrolls at a fraction of the
- * page's speed, so the works section (later sibling, higher z-index, opaque) catches up and
- * slides over it. routes/index.tsx clips the shared wrapper so the drifting intro never
- * shows below the works and stills. Off under reduced motion.
+ * Intro that pins once it reaches the middle of the screen; the works section (later
+ * sibling, higher z-index, opaque) then slides up over it — see routes/index.tsx, where they
+ * share a wrapper so the pin ends with the works and stills.
  */
 export function About() {
   const ref = useRef<HTMLElement>(null);
 
+  // Sticky "top" that centres the intro vertically: (screen height − intro height) / 2.
   useEffect(() => {
     const el = ref.current;
-    const wrap = el?.parentElement;
-    if (!el || !wrap || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const LAG = 0.6; // share of the scroll the intro gives back: it moves at 40% speed
-    let raf = 0;
-    const update = () => {
-      raf = 0;
-      // The wrapper starts where the intro's untransformed top is.
-      const start = window.innerHeight * 0.15;
-      const past = Math.max(0, start - wrap.getBoundingClientRect().top);
-      el.style.transform = past ? `translate3d(0, ${(past * LAG).toFixed(1)}px, 0)` : "";
+    if (!el) return;
+    const place = () => {
+      el.style.top = `${Math.round((window.innerHeight - el.offsetHeight) / 2)}px`;
     };
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update);
-    };
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    place();
+    const ro = new ResizeObserver(place);
+    ro.observe(el);
+    window.addEventListener("resize", place);
     return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      ro.disconnect();
+      window.removeEventListener("resize", place);
     };
   }, []);
 

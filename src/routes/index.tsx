@@ -18,10 +18,10 @@ function HomePage() {
   return (
     <PageShell>
       <Hero />
-      {/* The intro drifts slower than the page; works + stills catch up and slide over it.
-          overflow: clip keeps the drifting intro from showing below them. */}
-      <div className="relative [overflow:clip]">
+      {/* The intro pins while works + stills scroll up over it (together taller than the viewport). */}
+      <div className="relative">
         <About />
+        <div className="about-hold" aria-hidden="true" />
         <Works />
         <Stills />
       </div>
