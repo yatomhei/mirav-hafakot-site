@@ -26,14 +26,19 @@ export function Testimonials() {
     <section
       id="testimonials"
       aria-labelledby="t-title"
-      className="relative overflow-hidden bg-olive-deep py-[clamp(88px,11vw,140px)]"
+      className="relative overflow-hidden bg-olive-deep py-[clamp(88px,11vw,140px)] [clip-path:inset(0)]"
     >
-      <Picture
-        photo={{ name: testimonials.background, alt: "", pos: "center 60%" }}
-        decorative
-        sizes="100vw"
-        className="brightness-[0.8] contrast-[1.05] saturate-[0.95] sepia-[0.06]"
-      />
+      {/* Parallax reveal: the photo is fixed to the viewport and clipped to this section, so
+          it stays still while the section above scrolls away and uncovers it. (Works on
+          phones too, unlike background-attachment: fixed.) */}
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0">
+        <Picture
+          photo={{ name: testimonials.background, alt: "", pos: "center 60%" }}
+          decorative
+          sizes="100vw"
+          className="brightness-[0.8] contrast-[1.05] saturate-[0.95] sepia-[0.06]"
+        />
+      </div>
       <div aria-hidden="true" className="absolute inset-0 bg-[rgb(52_68_74/0.46)]" />
 
       <div data-reveal className="relative mx-auto max-w-[var(--content-max)] px-[var(--gutter)]">
