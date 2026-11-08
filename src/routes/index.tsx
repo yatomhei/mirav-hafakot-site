@@ -18,13 +18,9 @@ function HomePage() {
   return (
     <PageShell>
       <Hero />
-      {/* The intro pins while works + stills scroll up over it (together taller than the viewport). */}
-      <div className="relative">
-        <About />
-        <div className="about-hold" aria-hidden="true" />
-        <Works />
-        <Stills />
-      </div>
+      <About />
+      <Works />
+      <Stills />
       <Services />
       <Process />
       <Testimonials />

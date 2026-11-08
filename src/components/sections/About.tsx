@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef } from "react";
+import { Fragment } from "react";
 import { about } from "@/content/home";
 
 /** Renders **bold** spans from content text. */
@@ -18,33 +18,9 @@ export function RichText({ text }: { text: string }) {
   );
 }
 
-/**
- * Intro that pins once it reaches the middle of the screen; the works section (later
- * sibling, higher z-index, opaque) then slides up over it — see routes/index.tsx, where they
- * share a wrapper so the pin ends with the works and stills.
- */
 export function About() {
-  const ref = useRef<HTMLElement>(null);
-
-  // Sticky "top" that centres the intro vertically: (screen height − intro height) / 2.
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const place = () => {
-      el.style.top = `${Math.round((window.innerHeight - el.offsetHeight) / 2)}px`;
-    };
-    place();
-    const ro = new ResizeObserver(place);
-    ro.observe(el);
-    window.addEventListener("resize", place);
-    return () => {
-      ro.disconnect();
-      window.removeEventListener("resize", place);
-    };
-  }, []);
-
   return (
-    <section ref={ref} id="about" className="about-pin bg-cream">
+    <section id="about" className="bg-cream">
       <div
         data-reveal
         className="mx-auto max-w-[1080px] px-[clamp(16px,4vw,48px)] py-[clamp(72px,10vw,120px)] text-center"

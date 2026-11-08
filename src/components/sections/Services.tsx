@@ -86,7 +86,10 @@ export function Services() {
           ))}
         </ul>
 
-        <div data-reveal className="mt-[clamp(48px,6vw,72px)] flex flex-col items-center gap-5 text-center">
+        <div
+          data-reveal
+          className="mt-[clamp(48px,6vw,72px)] flex flex-col items-center gap-5 text-center"
+        >
           <p className="text-[clamp(22px,2.2vw,30px)] leading-[1.3] font-light">
             {servicesIntro.ctaText[0]}
             <br className="min-[761px]:hidden" /> {servicesIntro.ctaText[1]}

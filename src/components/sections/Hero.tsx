@@ -12,6 +12,33 @@ import { ArrowLeft, Play } from "@/components/ui/icons";
  */
 export function Hero() {
   const video = useRef<HTMLVideoElement>(null);
+  const frame = useRef<HTMLDivElement>(null);
+
+  // As the hero scrolls out of view its frame scales down (1 → 0.92), anchored at the top
+  // edge, so the bottom and sides pull in. Desktop frame only; off under reduced motion.
+  useEffect(() => {
+    const el = frame.current;
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const desktop = window.matchMedia("(min-width: 761px)");
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      // Scale is anchored at the top, so the measured top is not affected by it.
+      const p = Math.min(1, Math.max(0, -el.getBoundingClientRect().top / el.offsetHeight));
+      el.style.transform = desktop.matches && p ? `scale(${(1 - 0.08 * p).toFixed(4)})` : "";
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
 
   useEffect(() => {
     const v = video.current;
@@ -27,8 +54,8 @@ export function Hero() {
   const poster = image(`${hero.poster}-1600.webp`);
 
   return (
-    <section className="hero-out px-[clamp(8px,1.4vw,20px)]">
-      <div className="hero">
+    <section className="px-[clamp(8px,1.4vw,20px)]">
+      <div ref={frame} className="hero">
         <div className="hero-vid" aria-hidden="true" style={{ backgroundImage: `url(${poster})` }}>
           <video
             ref={video}

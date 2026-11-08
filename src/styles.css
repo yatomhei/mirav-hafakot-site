@@ -78,7 +78,9 @@
   --beige: oklch(0.843 0.019 62.4); /* #D5C9BF dividers, focus ring, image placeholders */
   --brown: oklch(0.657 0.046 51.8); /* #A98A78 contact section, nav underline */
   --sage: oklch(0.713 0.031 113.5); /* #A2A58F green surfaces, always dark text */
-  --olive: oklch(0.518 0.042 119.7); /* #656C51 logo olive: "הרבה מעבר לצילום" band, outline borders */
+  --olive: oklch(
+    0.518 0.042 119.7
+  ); /* #656C51 logo olive: "הרבה מעבר לצילום" band, outline borders */
   --olive-hover: oklch(0.459 0.037 119.7); /* #555B44 */
   --btn: var(--sage); /* #A2A58F buttons, always dark text */
   --btn-hover: oklch(0.645 0.031 113.5); /* #8E927A button hover */
@@ -580,44 +582,13 @@
     color: var(--btn-ink);
   }
 }
-/* The hero eases out as it scrolls away (browsers with scroll timelines only). */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .hero-out {
-      view-timeline: --hero block;
-    }
-    .hero-out > * {
-      animation: hero-leave both linear;
-      animation-timeline: --hero;
-      animation-range: exit 0% exit 100%;
-    }
-  }
-}
-@keyframes hero-leave {
-  to {
-    opacity: 0.35;
-    transform: translateY(-48px);
-  }
+/* As the hero scrolls away its frame scales down a little, anchored at the top edge, so
+   the bottom and sides pull in (set from scroll in Hero.tsx; desktop frame only). */
+.hero {
+  transform-origin: 50% 0;
 }
 
-/* ---------- About: intro pins in the middle of the screen, then the works slide over it ---------- */
-/* top is set from the intro's height in About.tsx so it pins exactly centred; this fallback
-   pins it a little below the header. */
-.about-pin {
-  position: sticky;
-  top: 15vh;
-  z-index: 0;
-}
-/* Transparent gap after the intro: it holds pinned in view this long before the works
-   section reaches it and starts covering it. */
-.about-hold {
-  height: 30vh;
-}
-@media (max-width: 760px) {
-  .about-hold {
-    height: 20svh;
-  }
-}
+/* ---------- About ---------- */
 .about-title {
   font-size: clamp(42px, 10vw, 72px);
   max-width: 1085px;
