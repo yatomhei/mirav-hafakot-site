@@ -591,9 +591,7 @@
 /* ---------- About ---------- */
 /* Sits in the text column beside the portrait on desktop, full width when stacked. */
 .about-title {
-  /* Sized to the text column so it stays on two lines at every desktop width (the longer
-     line is about 10× the font size wide). */
-  font-size: clamp(36px, 4.6vw, 64px);
+  font-size: clamp(40px, 5vw, 68px);
 }
 @media (max-width: 900px) {
   .about-title {
