@@ -20,7 +20,7 @@ export function RichText({ text }: { text: string }) {
 
 export function About() {
   return (
-    <section id="about" className="bg-cream">
+    <section id="about">
       <div
         data-reveal
         className="mx-auto max-w-[1080px] px-[clamp(16px,4vw,48px)] pt-[clamp(120px,15vw,220px)] pb-[clamp(72px,10vw,120px)] text-center"
