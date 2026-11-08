@@ -15,8 +15,8 @@ import { ArrowLeft, ArrowUpLeft } from "@/components/ui/icons";
 export function Services() {
   const title = useRef<HTMLHeadingElement>(null);
   const [cream, setCream] = useState(false);
-  // Cards rise as they scroll in; the second card of each row a beat after the first.
-  const grid = useRise<HTMLUListElement>(":scope > li", { delay: (k) => (k % 2) * 90 });
+  // Cards rise as they scroll in; cards in the same row share a top, so they rise together.
+  const grid = useRise<HTMLUListElement>(":scope > li");
 
   useEffect(() => {
     const el = title.current;
