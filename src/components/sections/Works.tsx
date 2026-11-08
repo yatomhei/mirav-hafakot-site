@@ -65,12 +65,12 @@ export function Works() {
   return (
     <section
       id="clips"
-      className="overflow-hidden pt-[clamp(120px,15vw,200px)] pb-[clamp(48px,11vw,72px)]"
+      className="overflow-hidden pt-[clamp(80px,10vw,140px)] pb-[clamp(48px,11vw,72px)]"
     >
       <div className="works-wrap mx-auto max-w-[var(--content-max)] px-[var(--gutter)]">
         <div
           ref={head}
-          className="works-head mx-auto mb-[clamp(20px,3vw,44px)] max-w-[760px] text-center"
+          className="works-head mx-auto mb-[clamp(36px,4.5vw,64px)] max-w-[760px] text-center"
         >
           <p className="caption mb-6">{works.caption}</p>
           <h2 className="heading-section mb-5">{works.title}</h2>

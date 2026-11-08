@@ -11,7 +11,7 @@ export function Stills() {
       className="px-[var(--gutter)] pt-[clamp(72px,11vw,120px)] pb-[clamp(72px,11vw,140px)]"
     >
       <div data-reveal className="mx-auto w-full max-w-[var(--content-max)]">
-        <div className="mx-auto mb-[clamp(36px,5vw,64px)] max-w-[760px] text-center">
+        <div className="mx-auto mb-[clamp(48px,6.5vw,88px)] max-w-[760px] text-center">
           <h3 className="heading-section mb-5">{stills.title}</h3>
           <p className="lead">{stills.text}</p>
         </div>
