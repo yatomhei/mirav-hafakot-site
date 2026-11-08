@@ -710,7 +710,8 @@
 }
 .rise-row {
   transform: translateY(80px);
-  opacity: 0;
+  opacity: 0.5; /* mostly a rise, only a light fade */
+  transition-duration: 450ms, 250ms;
 }
 .rise.is-up {
   transform: none;
