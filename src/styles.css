@@ -698,6 +698,24 @@
   }
 }
 
+/* ---------- Process: quick rise-up of the band, then each row (classes added by JS) ---------- */
+.rise {
+  transition:
+    transform 750ms var(--ease-out-expo),
+    opacity 450ms ease;
+}
+.rise-band {
+  transform: translateY(160px);
+}
+.rise-row {
+  transform: translateY(80px);
+  opacity: 0;
+}
+.rise.is-up {
+  transform: none;
+  opacity: 1;
+}
+
 /* ---------- Process / FAQ rows ---------- */
 .incl-icon {
   transition:

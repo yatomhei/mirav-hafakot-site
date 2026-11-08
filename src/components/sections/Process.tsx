@@ -2,15 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { process } from "@/content/home";
 import { Minus, Plus } from "@/components/ui/icons";
 
-/** 0 → 1 as `top` travels from `from` to `to` (fractions of the viewport height). */
-const progress = (top: number, vh: number, from: number, to: number) =>
-  Math.min(1, Math.max(0, (vh * from - top) / (vh * (from - to))));
-
 /**
- * Scroll-linked entrance: the band rises into place as it scrolls in, and each row rises
- * after it, both following the scroll position (scrubbed, so they run backwards on the way
- * up). Static wrappers are measured and their inner layer moves, so the measurement never
- * includes the movement. Off under reduced motion.
+ * Rise-up entrance: the band rises quickly into place when its top passes 85% of the
+ * screen height, and each row rises (with a fade) when it passes 90%, a beat after the one
+ * before. Plays once. Static wrappers are measured; their inner layer moves, so the
+ * measurement never includes the movement. Content is only hidden once this has run, and
+ * never under reduced motion.
  */
 function useScrollRise() {
   const band = useRef<HTMLDivElement>(null);
@@ -19,32 +16,44 @@ function useScrollRise() {
   useEffect(() => {
     const outer = band.current;
     if (!outer || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const inner = outer.firstElementChild as HTMLElement;
-    let frame = 0;
+    const targets: [HTMLElement, HTMLElement, number][] = [
+      [outer, outer.firstElementChild as HTMLElement, 0.85],
+      ...rows.current
+        .filter((r): r is HTMLDivElement => !!r)
+        .map((r, k): [HTMLElement, HTMLElement, number] => {
+          const el = r.firstElementChild as HTMLElement;
+          el.style.transitionDelay = `${k * 90}ms`;
+          return [r, el, 0.9];
+        }),
+    ];
+    targets[0]![1].classList.add("rise", "rise-band");
+    targets.slice(1).forEach(([, el]) => el.classList.add("rise", "rise-row"));
 
+    let frame = 0;
+    let pending = targets;
     const update = () => {
       frame = 0;
       const vh = window.innerHeight;
-      const p = progress(outer.getBoundingClientRect().top, vh, 1, 0.3);
-      inner.style.transform = `translateY(${((1 - p) * 180).toFixed(1)}px)`;
-      for (const row of rows.current) {
-        if (!row) continue;
-        const r = progress(row.getBoundingClientRect().top, vh, 1, 0.72);
-        const el = row.firstElementChild as HTMLElement;
-        el.style.transform = `translateY(${((1 - r) * 90).toFixed(1)}px)`;
-        el.style.opacity = String(r);
-      }
+      pending = pending.filter(([measure, el, at]) => {
+        if (measure.getBoundingClientRect().top > vh * at) return true;
+        el.classList.add("is-up");
+        return false;
+      });
+      if (!pending.length) stop();
     };
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(update);
+    };
+    const stop = () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
     };
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     return () => {
       cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      stop();
     };
   }, []);
 
@@ -61,7 +70,7 @@ export function Process() {
       <section
         id="process"
         aria-labelledby="process-title"
-        className="bg-olive px-[var(--gutter)] py-[clamp(88px,11vw,150px)] text-cream will-change-transform"
+        className="bg-olive px-[var(--gutter)] py-[clamp(88px,11vw,150px)] text-cream"
       >
         <div className="mx-auto max-w-[var(--content-max)]">
           <div className="mx-auto mb-[clamp(48px,6vw,88px)] max-w-[820px] text-center">
