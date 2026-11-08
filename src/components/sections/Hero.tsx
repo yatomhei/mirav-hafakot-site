@@ -14,9 +14,7 @@ export function Hero() {
   const video = useRef<HTMLVideoElement>(null);
   const frame = useRef<HTMLDivElement>(null);
 
-  // As the hero leaves, its lower part shrinks in: a clip narrows the bottom edge (up to 5%
-  // of the width on each side) while the top edge stays put — a slight trapezoid with the
-  // frame's rounded corners. Clipping, not transforming, so the video and text never distort.
+  // As the hero leaves, its lower part shrinks in: the frame tilts back from its top edge.
   useEffect(() => {
     const el = frame.current;
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -24,19 +22,17 @@ export function Hero() {
     let raf = 0;
     const update = () => {
       raf = 0;
-      const p = Math.min(1, Math.max(0, -el.getBoundingClientRect().top / el.offsetHeight));
-      if (!desktop.matches || !p) {
-        el.style.clipPath = "";
+      if (!desktop.matches) {
+        el.style.transform = "";
         return;
       }
-      const w = el.offsetWidth;
-      const h = el.offsetHeight;
-      const r = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0;
-      const d = p * w * 0.05; // bottom inset per side
-      const L = (y: number) => (d * y) / h; // left edge x at height y
-      const R = (y: number) => w - (d * y) / h; // right edge x at height y
-      const n = (v: number) => v.toFixed(1);
-      el.style.clipPath = `path("M ${n(L(0) + r)} 0 L ${n(R(0) - r)} 0 Q ${n(R(0))} 0 ${n(R(r))} ${n(r)} L ${n(R(h - r))} ${n(h - r)} Q ${n(R(h))} ${n(h)} ${n(R(h) - r)} ${n(h)} L ${n(L(h) + r)} ${n(h)} Q ${n(L(h))} ${n(h)} ${n(L(h - r))} ${n(h - r)} L ${n(L(r))} ${n(r)} Q ${n(L(0))} 0 ${n(L(0) + r)} 0 Z")`;
+      const r = el.getBoundingClientRect();
+      // Untransformed height: scale is anchored at the top, so r.top is unaffected.
+      const p = Math.min(1, Math.max(0, -r.top / el.offsetHeight));
+      // Tilt back from the top edge so the lower part narrows (a slight trapezoid).
+      el.style.transform = p
+        ? `perspective(1400px) rotateX(${(-10 * p).toFixed(2)}deg) scale(${(1 - 0.04 * p).toFixed(4)})`
+        : "";
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
