@@ -8,7 +8,7 @@ export function Stills() {
     <section
       id="stills"
       aria-label="צילומי סטילס"
-      className="relative z-[1] bg-olive-soft px-[var(--gutter)] pt-[clamp(72px,11vw,120px)] pb-[clamp(72px,11vw,140px)]"
+      className="px-[var(--gutter)] pt-[clamp(72px,11vw,120px)] pb-[clamp(72px,11vw,140px)]"
     >
       <div data-reveal className="mx-auto w-full max-w-[var(--content-max)]">
         <div className="mx-auto mb-[clamp(36px,5vw,64px)] max-w-[760px] text-center">

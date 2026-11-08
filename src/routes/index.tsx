@@ -2,8 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PageShell } from "@/components/layout/PageShell";
 import { Hero } from "@/components/sections/Hero";
 import { About } from "@/components/sections/About";
-import { Works } from "@/components/sections/Works";
-import { Stills } from "@/components/sections/Stills";
+import { WorksBand } from "@/components/sections/WorksBand";
 import { Services } from "@/components/sections/Services";
 import { Process } from "@/components/sections/Process";
 import { Testimonials } from "@/components/sections/Testimonials";
@@ -19,8 +18,7 @@ function HomePage() {
     <PageShell>
       <Hero />
       <About />
-      <Works />
-      <Stills />
+      <WorksBand />
       <Services />
       <Process />
       <Testimonials />

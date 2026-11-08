@@ -62,7 +62,7 @@ export function Works() {
   return (
     <section
       id="clips"
-      className="relative z-[1] overflow-hidden bg-olive-soft pt-[clamp(72px,11vw,120px)] pb-[clamp(48px,11vw,72px)]"
+      className="overflow-hidden pt-[clamp(72px,11vw,120px)] pb-[clamp(48px,11vw,72px)]"
     >
       <div data-reveal className="works-wrap mx-auto max-w-[var(--content-max)] px-[var(--gutter)]">
         <div className="works-head mx-auto mb-[clamp(20px,3vw,44px)] max-w-[760px] text-center">
