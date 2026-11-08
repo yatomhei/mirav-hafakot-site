@@ -22,16 +22,56 @@ export function Testimonials() {
     return () => clearInterval(t);
   }, [paused, items.length]);
 
+  // Photo first, then text: while the section above scrolls away, the photo layer is held
+  // still against the screen (so it is uncovered, not scrolled in). Once the section reaches
+  // the top of the screen the photo is released and scrolls away with the text. The text
+  // rises in only after the photo is (almost) fully revealed.
+  const section = useRef<HTMLElement>(null);
+  const photo = useRef<HTMLDivElement>(null);
+  const content = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const sec = section.current;
+    const layer = photo.current;
+    const text = content.current;
+    if (!sec || !layer || !text) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) text.classList.add("is-revealed");
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const top = sec.getBoundingClientRect().top;
+      const vh = window.innerHeight;
+      // Only while the section is entering from below: hold the photo at the screen's top.
+      const hold = top > 0 && top < vh ? -top : 0;
+      layer.style.transform = reduce ? "" : `translate3d(0, ${hold.toFixed(1)}px, 0)`;
+      if (top <= vh * 0.2) text.classList.add("is-revealed");
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
   return (
     <section
+      ref={section}
       id="testimonials"
       aria-labelledby="t-title"
-      className="relative overflow-hidden bg-olive-deep py-[clamp(88px,11vw,140px)] [clip-path:inset(0)]"
+      className="relative overflow-hidden bg-olive-deep py-[clamp(88px,11vw,140px)]"
     >
-      {/* Parallax reveal: the photo is fixed to the viewport and clipped to this section, so
-          it stays still while the section above scrolls away and uncovers it. (Works on
-          phones too, unlike background-attachment: fixed.) */}
-      <div aria-hidden="true" className="pointer-events-none fixed inset-0">
+      <div
+        ref={photo}
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-full min-h-[100vh] will-change-transform"
+      >
         <Picture
           photo={{ name: testimonials.background, alt: "", pos: "center 60%" }}
           decorative
@@ -41,7 +81,11 @@ export function Testimonials() {
       </div>
       <div aria-hidden="true" className="absolute inset-0 bg-[rgb(52_68_74/0.46)]" />
 
-      <div data-reveal className="relative mx-auto max-w-[var(--content-max)] px-[var(--gutter)]">
+      <div
+        ref={content}
+        data-reveal="late"
+        className="relative mx-auto max-w-[var(--content-max)] px-[var(--gutter)]"
+      >
         <p className="caption mb-6 text-center !text-beige">{testimonials.caption}</p>
         <h2 id="t-title" className="heading-testimonials mb-14 text-center text-cream">
           {testimonials.title}
