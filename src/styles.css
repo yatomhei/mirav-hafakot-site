@@ -605,7 +605,7 @@
    section starts covering it. Kept smaller on phones so the text never goes under the edge. */
 .about-pin {
   position: sticky;
-  top: -16vh;
+  top: -10vh;
   z-index: 0;
   min-height: 100vh;
   min-height: 100svh;
@@ -613,9 +613,17 @@
   align-items: center;
   justify-content: center;
 }
+/* Transparent gap after the intro: it holds pinned in view this long before the works
+   section reaches it and starts covering it. */
+.about-hold {
+  height: 30vh;
+}
 @media (max-width: 760px) {
+  .about-hold {
+    height: 20svh;
+  }
   .about-pin {
-    top: -8svh;
+    top: -5svh;
   }
 }
 .about-title {
