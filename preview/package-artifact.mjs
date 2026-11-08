@@ -12,7 +12,7 @@ const js = [
   ...html.matchAll(/<script type="module"[^>]*src="(\.\/assets\/[^"]+)"[^>]*><\/script>/g),
 ].map((m) => m[1]);
 
-const page = `<title>הפקת המרב — תצוגה מקדימה</title>
+const page = `<title>אתר הפקת המרב</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,7 +31,7 @@ const walk = (dir) => {
     if (statSync(p).isDirectory()) walk(p);
     else {
       const rel = relative(dist, p).split(sep).join("/");
-      if (rel.startsWith("assets/") || rel.startsWith("images/")) files[rel] = rel;
+      if (["assets/", "images/", "video/"].some((d) => rel.startsWith(d))) files[rel] = rel;
     }
   }
 };

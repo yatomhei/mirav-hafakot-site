@@ -30,6 +30,8 @@ router.subscribe("onResolved", ({ toLocation, fromLocation }) => {
 
 // The host page has no lang/dir of its own.
 document.documentElement.lang = "he";
+// claude.ai pages can't embed YouTube, so video links open YouTube in a new tab instead.
+(window as { __NO_VIDEO_EMBED__?: boolean }).__NO_VIDEO_EMBED__ = true;
 document.documentElement.dir = "rtl";
 
 const el = document.getElementById("app");

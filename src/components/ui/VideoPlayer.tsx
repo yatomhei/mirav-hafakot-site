@@ -68,6 +68,8 @@ export function useVideoLink(video: Video) {
     target: "_blank",
     rel: "noopener",
     onClick: (e: React.MouseEvent) => {
+      // The shareable preview runs where YouTube can't be embedded: just follow the link.
+      if ((window as { __NO_VIDEO_EMBED__?: boolean }).__NO_VIDEO_EMBED__) return;
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
       e.preventDefault();
       open(video);

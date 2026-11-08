@@ -35,6 +35,8 @@ function CallButton({ className = "" }: { className?: string }) {
  */
 export function Contact() {
   const [error, setError] = useState("");
+  // When the browser blocks the new tab, offer the WhatsApp link to tap instead.
+  const [fallback, setFallback] = useState("");
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,7 +53,12 @@ export function Contact() {
       return;
     }
     setError("");
-    window.open(whatsappHref(buildMessage(f)), "_blank", "noopener");
+    const href = whatsappHref(buildMessage(f));
+    // No "noopener" feature here: with it, window.open always returns null and we could not
+    // tell a blocked tab from an opened one. Cut the link back to this page instead.
+    const win = window.open(href, "_blank");
+    if (win) win.opener = null;
+    setFallback(win ? "" : href);
   };
 
   return (
@@ -123,6 +130,19 @@ export function Contact() {
             {error && (
               <p role="alert" className="col-span-full text-center text-[15px] font-medium">
                 {error}
+              </p>
+            )}
+            {fallback && (
+              <p role="status" className="col-span-full text-center text-[15px]">
+                ההודעה מוכנה.{" "}
+                <a
+                  href={fallback}
+                  target="_blank"
+                  rel="noopener"
+                  className="font-medium underline underline-offset-4"
+                >
+                  פתיחת וואטסאפ
+                </a>
               </p>
             )}
             <button
