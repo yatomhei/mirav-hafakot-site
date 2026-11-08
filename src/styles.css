@@ -79,7 +79,7 @@
   --olive: oklch(0.518 0.042 119.7); /* #656C51 logo olive: buttons */
   --olive-hover: oklch(0.459 0.037 119.7); /* #555B44 button hover */
   --olive-deep: oklch(0.497 0.041 120.1); /* #5F664C section captions; testimonials backdrop */
-  --blue: oklch(0.516 0.024 203.9); /* #586C6E service card tint only */
+  --blue: oklch(0.516 0.024 203.9); /* #586C6E: dark version used for photo overlays only */
   --ink: oklch(0.307 0.016 122.4); /* #2E3128 text */
   --ink-deep: oklch(0.263 0.013 126.2); /* #23261F text on the brown contact section */
   --overlay: oklch(0.375 0.023 222.8); /* #34444A hero + testimonials photo overlays */
@@ -389,7 +389,7 @@
   transform: scale(1.04);
 }
 
-/* Service cards: one blue duotone so all six read as a set; colour returns on hover. */
+/* Service cards: one brown duotone so all six read as a set; colour returns on hover. */
 .svc-card img {
   filter: grayscale(1) contrast(1.06) brightness(0.92);
   transition:
@@ -397,7 +397,7 @@
     transform 900ms var(--ease-soft);
 }
 .svc-card .svc-veil {
-  background: oklch(0.516 0.024 203.9 / 0.7); /* blue #586C6E at 70% */
+  background: oklch(0.657 0.046 51.8 / 0.7); /* brown #A98A78 at 70% */
   transition: background-color 300ms ease;
 }
 .svc-card:hover img,
@@ -407,7 +407,7 @@
 }
 .svc-card:hover .svc-veil,
 .svc-card:focus-visible .svc-veil {
-  background: oklch(0.516 0.024 203.9 / 0.6);
+  background: oklch(0.657 0.046 51.8 / 0.6);
 }
 .svc-card .svc-arrow {
   transition:
