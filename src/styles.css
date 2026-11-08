@@ -580,11 +580,24 @@
     color: var(--btn-ink);
   }
 }
-/* As the hero scrolls away its frame shrinks in a little from the bottom (scale anchored at
-   the top edge, set from scroll in Hero.tsx; desktop frame only). */
-.hero {
-  transform-origin: 50% 0;
-  will-change: transform;
+/* The hero eases out as it scrolls away (browsers with scroll timelines only). */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-out {
+      view-timeline: --hero block;
+    }
+    .hero-out > * {
+      animation: hero-leave both linear;
+      animation-timeline: --hero;
+      animation-range: exit 0% exit 100%;
+    }
+  }
+}
+@keyframes hero-leave {
+  to {
+    opacity: 0.35;
+    transform: translateY(-48px);
+  }
 }
 
 /* ---------- About: scrolls slower than the page, so the works section catches up and
