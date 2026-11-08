@@ -389,25 +389,27 @@
   transform: scale(1.04);
 }
 
-/* Service cards: one brown duotone so all six read as a set; colour returns on hover. */
+/* Service cards: the photo keeps its own (slightly muted) colour under a dark olive veil —
+   the logo olive #656C51 taken much darker — so the cards read dark, green-toned and
+   consistent, with cream titles that stay legible. The veil lifts a little on hover. */
 .svc-card img {
-  filter: grayscale(1) contrast(1.06) brightness(0.92);
+  filter: saturate(0.8) contrast(1.04) brightness(0.9);
   transition:
     filter 600ms ease,
     transform 900ms var(--ease-soft);
 }
 .svc-card .svc-veil {
-  background: oklch(0.657 0.046 51.8 / 0.7); /* brown #A98A78 at 70% */
+  background: rgb(46 51 36 / 0.62); /* dark olive #2E3324 at 62% */
   transition: background-color 300ms ease;
 }
 .svc-card:hover img,
 .svc-card:focus-visible img {
-  filter: grayscale(0.35) contrast(1.04) brightness(0.95);
+  filter: saturate(0.95) contrast(1.04) brightness(0.95);
   transform: scale(1.04);
 }
 .svc-card:hover .svc-veil,
 .svc-card:focus-visible .svc-veil {
-  background: oklch(0.657 0.046 51.8 / 0.6);
+  background: rgb(46 51 36 / 0.5);
 }
 .svc-card .svc-arrow {
   transition:
