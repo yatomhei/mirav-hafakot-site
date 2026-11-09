@@ -671,9 +671,10 @@
   color: var(--btn-ink);
 }
 
-/* ---------- Testimonials: full screen, pinned briefly before it scrolls away ---------- */
+/* ---------- Testimonials: full screen, pinned while the quotes advance with the scroll ---------- */
 .t-spacer {
-  height: 30vh; /* the pause, in scroll distance (padding would not count for sticky) */
+  /* one step of scroll per testimonial (padding would not count for sticky) */
+  height: calc(var(--t-steps, 1) * 55vh);
 }
 .t-pin {
   position: sticky;
@@ -687,7 +688,7 @@
 }
 @media (max-width: 760px) {
   .t-spacer {
-    height: 20svh;
+    height: calc(var(--t-steps, 1) * 45svh);
   }
 }
 

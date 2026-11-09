@@ -1,26 +1,20 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { testimonials } from "@/content/home";
 import { Picture } from "@/components/ui/Picture";
 import { ArrowLeft, ArrowRight } from "@/components/ui/icons";
 
 /**
- * Quote carousel over a photo with the 46% dark-blue overlay, cream text. Advances every 7s;
- * pauses on hover/focus and while the tab is hidden, and never autoplays under reduced motion.
+ * Quote carousel over a photo with the 46% dark-blue overlay, cream text. The section pins
+ * and the quotes advance with the page scroll: the spacer after it is one step of scroll per
+ * testimonial (CSS --t-steps), so the visitor scrolls through every quote before the page
+ * moves on. Works for any number of testimonials. Arrows, dots and swipes scroll the page
+ * to that quote, so everything stays in step.
  */
 export function Testimonials() {
   const items = testimonials.items;
   const [i, setI] = useState(0);
-  const [paused, setPaused] = useState(false);
+  const index = useRef(0);
   const touchX = useRef<number | null>(null);
-  const go = (n: number) => setI((n + items.length) % items.length);
-
-  useEffect(() => {
-    if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const t = setInterval(() => {
-      if (!document.hidden) setI((x) => (x + 1) % items.length);
-    }, 7000);
-    return () => clearInterval(t);
-  }, [paused, items.length]);
 
   // Photo first, then text: while the section above scrolls away, the photo layer is held
   // still against the screen (so it is uncovered, not scrolled in). Once the section reaches
@@ -29,6 +23,24 @@ export function Testimonials() {
   const section = useRef<HTMLElement>(null);
   const photo = useRef<HTMLDivElement>(null);
   const content = useRef<HTMLDivElement>(null);
+  const spacer = useRef<HTMLDivElement>(null);
+
+  /** Where the pinned stretch starts, and how much scroll each quote gets. */
+  const measure = () => {
+    const sec = section.current!;
+    const vh = window.innerHeight;
+    const stickyTop = Math.min(0, vh - sec.offsetHeight);
+    const wrapTop = sec.parentElement!.getBoundingClientRect().top;
+    const step = spacer.current!.offsetHeight / items.length;
+    return { stickyTop, scrolled: stickyTop - wrapTop, step, wrapTop };
+  };
+
+  /** Scroll the page to quote k (arrows, dots, swipe). */
+  const go = (k: number) => {
+    const n = Math.min(items.length - 1, Math.max(0, k));
+    const { stickyTop, step, wrapTop } = measure();
+    window.scrollTo({ top: window.scrollY + wrapTop - stickyTop + n * step + step * 0.3 });
+  };
 
   useEffect(() => {
     const sec = section.current;
@@ -37,36 +49,40 @@ export function Testimonials() {
     if (!sec || !layer || !text) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) text.classList.add("is-revealed");
-    let frame = 0;
     const update = () => {
-      frame = 0;
       const vh = window.innerHeight;
       // Pin with the whole section on screen; if it is taller than the screen, pin it with
       // its bottom edge at the screen's bottom instead of its top at the top.
       sec.style.top = `${Math.min(0, vh - sec.offsetHeight)}px`;
+      // Which quote: one step of the pinned scroll per testimonial.
+      const { scrolled, step } = measure();
+      const k = Math.min(items.length - 1, Math.max(0, Math.floor(scrolled / step)));
+      if (k !== index.current) {
+        index.current = k;
+        setI(k);
+      }
       const top = sec.getBoundingClientRect().top;
       // Only while the section is entering from below: hold the photo at the screen's top.
       const hold = top > 0 && top < vh ? -top : 0;
       layer.style.transform = reduce ? "" : `translate3d(0, ${hold.toFixed(1)}px, 0)`;
       if (top <= vh * 0.2) text.classList.add("is-revealed");
     };
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(update);
-    };
+    // Scroll events already arrive once per frame; the work here is a few measurements.
     update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
     return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
     };
+    // measure/items are stable for the life of the page.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    // The spacer after the section (CSS .t-spacer) is the hold distance, so the
-    // full-screen section pins at the top for a moment before it scrolls away.
-    <div className="t-hold bg-olive-deep">
+    // The spacer after the section (CSS .t-spacer) is the pinned scroll distance: one step
+    // per testimonial, then the section scrolls away.
+    <div className="t-hold bg-olive-deep" style={{ "--t-steps": items.length } as CSSProperties}>
       <section
         ref={section}
         id="testimonials"
@@ -102,10 +118,6 @@ export function Testimonials() {
             aria-roledescription="קרוסלה"
             aria-label="המלצות לקוחות"
             className="mx-auto max-w-[980px]"
-            onMouseEnter={() => setPaused(true)}
-            onMouseLeave={() => setPaused(false)}
-            onFocus={() => setPaused(true)}
-            onBlur={() => setPaused(false)}
             onTouchStart={(e) => {
               touchX.current = e.touches[0]!.clientX;
             }}
@@ -116,7 +128,7 @@ export function Testimonials() {
               if (Math.abs(dx) > 40) go(i + (dx > 0 ? 1 : -1));
             }}
           >
-            <div className="overflow-hidden" aria-live={paused ? "polite" : "off"}>
+            <div className="overflow-hidden" aria-live="polite">
               <div
                 className="flex transition-transform duration-700 ease-[cubic-bezier(.4,0,.2,1)]"
                 style={{ transform: `translateX(${i * 100}%)` }}
@@ -182,7 +194,7 @@ export function Testimonials() {
           </div>
         </div>
       </section>
-      <div className="t-spacer" aria-hidden="true" />
+      <div ref={spacer} className="t-spacer" aria-hidden="true" />
     </div>
   );
 }
