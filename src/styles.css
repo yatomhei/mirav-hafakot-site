@@ -534,13 +534,16 @@
     display: none;
   }
 }
-/* Mobile hero: text and buttons first on cream, then the video as a bright 16:9 rectangle. */
+/* Mobile hero: a full-width dark olive band (the "הרבה מעבר לצילום" colour) with the title
+   in cream, then the video at the same size as the works videos (full content width, 16:10). */
 @media (max-width: 760px) {
   .hero {
     height: auto;
     overflow: visible;
-    background: transparent;
+    background: var(--olive);
     border-radius: 0;
+    margin-inline: calc(-1 * clamp(8px, 1.4vw, 20px));
+    padding: 0 var(--gutter) 56px;
     display: flex;
     flex-direction: column;
     gap: clamp(28px, 8vw, 40px);
@@ -549,9 +552,8 @@
     position: relative;
     inset: auto;
     width: 100%;
-    aspect-ratio: 16 / 9;
-    margin-bottom: 12px;
-    border-radius: clamp(16px, 4vw, 22px);
+    aspect-ratio: 16 / 10;
+    border-radius: clamp(12px, 1.2vw, 18px);
     overflow: hidden;
     filter: brightness(1.22) contrast(0.95) saturate(1.05);
   }
@@ -561,9 +563,9 @@
   .hero-body {
     order: -1;
     height: auto;
-    color: var(--ink);
+    color: var(--cream);
     justify-content: flex-start;
-    padding: clamp(36px, 10vw, 56px) 8px 0;
+    padding: clamp(36px, 10vw, 56px) 0 0;
   }
   .hero-primary {
     background: var(--btn);
