@@ -5,7 +5,7 @@ import { asset, image } from "@/lib/asset";
 
 /**
  * Rounded full-height frame, looping video under a 40% dark-blue overlay, cream logo and
- * title centred on top (the logo hides at ≤820px). On phones the frame fills the screen
+ * title centred on top. On phones the frame fills the screen
  * below the header. Reduced motion → poster.
  */
 export function Hero() {
