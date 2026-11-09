@@ -35,13 +35,16 @@ export function About() {
           <Picture photo={about.portrait} sizes="(max-width: 900px) 65vw, 460px" />
         </div>
         {/* Phones: the contact button sits under the portrait. */}
-        <HomeLink
-          hash="contact"
-          className="btn btn-primary order-last mx-auto hidden w-[min(100%,300px)] !min-h-[50px] !px-5 !text-[15px] !font-normal max-[760px]:!inline-flex"
-        >
-          {about.cta}
-          <ArrowLeft />
-        </HomeLink>
+        <div className="order-last hidden flex-col items-center gap-4 max-[760px]:flex">
+          <p className="text-[18px] leading-[1.4] font-normal">{about.ctaText}</p>
+          <HomeLink
+            hash="contact"
+            className="btn btn-primary w-[min(100%,300px)] !min-h-[50px] !px-5 !text-[15px] !font-normal"
+          >
+            {about.cta}
+            <ArrowLeft />
+          </HomeLink>
+        </div>
         <div>
           <p className="caption mb-8">{about.caption}</p>
           <h2 className="about-title mb-10 font-light leading-none tracking-[-0.015em]">
@@ -51,14 +54,19 @@ export function About() {
           <p className="max-w-[940px] text-[clamp(20px,2.1vw,27px)] leading-[1.65] font-light max-[900px]:mx-auto">
             <RichText text={about.body} />
           </p>
-          {/* On phones this button moves under the portrait (above). */}
-          <HomeLink
-            hash="contact"
-            className="btn btn-primary mt-10 !min-h-[62px] !px-10 !text-[19px] !font-normal max-[760px]:!hidden"
-          >
-            {about.cta}
-            <ArrowLeft />
-          </HomeLink>
+          {/* Question and button on one line; on phones they stack under the portrait (above). */}
+          <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4 max-[900px]:justify-center max-[760px]:hidden">
+            <p className="text-[clamp(18px,1.6vw,22px)] leading-[1.4] font-normal">
+              {about.ctaText}
+            </p>
+            <HomeLink
+              hash="contact"
+              className="btn btn-primary !min-h-[62px] !px-10 !text-[19px] !font-normal"
+            >
+              {about.cta}
+              <ArrowLeft />
+            </HomeLink>
+          </div>
         </div>
       </div>
     </section>
