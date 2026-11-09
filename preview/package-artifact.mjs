@@ -18,7 +18,12 @@ const page = `<title>אתר הפקת המרב</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500&display=swap">
 ${css.map((h) => `<link rel="stylesheet" href="${h.slice(2)}">`).join("\n")}
-<style>html,body{background:#FAF0EB}</style>
+<style>
+/* The artifact host's own reset sets body to "14px -apple-system…" in black, outside any
+   cascade layer, so it beats the site's @layer base body rule. Restate the base here. */
+html,body{background:#FAF0EB}
+body{font-family:"Rubik",system-ui,sans-serif;font-size:16px;font-weight:300;line-height:1.5;color:#2E3128;text-align:right;-webkit-font-smoothing:antialiased}
+</style>
 <div id="app" dir="rtl" lang="he"></div>
 ${js.map((s) => `<script type="module" src="${s.slice(2)}"></script>`).join("\n")}
 `;
