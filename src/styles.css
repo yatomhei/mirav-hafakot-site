@@ -534,58 +534,16 @@
     display: none;
   }
 }
-/* Mobile hero: a full-width dark olive band (the "הרבה מעבר לצילום" colour) with the title
-   in cream, then the video at the same size as the works videos (full content width, 16:10). */
+/* Mobile hero: the same rounded video frame as desktop (title over the video), filling the
+   screen below the header. */
 @media (max-width: 760px) {
   .hero {
-    height: auto;
-    overflow: visible;
-    background: var(--olive);
-    border-radius: 0;
-    margin-inline: calc(-1 * clamp(8px, 1.4vw, 20px));
-    padding: 0 var(--gutter) 56px;
-    display: flex;
-    flex-direction: column;
-    gap: clamp(28px, 8vw, 40px);
-  }
-  .hero-vid {
-    position: relative;
-    inset: auto;
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    border-radius: clamp(12px, 1.2vw, 18px);
-    overflow: hidden;
-    filter: brightness(1.22) contrast(0.95) saturate(1.05);
-  }
-  .hero-ov {
-    display: none;
-  }
-  .hero-body {
-    order: -1;
-    height: auto;
-    color: var(--cream);
-    justify-content: flex-start;
-    padding: clamp(36px, 10vw, 56px) 0 0;
-  }
-  .hero-primary {
-    background: var(--btn);
-    color: var(--btn-ink);
-  }
-  .hero-primary:hover {
-    background: var(--btn-hover);
-  }
-  .hero-ghost {
-    border-color: var(--olive);
-    color: var(--ink);
-  }
-  .hero-ghost:hover {
-    background: var(--btn);
-    border-color: var(--btn);
-    color: var(--btn-ink);
+    height: calc(100svh - var(--header-h) - 12px);
+    min-height: 480px;
   }
 }
 /* As the hero scrolls away its frame scales down a little, anchored at the top edge, so
-   the bottom and sides pull in (set from scroll in Hero.tsx; desktop frame only). */
+   the bottom and sides pull in (set from scroll in Hero.tsx; desktop and mobile). */
 .hero {
   transform-origin: 50% 0;
 }

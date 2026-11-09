@@ -4,26 +4,25 @@ import { site } from "@/content/site";
 import { asset, image } from "@/lib/asset";
 
 /**
- * Desktop: rounded full-height frame, looping video under a 40% dark-blue overlay, cream
- * logo and title centred on top. ≤760px: text and buttons first on cream, then the
- * video as a 16:9 rounded rectangle, brightened, without the overlay. Reduced motion → poster.
+ * Rounded full-height frame, looping video under a 40% dark-blue overlay, cream logo and
+ * title centred on top (the logo hides at ≤820px). On phones the frame fills the screen
+ * below the header. Reduced motion → poster.
  */
 export function Hero() {
   const video = useRef<HTMLVideoElement>(null);
   const frame = useRef<HTMLDivElement>(null);
 
   // As the hero scrolls out of view its frame scales down (1 → 0.92), anchored at the top
-  // edge, so the bottom and sides pull in. Desktop frame only; off under reduced motion.
+  // edge, so the bottom and sides pull in (desktop and mobile). Off under reduced motion.
   useEffect(() => {
     const el = frame.current;
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const desktop = window.matchMedia("(min-width: 761px)");
     let raf = 0;
     const update = () => {
       raf = 0;
       // Scale is anchored at the top, so the measured top is not affected by it.
       const p = Math.min(1, Math.max(0, -el.getBoundingClientRect().top / el.offsetHeight));
-      el.style.transform = desktop.matches && p ? `scale(${(1 - 0.08 * p).toFixed(4)})` : "";
+      el.style.transform = p ? `scale(${(1 - 0.08 * p).toFixed(4)})` : "";
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
