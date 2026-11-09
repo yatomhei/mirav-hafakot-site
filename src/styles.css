@@ -598,6 +598,12 @@
     font-size: clamp(42px, 10vw, 64px);
   }
 }
+/* Phones: same size as the other section titles (.heading-section). */
+@media (max-width: 760px) {
+  .about-title {
+    font-size: clamp(36px, 10vw, 72px);
+  }
+}
 
 /* ---------- Works carousel ---------- */
 .car {

@@ -65,7 +65,7 @@ export function Works() {
   return (
     <section
       id="clips"
-      className="overflow-hidden pt-[clamp(80px,10vw,140px)] pb-[clamp(48px,11vw,72px)]"
+      className="overflow-hidden pt-[clamp(80px,10vw,140px)] max-[760px]:pt-[48px] pb-[clamp(48px,11vw,72px)]"
     >
       <div className="works-wrap mx-auto max-w-[var(--content-max)] px-[var(--gutter)]">
         <div

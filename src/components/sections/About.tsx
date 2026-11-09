@@ -37,7 +37,7 @@ export function About() {
         {/* Phones: the contact button sits under the portrait. */}
         <HomeLink
           hash="contact"
-          className="btn btn-primary order-last mx-auto hidden w-[min(100%,300px)] !min-h-[50px] !px-5 !text-[15px] !font-normal max-[760px]:-mt-4 max-[760px]:!inline-flex"
+          className="btn btn-primary order-last mx-auto hidden w-[min(100%,300px)] !min-h-[50px] !px-5 !text-[15px] !font-normal max-[760px]:!inline-flex"
         >
           {about.cta}
           <ArrowLeft />
@@ -46,7 +46,7 @@ export function About() {
           <p className="caption mb-8">{about.caption}</p>
           <h2 className="about-title mb-10 font-light leading-none tracking-[-0.015em]">
             {about.title[0]}
-            <br className="max-[760px]:hidden" /> {about.title[1]}
+            <br /> {about.title[1]}
           </h2>
           <p className="max-w-[940px] text-[clamp(20px,2.1vw,27px)] leading-[1.65] font-light max-[900px]:mx-auto">
             <RichText text={about.body} />
