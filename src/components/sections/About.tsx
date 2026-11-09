@@ -41,7 +41,7 @@ export function About() {
             hash="contact"
             className="btn btn-primary w-[min(100%,300px)] !min-h-[50px] !px-5 !text-[15px] !font-normal"
           >
-            {about.cta}
+            {about.ctaMobile}
             <ArrowLeft />
           </HomeLink>
         </div>
@@ -54,19 +54,14 @@ export function About() {
           <p className="max-w-[940px] text-[clamp(20px,2.1vw,27px)] leading-[1.65] font-light max-[900px]:mx-auto">
             <RichText text={about.body} />
           </p>
-          {/* Question and button on one line; on phones they stack under the portrait (above). */}
-          <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4 max-[900px]:justify-center max-[760px]:hidden">
-            <p className="text-[clamp(18px,1.6vw,22px)] leading-[1.4] font-normal">
-              {about.ctaText}
-            </p>
-            <HomeLink
-              hash="contact"
-              className="btn btn-primary !min-h-[62px] !px-10 !text-[19px] !font-normal"
-            >
-              {about.cta}
-              <ArrowLeft />
-            </HomeLink>
-          </div>
+          {/* On phones a question with a shorter button sits under the portrait instead (above). */}
+          <HomeLink
+            hash="contact"
+            className="btn btn-primary mt-10 !min-h-[62px] !px-10 !text-[19px] !font-normal max-[760px]:!hidden"
+          >
+            {about.cta}
+            <ArrowLeft />
+          </HomeLink>
         </div>
       </div>
     </section>

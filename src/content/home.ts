@@ -13,8 +13,11 @@ export const about: {
   portrait: Photo;
   title: string[];
   body: string;
-  ctaText: string;
+  /** Desktop button. */
   cta: string;
+  /** Phones: a question with its own shorter button. */
+  ctaText: string;
+  ctaMobile: string;
 } = {
   caption: "01 / נעים להכיר",
   portrait: {
@@ -25,8 +28,9 @@ export const about: {
   title: ["אני מרב ורנר,", "צלמת, עורכת וידאו ומפיקה."],
   /** **bold** marks the highlighted phrase. */
   body: "בהפקת המרב אני יוצרת **קליפים אישיים, סרטי תדמית ופרסומת, ומצלמת משפחות ורגעים מיוחדים**. אני מלווה פרויקטים משלב הרעיון ועד לתוצאה המוגמרת, ואוהבת במיוחד לצלם אנשים בסביבה הטבעית שלהם, בחוץ בטבע או בבית, באור טבעי ובאווירה נינוחה.",
+  cta: "בואו נדבר על הסרט או האירוע שלכם",
   ctaText: "יש לכם רעיון לסרטון או לקליפ?",
-  cta: "בואו נתכנן אותו יחד!",
+  ctaMobile: "בואו נתכנן אותו יחד!",
 };
 
 export const works = {
