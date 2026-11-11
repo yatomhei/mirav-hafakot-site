@@ -46,7 +46,7 @@ export const clips: Video[] = [
     thumb: { name: "clip-gefen", alt: "" },
   },
   {
-    title: "קליפ בר מצווה בבית המשפחה",
+    title: "קליפ בר מצווה בירושלים",
     youtubeId: "0tKX4jDtYpc",
     thumb: { name: "clip-home", alt: "" },
   },
