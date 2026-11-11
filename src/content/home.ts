@@ -41,9 +41,9 @@ export const works = {
 
 export const clips: Video[] = [
   {
-    title: "קליפ בר מצווה על חוף הים",
+    title: "קליפ בת מצווה של גפן – בכרם עם המשפחה",
     youtubeId: "QWX2MCzFjdk",
-    thumb: { name: "clip-beach", alt: "" },
+    thumb: { name: "clip-gefen", alt: "" },
   },
   {
     title: "קליפ בר מצווה בבית המשפחה",
