@@ -640,6 +640,27 @@
   }
 }
 
+/* Stills service page: every photo, at most 3 per row, all 3:2 — 2 per row on tablets,
+   1 on small phones. */
+.stills-even {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(8px, 1vw, 14px);
+}
+.stills-even > li {
+  aspect-ratio: 3 / 2;
+}
+@media (max-width: 900px) {
+  .stills-even {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 520px) {
+  .stills-even {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* ---------- Process: quick rise-up of the band, then each row (classes added by JS) ---------- */
 .rise {
   transition:

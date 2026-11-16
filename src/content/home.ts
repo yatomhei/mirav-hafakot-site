@@ -72,7 +72,10 @@ export const clips: Video[] = [
 export const stills = {
   title: "רגעים שתפסתי בעדשה",
   text: "צילומי משפחה, בריתות ובר ובת מצווה, בטבע, בבית או בסטודיו. אני אוהבת לצלם אנשים בסביבה שבה הם מרגישים בנוח ולתפוס את הרגעים שקורים באופן טבעי.",
-  /** Order sets the mosaic: the 2nd and 4th slots are narrow/tall, so portrait photos go there. */
+  /**
+   * Order sets the homepage mosaic (the first 9; 3 rows of 3): slots 2 and 6 are narrow and
+   * tall on phones, so portrait photos go there. The stills service page shows all of them.
+   */
   photos: [
     {
       name: "still-bat-mitzvah-sea",
@@ -92,22 +95,40 @@ export const stills = {
       pos: "center 30%",
     },
     {
+      name: "still-kids-cotton",
+      label: "ילדים",
+      alt: "פעוטה יושבת על כיסא עץ בשביל ליד שדה כותנה בשקיעה",
+      pos: "55% center",
+    },
+    {
+      name: "still-kids-tire",
+      label: "ילדים",
+      alt: "ילד מחייך מבעד לנדנדת צמיג בין עלי שלכת",
+      pos: "center 40%",
+    },
+    {
       name: "still-brit",
       label: "ברית",
       alt: "הורים מחזיקים תינוק ביום הברית",
       pos: "center 45%",
     },
+    {
+      name: "still-newborn",
+      label: "ניו בורן",
+      alt: "תינוק ישן בכובע ארנב עם גזר סרוג",
+    },
     { name: "still-bar-mitzvah-stream", label: "בר מצווה", alt: "נער משיט ספינה בנחל" },
+    {
+      name: "still-family-lake",
+      label: "משפחה",
+      alt: "משפחה מורחבת מחובקת ליד אגם בין עצי אקליפטוס",
+      pos: "center 60%",
+    },
     {
       name: "still-family-sunset",
       label: "משפחה",
       alt: "משפחה בשביל עפר בשקיעה",
       pos: "center 55%",
-    },
-    {
-      name: "still-newborn",
-      label: "ניו בורן",
-      alt: "תינוק ישן בכובע ארנב עם גזר סרוג",
     },
   ] satisfies StillPhoto[],
 };

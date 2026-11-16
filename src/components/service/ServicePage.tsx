@@ -103,7 +103,7 @@ export function ServicePage({ service }: { service: Service }) {
       >
         <div ref={gallery} className="mx-auto max-w-[var(--content-max)]">
           {isPhotos ? (
-            <StillsGrid />
+            <StillsGrid layout="grid" />
           ) : isEmpty ? (
             <p
               data-reveal
