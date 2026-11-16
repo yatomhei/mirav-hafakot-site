@@ -59,11 +59,7 @@ function StillTile({
       {/* The whole tile is the first child, so a rise-in moves the tile, not the photo inside it. */}
       <figure className="still img-zoom relative m-0 h-full overflow-hidden rounded-[clamp(12px,1.2vw,18px)] bg-beige">
         <Picture photo={p} sizes="(max-width: 640px) 92vw, 40vw" />
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 z-[1] h-[45%] bg-gradient-to-t from-[rgb(46_49_40/0.55)] to-transparent"
-        />
-        <figcaption className="absolute inset-0 z-[2] flex items-end justify-start px-[clamp(12px,1.4vw,18px)] py-[clamp(10px,1.2vw,16px)] text-right text-[clamp(14px,1.1vw,17px)] leading-[1.4] font-light text-cream opacity-[0.92] [text-shadow:0_1px_10px_rgb(0_0_0/0.3)]">
+        <figcaption className="absolute right-[clamp(10px,1.2vw,16px)] bottom-[clamp(10px,1.2vw,16px)] z-[2] rounded-full bg-[rgb(250_240_235/0.9)] px-[0.9em] py-[0.3em] text-[clamp(13px,1vw,15px)] leading-[1.4] font-normal text-ink shadow-[0_1px_8px_rgb(46_49_40/0.15)] backdrop-blur-sm">
           {p.label}
         </figcaption>
       </figure>
