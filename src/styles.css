@@ -640,24 +640,25 @@
   }
 }
 
-/* Stills service page: every photo, at most 3 per row, all 3:2 — 2 per row on tablets,
-   1 on small phones. */
-.stills-even {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(8px, 1vw, 14px);
+/* Stills service page: masonry — every photo in its own shape, in 3 columns (2 on tablets,
+   1 on small phones). Columns fill top to bottom, starting on the right. */
+.stills-masonry {
+  --gap: clamp(8px, 1vw, 14px);
+  columns: 3;
+  column-gap: var(--gap);
 }
-.stills-even > li {
-  aspect-ratio: 3 / 2;
+.stills-masonry > li {
+  break-inside: avoid;
+  margin-bottom: var(--gap);
 }
 @media (max-width: 900px) {
-  .stills-even {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .stills-masonry {
+    columns: 2;
   }
 }
 @media (max-width: 520px) {
-  .stills-even {
-    grid-template-columns: minmax(0, 1fr);
+  .stills-masonry {
+    columns: 1;
   }
 }
 

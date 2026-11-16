@@ -57,5 +57,6 @@ export type Service = {
 export type Testimonial = { quote: string; name: string; role: string };
 export type Faq = { q: string; a: string };
 export type IncludeItem = { num: string; title: string; meta: string; desc: string };
-export type StillPhoto = Photo & { label: string };
+/** `ratio` (width ÷ height) sizes the tile in the stills page masonry before the photo loads. */
+export type StillPhoto = Photo & { label: string; ratio: number };
 export type StripPhoto = Photo & { ratio: number };

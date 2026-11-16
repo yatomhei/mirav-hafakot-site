@@ -44,9 +44,18 @@ const SLOTS = [
   { c: 5, mc: 2, mr: 1 },
 ];
 
-function StillTile({ p, style }: { p: StillPhoto; style?: CSSProperties }) {
+function StillTile({
+  p,
+  style,
+  natural,
+}: {
+  p: StillPhoto;
+  style?: CSSProperties;
+  /** Masonry: the tile keeps the photo's own shape. */
+  natural?: boolean;
+}) {
   return (
-    <li style={style}>
+    <li style={natural ? { aspectRatio: p.ratio, ...style } : style}>
       {/* The whole tile is the first child, so a rise-in moves the tile, not the photo inside it. */}
       <figure className="still img-zoom relative m-0 h-full overflow-hidden rounded-[clamp(12px,1.2vw,18px)] bg-beige">
         <Picture photo={p} sizes="(max-width: 640px) 92vw, 40vw" />
@@ -63,15 +72,15 @@ function StillTile({ p, style }: { p: StillPhoto; style?: CSSProperties }) {
 }
 
 /**
- * The stills photos. "mosaic" (homepage): the first 9 in the 3×3 mosaic above. "grid" (the
- * stills service page): every photo, at most 3 per row, all the same shape.
+ * The stills photos. "mosaic" (homepage): the first 9 in the 3×3 mosaic above. "masonry"
+ * (the stills service page): every photo in its own shape, in up to 3 columns.
  */
-export function StillsGrid({ layout = "mosaic" }: { layout?: "mosaic" | "grid" }) {
-  if (layout === "grid") {
+export function StillsGrid({ layout = "mosaic" }: { layout?: "mosaic" | "masonry" }) {
+  if (layout === "masonry") {
     return (
-      <ul className="stills-even m-0 list-none p-0" aria-label="דוגמאות לצילומי סטילס">
+      <ul className="stills-masonry m-0 list-none p-0" aria-label="דוגמאות לצילומי סטילס">
         {stills.photos.map((p) => (
-          <StillTile key={p.name} p={p} />
+          <StillTile key={p.name} p={p} natural />
         ))}
       </ul>
     );
