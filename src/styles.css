@@ -569,6 +569,11 @@
   }
 }
 
+/* About: Merav's portrait sits in a white frame. */
+.portrait-frame {
+  border: clamp(6px, 0.7vw, 10px) solid #fff;
+}
+
 /* ---------- Works carousel ---------- */
 .car {
   --car-gap: clamp(14px, 2vw, 28px);
