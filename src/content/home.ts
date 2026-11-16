@@ -116,6 +116,8 @@ export const servicesIntro = {
   lead: "לחצו על אחד התחומים כדי לגלות עוד על השירות, איך הוא עובד ומה הוא כולל.",
   ctaText: ["יש לכם רעיון לסרטון לעסק", "או רוצים לתעד אירוע משפחתי?"],
   cta: "דברו איתי ונתחיל לתכנן יחד",
+  /** Last card in the services grid; opens the contact form. */
+  otherCard: { title: "משהו אחר בראש?", meta: "דברו איתי" },
 };
 
 export const process = {
