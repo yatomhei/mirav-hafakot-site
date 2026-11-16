@@ -39,6 +39,36 @@ function VideoCard({ video }: { video: Video }) {
   );
 }
 
+/** Breadcrumbs above the title: דף הבית › שירותים › <this service>. */
+function Breadcrumbs({ current }: { current: string }) {
+  const sep = (
+    <span aria-hidden="true" className="opacity-60">
+      ‹
+    </span>
+  );
+  return (
+    <nav aria-label="פירורי לחם" className="mb-[clamp(18px,2.4vw,28px)]">
+      <ol className="crumbs m-0 flex list-none flex-wrap items-center justify-center gap-x-2 gap-y-1 p-0 text-[15px] font-light">
+        <li className="flex items-center gap-2">
+          <Link to="/" className="crumb-link">
+            דף הבית
+          </Link>
+          {sep}
+        </li>
+        <li className="flex items-center gap-2">
+          <HomeLink hash="services" className="crumb-link">
+            שירותים
+          </HomeLink>
+          {sep}
+        </li>
+        <li aria-current="page" className="font-normal">
+          {current}
+        </li>
+      </ol>
+    </nav>
+  );
+}
+
 /** Service page: title + lead, the work (videos, or photos for stills), CTA, other services. */
 export function ServicePage({ service }: { service: Service }) {
   const others = services.filter((s) => s.slug !== service.slug);
@@ -51,6 +81,7 @@ export function ServicePage({ service }: { service: Service }) {
         aria-labelledby="svc-title"
         className="px-[clamp(16px,4vw,48px)] pt-[clamp(64px,9vw,130px)] pb-[clamp(40px,5vw,72px)] text-center"
       >
+        <Breadcrumbs current={service.title} />
         <h1 id="svc-title" className="page-title mb-[22px]">
           {service.title}
         </h1>

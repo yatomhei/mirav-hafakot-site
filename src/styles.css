@@ -787,6 +787,27 @@
 }
 
 /* ---------- Service page ---------- */
+/* Breadcrumbs: quiet olive links, the current page in ink. */
+.crumbs {
+  color: var(--olive-deep);
+}
+.crumbs [aria-current="page"] {
+  color: var(--ink);
+}
+.crumb-link {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+  transition: text-decoration-color 200ms ease;
+}
+.crumb-link:hover,
+.crumb-link:focus-visible {
+  text-decoration-color: currentColor;
+}
 .more-link .more-go {
   transition: transform 300ms ease;
 }
