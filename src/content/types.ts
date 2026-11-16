@@ -42,8 +42,6 @@ export type Service = {
   title: string;
   meta: string;
   desc: string;
-  /** Card photo; without one the card shows its plain background under the veil. */
-  image?: Photo;
   /** Service page */
   lead: string;
   videos: Video[];
