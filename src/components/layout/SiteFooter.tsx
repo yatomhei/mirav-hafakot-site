@@ -33,7 +33,7 @@ export function SiteFooter() {
         <nav aria-labelledby="f-svc-h">
           <h2
             id="f-svc-h"
-            className="mb-[18px] text-[17px] font-light leading-[1.4] tracking-[0.06em]"
+            className="mb-[18px] text-[17px] font-normal leading-[1.4] tracking-[0.06em]"
           >
             הפקות סרטים וצילום אמנותי:
           </h2>
@@ -53,7 +53,7 @@ export function SiteFooter() {
         </nav>
 
         <div>
-          <h2 className="mb-[18px] text-[17px] font-light leading-[1.4] tracking-[0.06em]">
+          <h2 className="mb-[18px] text-[17px] font-normal leading-[1.4] tracking-[0.06em]">
             יצירת קשר:
           </h2>
           <ul className="m-0 flex list-none flex-col gap-0.5 p-0 max-[760px]:items-center">
@@ -93,7 +93,7 @@ export function SiteFooter() {
           </ul>
           {site.serviceArea && (
             <>
-              <h2 className="mt-8 mb-2.5 text-[17px] font-light leading-[1.4] tracking-[0.06em]">
+              <h2 className="mt-8 mb-2.5 text-[17px] font-normal leading-[1.4] tracking-[0.06em]">
                 אזורי שירות:
               </h2>
               <p className="max-w-[320px] whitespace-pre-line text-[15px] leading-[1.6] font-light max-[760px]:mx-auto max-[760px]:text-[16px]">
