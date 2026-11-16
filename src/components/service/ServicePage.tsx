@@ -77,6 +77,9 @@ function Breadcrumbs({ current }: { current: string }) {
 export function ServicePage({ service }: { service: Service }) {
   const others = services.filter((s) => s.slug !== service.slug);
   const isPhotos = !!service.photos?.length;
+  // Only videos with a YouTube id are shown; a gallery with none shows a short note instead.
+  const videos = service.videos.filter((v) => v.youtubeId);
+  const isEmpty = !isPhotos && videos.length === 0;
   // Gallery items rise as they scroll in, like the homepage service cards.
   const gallery = useRise<HTMLDivElement>("ul > li");
 
@@ -101,10 +104,17 @@ export function ServicePage({ service }: { service: Service }) {
         <div ref={gallery} className="mx-auto max-w-[var(--content-max)]">
           {isPhotos ? (
             <StillsGrid />
+          ) : isEmpty ? (
+            <p
+              data-reveal
+              className="mx-auto max-w-[760px] rounded-[clamp(12px,1.2vw,18px)] bg-olive-soft px-6 py-[clamp(40px,5vw,64px)] text-center text-[clamp(19px,1.8vw,24px)] leading-[1.5] font-light"
+            >
+              {servicePage.empty}
+            </p>
           ) : (
             <ul className="m-0 grid list-none grid-cols-2 gap-x-[clamp(16px,2vw,28px)] gap-y-[clamp(36px,4vw,56px)] p-0 max-[640px]:grid-cols-1">
-              {service.videos.map((v, k) => (
-                <VideoCard key={v.youtubeId || `ph-${k}`} video={v} />
+              {videos.map((v) => (
+                <VideoCard key={v.youtubeId} video={v} />
               ))}
             </ul>
           )}
@@ -114,7 +124,7 @@ export function ServicePage({ service }: { service: Service }) {
       <section aria-label="יצירת קשר" className="px-[var(--gutter)] pb-[clamp(88px,11vw,150px)]">
         <div data-reveal className="flex flex-col items-center gap-5 text-center">
           <p className="text-[clamp(22px,2.2vw,30px)] leading-[1.3] font-light">
-            {isPhotos ? servicePage.ctaPhotos : servicePage.cta}
+            {isPhotos ? servicePage.ctaPhotos : isEmpty ? servicePage.ctaEmpty : servicePage.cta}
           </p>
           <HomeLink hash="contact" className="btn btn-primary !font-normal">
             {servicePage.ctaButton}

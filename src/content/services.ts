@@ -1,12 +1,9 @@
 import { clips, stills } from "./home";
-import type { Service, Video } from "./types";
-
-const placeholder = (n: number): Video[] =>
-  Array.from({ length: n }, () => ({ title: "[שם הסרטון]", youtubeId: "" }));
+import type { Service } from "./types";
 
 /**
  * The services: homepage cards (title, meta, optional image) and their pages (/services/<slug>).
- * Order is the homepage order. Services without real videos yet show placeholder slots.
+ * Order is the homepage order. A service with no videos yet shows a short "coming soon" note.
  */
 export const services: Service[] = [
   {
@@ -27,7 +24,7 @@ export const services: Service[] = [
     desc: "העסק שלכם באור טבעי ואמיתי — האנשים, המקום והסיפור.",
     image: { name: "svc-promo", alt: "" },
     lead: "העסק שלכם באור טבעי ואמיתי — האנשים, המקום והסיפור.",
-    videos: placeholder(4),
+    videos: [],
   },
   {
     slug: "commercials",
@@ -37,7 +34,7 @@ export const services: Service[] = [
     desc: "סרטון קצר וממוקד שמציג את המוצר או השירות שלכם — מהרעיון ועד הגרסה לרשתות.",
     image: { name: "svc-ads", alt: "", pos: "center 40%" },
     lead: "סרטון קצר וממוקד שמציג את המוצר או השירות שלכם — מהרעיון ועד הגרסה לרשתות.",
-    videos: placeholder(4),
+    videos: [],
   },
   {
     slug: "event-summary",
@@ -73,7 +70,6 @@ export const services: Service[] = [
         youtubeId: "FXQcYH_lsms",
         thumb: { name: "event-independence", alt: "" },
       },
-      ...placeholder(1),
     ],
   },
   {
@@ -100,7 +96,6 @@ export const services: Service[] = [
         youtubeId: "eEqXKGU30Qk",
         thumb: { name: "event-kululam-english", alt: "" },
       },
-      ...placeholder(1),
     ],
   },
   {
@@ -111,7 +106,7 @@ export const services: Service[] = [
     desc: "צילום ועריכה של קורסים דיגיטליים — שיעורים ברורים ונעימים לצפייה, מוכנים לעלות לפלטפורמה.",
     image: { name: "svc-courses", alt: "" },
     lead: "צילום ועריכה של קורסים דיגיטליים — שיעורים ברורים ונעימים לצפייה, מוכנים לעלות לפלטפורמה.",
-    videos: placeholder(4),
+    videos: [],
   },
   {
     slug: "stills",
@@ -132,6 +127,10 @@ export const servicePage = {
   cta: "אהבתם? הסרט הבא יכול להיות שלכם.",
   ctaPhotos: "אהבתם? הצילומים הבאים יכולים להיות שלכם.",
   ctaButton: "דברו איתי ונתחיל לתכנן יחד",
+  /** Shown instead of the gallery while a service has no videos or photos yet. */
+  empty: "עבודות לדוגמה יעלו לכאן בקרוב.",
+  /** The CTA line on a page whose gallery is still empty. */
+  ctaEmpty: "רוצים לשמוע עוד או לראות עבודות קודמות? דברו איתי.",
   moreCaption: "שירותים נוספים",
   moreTitle: "אולי יעניין אתכם גם…",
 };
