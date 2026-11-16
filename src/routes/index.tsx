@@ -3,6 +3,7 @@ import { PageShell } from "@/components/layout/PageShell";
 import { Hero } from "@/components/sections/Hero";
 import { WorksBand } from "@/components/sections/WorksBand";
 import { Services } from "@/components/sections/Services";
+import { About } from "@/components/sections/About";
 import { Process } from "@/components/sections/Process";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { Faq } from "@/components/sections/Faq";
@@ -18,6 +19,7 @@ function HomePage() {
       <Hero />
       <WorksBand />
       <Services />
+      <About />
       <Process />
       <Testimonials />
       <Faq />

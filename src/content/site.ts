@@ -16,9 +16,9 @@ export const site: SiteSettings = {
 };
 
 export const nav: NavItem[] = [
-  { label: "אודות", hash: "about" },
   { label: "עבודות", hash: "clips" },
   { label: "שירותים", hash: "services" },
+  { label: "אודות", hash: "about" },
   { label: "מה כולל השירות", hash: "process" },
   { label: "המלצות", hash: "testimonials" },
   { label: "שאלות נפוצות", hash: "faq" },

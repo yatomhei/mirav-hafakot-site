@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { About } from "./About";
+import { Intro } from "./Intro";
 import { Works } from "./Works";
 import { Stills } from "./Stills";
 
 /**
- * The intro, works and stills sections share one background: cream at first, switching straight
+ * The short intro, works and stills sections share one background: cream at first, switching straight
  * to olive-soft (no fade) once the works title's centre reaches the middle of the screen — and
  * back to cream when scrolling up past that point.
  */
@@ -39,7 +39,7 @@ export function WorksBand() {
 
   return (
     <div ref={band} className={olive ? "bg-olive-soft" : "bg-cream"}>
-      <About />
+      <Intro />
       <Works />
       <Stills />
     </div>
