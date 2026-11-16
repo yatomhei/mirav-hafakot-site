@@ -10,7 +10,7 @@ export function SiteFooter() {
   const socials = [
     { label: "יוטיוב", href: site.youtubeUrl, Icon: YouTube },
     { label: "פייסבוק", href: site.facebookUrl, Icon: Facebook },
-  ];
+  ].filter((s) => !isPlaceholder(s.href)); // only links filled in from the admin are shown
 
   return (
     <footer data-reveal className="bg-cream px-[var(--gutter)] pt-16 pb-[108px] text-ink">
@@ -74,20 +74,22 @@ export function SiteFooter() {
                 {site.email}
               </a>
             </li>
-            <li className="mt-2.5 flex gap-2.5 max-[760px]:justify-center">
-              {socials.map(({ label, href, Icon }) => (
-                <a
-                  key={label}
-                  href={isPlaceholder(href) ? "#" : href}
-                  target={isPlaceholder(href) ? undefined : "_blank"}
-                  rel="noopener"
-                  aria-label={label}
-                  className="social-btn inline-flex h-11 w-11 items-center justify-center rounded-full border border-[rgb(46_49_40/0.5)] text-ink"
-                >
-                  <Icon />
-                </a>
-              ))}
-            </li>
+            {socials.length > 0 && (
+              <li className="mt-2.5 flex gap-2.5 max-[760px]:justify-center">
+                {socials.map(({ label, href, Icon }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener"
+                    aria-label={label}
+                    className="social-btn inline-flex h-11 w-11 items-center justify-center rounded-full border border-[rgb(46_49_40/0.5)] text-ink"
+                  >
+                    <Icon />
+                  </a>
+                ))}
+              </li>
+            )}
           </ul>
         </div>
       </div>

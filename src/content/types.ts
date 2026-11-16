@@ -28,6 +28,7 @@ export type SiteSettings = {
   /** International digits only, e.g. "972500000000". Empty → WhatsApp opens without a number. */
   whatsapp: string;
   email: string;
+  /** Social links: empty (or a [placeholder]) hides the icon in the footer; filled in, it shows. */
   youtubeUrl: string;
   facebookUrl: string;
   /** Text pre-filled in the WhatsApp chat from the floating button and menu. */
