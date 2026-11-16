@@ -95,8 +95,9 @@ export function Services() {
               </Link>
             </li>
           ))}
-          {/* Last card: not a service — it opens the contact form. */}
-          <li>
+          {/* Last card: not a service — it opens the contact form. Hidden on phones (one column),
+              where it only filled a gap; the section's own contact button follows right after. */}
+          <li className="max-[640px]:hidden">
             <HomeLink hash="contact" className={CARD}>
               <CardFace title={servicesIntro.otherCard.title} />
             </HomeLink>
