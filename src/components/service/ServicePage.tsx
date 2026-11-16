@@ -6,35 +6,39 @@ import { HomeLink } from "@/components/ui/HomeLink";
 import { useVideoLink } from "@/components/ui/VideoPlayer";
 import { StillsGrid } from "@/components/sections/Stills";
 import { ArrowLeft, Play } from "@/components/ui/icons";
+import { useRise } from "@/hooks/useRise";
 
 function VideoCard({ video }: { video: Video }) {
   const link = useVideoLink(video);
   const playable = !!video.youtubeId;
   return (
-    <li className="flex flex-col gap-3.5">
-      <div className="car-slide relative aspect-video overflow-hidden rounded-[clamp(12px,1.2vw,18px)] bg-beige">
-        {video.thumb && (
-          <Picture photo={video.thumb} decorative sizes="(max-width: 640px) 92vw, 46vw" />
-        )}
-        {playable && (
-          <>
-            <span
-              aria-hidden="true"
-              className="play-ring absolute top-1/2 left-1/2 z-[1] flex h-[60px] w-[60px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-cream bg-[rgb(72_80_60/0.35)] text-cream"
-            >
-              <Play />
-            </span>
-            <a
-              {...link}
-              aria-label={`צפייה: ${video.title}`}
-              className="absolute inset-0 z-[2] rounded-[inherit]"
-            />
-          </>
-        )}
+    <li>
+      {/* One wrapper, so the thumbnail and its title rise together (useRise moves the first child). */}
+      <div className="flex flex-col gap-3.5">
+        <div className="car-slide relative aspect-video overflow-hidden rounded-[clamp(12px,1.2vw,18px)] bg-beige">
+          {video.thumb && (
+            <Picture photo={video.thumb} decorative sizes="(max-width: 640px) 92vw, 46vw" />
+          )}
+          {playable && (
+            <>
+              <span
+                aria-hidden="true"
+                className="play-ring absolute top-1/2 left-1/2 z-[1] flex h-[60px] w-[60px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-cream bg-[rgb(72_80_60/0.35)] text-cream"
+              >
+                <Play />
+              </span>
+              <a
+                {...link}
+                aria-label={`צפייה: ${video.title}`}
+                className="absolute inset-0 z-[2] rounded-[inherit]"
+              />
+            </>
+          )}
+        </div>
+        <p className="px-0.5 text-[clamp(16px,1.3vw,19px)] leading-[1.5] font-normal">
+          {video.title}
+        </p>
       </div>
-      <p className="px-0.5 text-[clamp(16px,1.3vw,19px)] leading-[1.5] font-normal">
-        {video.title}
-      </p>
     </li>
   );
 }
@@ -73,6 +77,8 @@ function Breadcrumbs({ current }: { current: string }) {
 export function ServicePage({ service }: { service: Service }) {
   const others = services.filter((s) => s.slug !== service.slug);
   const isPhotos = !!service.photos?.length;
+  // Gallery items rise as they scroll in, like the homepage service cards.
+  const gallery = useRise<HTMLDivElement>("ul > li");
 
   return (
     <>
@@ -92,7 +98,7 @@ export function ServicePage({ service }: { service: Service }) {
         aria-label={isPhotos ? "תמונות" : "סרטונים"}
         className="px-[var(--gutter)] pb-[clamp(56px,7vw,96px)]"
       >
-        <div data-reveal className="mx-auto max-w-[var(--content-max)]">
+        <div ref={gallery} className="mx-auto max-w-[var(--content-max)]">
           {isPhotos ? (
             <StillsGrid />
           ) : (
