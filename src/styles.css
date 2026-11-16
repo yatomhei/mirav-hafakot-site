@@ -397,6 +397,15 @@
   transform: scale(1.04);
 }
 
+/* An odd last service card spans both columns at one card's width, centred. */
+@media (min-width: 641px) {
+  .svc-grid > li:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: calc((100% - clamp(16px, 2vw, 28px)) / 2);
+  }
+}
+
 /* Service cards: the photo keeps its own (slightly muted) colour under a dark olive veil —
    the logo olive #656C51 taken much darker — so the cards read dark, green-toned and
    consistent, with cream titles that stay legible. The veil lifts a little on hover. */

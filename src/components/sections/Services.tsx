@@ -8,7 +8,7 @@ import { HomeLink } from "@/components/ui/HomeLink";
 import { ArrowLeft, ArrowUpLeft } from "@/components/ui/icons";
 
 /**
- * Six service cards in two columns under a dark olive veil; each opens its service page.
+ * Service cards in two columns (an odd last card sits centred) under a dark olive veil; each opens its service page.
  * The section starts in the works band's olive-soft and fades to cream once its title has
  * risen past the middle of the screen (and back again when scrolling up).
  */
@@ -65,7 +65,7 @@ export function Services() {
                 params={{ slug: s.slug }}
                 className="svc-card relative block aspect-video overflow-hidden rounded-[clamp(12px,1.2vw,18px)] bg-beige text-cream no-underline"
               >
-                <Picture photo={s.image} decorative sizes="(max-width: 640px) 92vw, 46vw" />
+                {s.image && <Picture photo={s.image} decorative sizes="(max-width: 640px) 92vw, 46vw" />}
                 <span className="svc-veil absolute inset-0" aria-hidden="true" />
                 <span className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-[clamp(16px,2vw,28px)] text-center">
                   <h3 className="text-[clamp(24px,2.4vw,36px)] leading-[1.15] font-light text-cream [text-shadow:0_1px_12px_rgb(0_0_0/0.25)]">

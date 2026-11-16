@@ -5,7 +5,7 @@ const placeholder = (n: number): Video[] =>
   Array.from({ length: n }, () => ({ title: "[שם הסרטון]", youtubeId: "" }));
 
 /**
- * The six services: homepage cards (title, meta, image) and their pages (/services/<slug>).
+ * The services: homepage cards (title, meta, optional image) and their pages (/services/<slug>).
  * Order is the homepage order. Services without real videos yet show placeholder slots.
  */
 export const services: Service[] = [
@@ -54,21 +54,6 @@ export const services: Service[] = [
         thumb: { name: "svc-event", alt: "" },
       },
       {
-        title: "קולולם – מדרשת כיסופים",
-        youtubeId: "Oz6Cf72R9S8",
-        thumb: { name: "event-kululam-kisufim", alt: "" },
-      },
-      {
-        title: "קולולם – אולפנת קומי אורי",
-        youtubeId: "kHYYCcQDJEQ",
-        thumb: { name: "event-kululam-komi-ori", alt: "" },
-      },
-      {
-        title: "קולולם – מגמת אנגלית, אולפנת חפץ חיים",
-        youtubeId: "eEqXKGU30Qk",
-        thumb: { name: "event-kululam-english", alt: "" },
-      },
-      {
         title: "תפילה בשבילי – אולפנת ישי, סרטון לאירוע קבלת סידור",
         youtubeId: "PGH948FnBtQ",
         thumb: { name: "event-tfila", alt: "" },
@@ -88,12 +73,38 @@ export const services: Service[] = [
         youtubeId: "FXQcYH_lsms",
         thumb: { name: "event-independence", alt: "" },
       },
-      ...placeholder(2),
+      ...placeholder(1),
+    ],
+  },
+  {
+    slug: "kululam",
+    num: "05",
+    title: "קולולם",
+    meta: "שיר אחד · הרבה קולות · קליפ אחד",
+    desc: "כולם שרים יחד — ואני מצלמת ועורכת את הקולולם שלכם לקליפ מרגש שנשאר למזכרת.",
+    lead: "קליפ קולולם לבית ספר, לאולפנה, לקהילה או לאירוע — כולם שרים יחד, ואני מצלמת ועורכת את הרגע לקליפ מרגש שנשאר למזכרת.",
+    videos: [
+      {
+        title: "קולולם – מדרשת כיסופים",
+        youtubeId: "Oz6Cf72R9S8",
+        thumb: { name: "event-kululam-kisufim", alt: "" },
+      },
+      {
+        title: "קולולם – אולפנת קומי אורי",
+        youtubeId: "kHYYCcQDJEQ",
+        thumb: { name: "event-kululam-komi-ori", alt: "" },
+      },
+      {
+        title: "קולולם – מגמת אנגלית, אולפנת חפץ חיים",
+        youtubeId: "eEqXKGU30Qk",
+        thumb: { name: "event-kululam-english", alt: "" },
+      },
+      ...placeholder(1),
     ],
   },
   {
     slug: "digital-courses",
-    num: "05",
+    num: "06",
     title: "צילום קורסים דיגיטליים",
     meta: "שיעורים מצולמים · עריכה",
     desc: "צילום ועריכה של קורסים דיגיטליים — שיעורים ברורים ונעימים לצפייה, מוכנים לעלות לפלטפורמה.",
@@ -103,7 +114,7 @@ export const services: Service[] = [
   },
   {
     slug: "stills",
-    num: "06",
+    num: "07",
     title: "צילומי סטילס",
     meta: "צילומי משפחה ואירועים, בטבע, בבית או בסטודיו",
     desc: "תיעוד רגיש ולא פולשני של רגע משפחתי — תמונות טבעיות ואמיתיות שתשמרו לשנים.",
