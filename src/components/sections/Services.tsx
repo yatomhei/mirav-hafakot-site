@@ -10,8 +10,8 @@ import { ArrowLeft, ArrowUpLeft } from "@/components/ui/icons";
 const CARD =
   "svc-card relative block aspect-video overflow-hidden rounded-[clamp(12px,1.2vw,18px)] bg-beige text-cream no-underline";
 
-/** A card's veil, centred title + meta line, and the round arrow. */
-function CardFace({ title, meta }: { title: string; meta: string }) {
+/** A card's veil, centred title (+ optional meta line), and the round arrow. */
+function CardFace({ title, meta }: { title: string; meta?: string }) {
   return (
     <>
       <span className="svc-veil absolute inset-0" aria-hidden="true" />
@@ -19,7 +19,9 @@ function CardFace({ title, meta }: { title: string; meta: string }) {
         <h3 className="text-[clamp(24px,2.4vw,36px)] leading-[1.15] font-light text-cream [text-shadow:0_1px_12px_rgb(0_0_0/0.25)]">
           {title}
         </h3>
-        <span className="text-[clamp(14px,1.1vw,17px)] font-light opacity-[0.92]">{meta}</span>
+        {meta && (
+          <span className="text-[clamp(14px,1.1vw,17px)] font-light opacity-[0.92]">{meta}</span>
+        )}
       </span>
       <span
         className="svc-arrow absolute bottom-[clamp(12px,1.4vw,20px)] left-[clamp(12px,1.4vw,20px)] inline-flex h-11 w-11 items-center justify-center rounded-full border border-[rgb(250_240_235/0.85)] text-cream"
@@ -96,7 +98,7 @@ export function Services() {
           {/* Last card: not a service — it opens the contact form. */}
           <li>
             <HomeLink hash="contact" className={CARD}>
-              <CardFace title={servicesIntro.otherCard.title} meta={servicesIntro.otherCard.meta} />
+              <CardFace title={servicesIntro.otherCard.title} />
             </HomeLink>
           </li>
         </ul>

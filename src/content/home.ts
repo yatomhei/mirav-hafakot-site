@@ -117,7 +117,7 @@ export const servicesIntro = {
   ctaText: ["יש לכם רעיון לסרטון לעסק", "או רוצים לתעד אירוע משפחתי?"],
   cta: "דברו איתי ונתחיל לתכנן יחד",
   /** Last card in the services grid; opens the contact form. */
-  otherCard: { title: "משהו אחר בראש?", meta: "דברו איתי" },
+  otherCard: { title: "משהו אחר בראש? דברו איתי" },
 };
 
 export const process = {
