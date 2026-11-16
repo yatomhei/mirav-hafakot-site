@@ -91,6 +91,16 @@ export function SiteFooter() {
               </li>
             )}
           </ul>
+          {site.serviceArea && (
+            <>
+              <h2 className="mt-8 mb-2.5 text-[17px] font-light leading-[1.4] tracking-[0.06em]">
+                אזורי שירות:
+              </h2>
+              <p className="max-w-[320px] text-[15px] leading-[1.6] font-light max-[760px]:mx-auto max-[760px]:text-[16px]">
+                {site.serviceArea}
+              </p>
+            </>
+          )}
         </div>
       </div>
 

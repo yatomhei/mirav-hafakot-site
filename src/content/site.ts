@@ -10,6 +10,7 @@ export const site: SiteSettings = {
   phone: "[טלפון]",
   whatsapp: "",
   email: "[אימייל]",
+  serviceArea: "יד בנימין, גדרה והסביבה, קריית מלאכי, חבל לכיש ואשדוד",
   youtubeUrl: "",
   facebookUrl: "",
   whatsappGreeting: "היי מרב, הגעתי מהאתר ואשמח לשמוע פרטים",
