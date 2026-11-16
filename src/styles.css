@@ -75,8 +75,6 @@
   --cream: oklch(0.962 0.013 48.6); /* #FAF0EB page background */
   --paper: oklch(0.973 0.007 88.6); /* #F8F6F1 FAQ background */
   --olive-soft: oklch(0.928 0.015 106.7); /* #E8E8DD works, stills, "other services" */
-  --blush: #fae9e1; /* service cards (camera viewfinder) */
-  --blush-hover: #f6e0d5;
   --rec: #e8291f; /* the REC dot on service cards — the only red on the site */
   --beige: oklch(0.843 0.019 62.4); /* #D5C9BF dividers, focus ring, image placeholders */
   --brown: oklch(0.657 0.046 51.8); /* #A98A78 contact section, nav underline */
@@ -409,24 +407,38 @@
   }
 }
 
-/* Service cards: a camera viewfinder on a solid blush card — four ink corner brackets and a
-   red REC mark in the top corner, the title in ink. On hover the card warms a touch and the
-   REC dot blinks, as if recording. */
+/* Service cards: the photo keeps its own (slightly muted) colour under a dark olive veil —
+   the logo olive #656C51 taken much darker — with a cream camera viewfinder on top: four
+   corner brackets and a REC mark, cream titles that stay legible. On hover the veil lifts a
+   little, the photo zooms slowly and the REC dot blinks, as if recording. */
 .svc-card {
   --svc-inset: clamp(10px, 2.6%, 18px);
   --svc-line: clamp(2px, 0.25vw, 3px);
-  background: var(--blush);
+}
+.svc-card img {
+  filter: saturate(0.8) contrast(1.04) brightness(0.9);
+  transition:
+    filter 600ms ease,
+    transform 900ms var(--ease-soft);
+}
+.svc-card .svc-veil {
+  background: rgb(46 51 36 / 0.62); /* dark olive #2E3324 at 62% */
   transition: background-color 300ms ease;
 }
-.svc-card:hover,
-.svc-card:focus-visible {
-  background: var(--blush-hover);
+.svc-card:hover img,
+.svc-card:focus-visible img {
+  filter: saturate(0.95) contrast(1.04) brightness(0.95);
+  transform: scale(1.04);
+}
+.svc-card:hover .svc-veil,
+.svc-card:focus-visible .svc-veil {
+  background: rgb(46 51 36 / 0.5);
 }
 .svc-corner {
   position: absolute;
   width: 17%;
   height: 27%;
-  border: 0 solid var(--ink);
+  border: 0 solid var(--cream);
   pointer-events: none;
 }
 .svc-corner-tr {
@@ -465,7 +477,7 @@
   font-weight: 500;
   letter-spacing: 0.04em;
   line-height: 1;
-  color: var(--ink);
+  color: var(--cream);
 }
 .svc-rec::before {
   content: "";

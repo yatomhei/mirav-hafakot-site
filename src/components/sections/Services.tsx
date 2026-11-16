@@ -3,16 +3,18 @@ import { useEffect, useRef, useState } from "react";
 import { servicesIntro } from "@/content/home";
 import { services } from "@/content/services";
 import { useRise } from "@/hooks/useRise";
+import { Picture } from "@/components/ui/Picture";
 import { HomeLink } from "@/components/ui/HomeLink";
 import { ArrowLeft } from "@/components/ui/icons";
 
 const CARD =
-  "svc-card relative block aspect-video overflow-hidden rounded-[clamp(10px,1vw,14px)] text-ink no-underline";
+  "svc-card relative block aspect-video overflow-hidden rounded-[clamp(10px,1vw,14px)] bg-beige text-cream no-underline";
 
-/** A card's camera viewfinder (four corner brackets + REC) around the centred title and meta line. */
+/** A card's dark veil and camera viewfinder (four corner brackets + REC) around the centred title and meta line. */
 function CardFace({ title, meta }: { title: string; meta: string }) {
   return (
     <>
+      <span className="svc-veil absolute inset-0" aria-hidden="true" />
       <span className="svc-corner svc-corner-tr" aria-hidden="true" />
       <span className="svc-corner svc-corner-tl" aria-hidden="true" />
       <span className="svc-corner svc-corner-br" aria-hidden="true" />
@@ -21,17 +23,19 @@ function CardFace({ title, meta }: { title: string; meta: string }) {
         REC
       </span>
       <span className="absolute inset-0 flex flex-col items-center justify-center gap-[clamp(6px,0.8vw,12px)] px-[16%] text-center">
-        <h3 className="text-[clamp(24px,2.5vw,38px)] leading-[1.15] font-normal text-ink">
+        <h3 className="text-[clamp(24px,2.5vw,38px)] leading-[1.15] font-light text-cream [text-shadow:0_1px_12px_rgb(0_0_0/0.25)]">
           {title}
         </h3>
-        <span className="text-[clamp(15px,1.3vw,20px)] leading-[1.35] font-light">{meta}</span>
+        <span className="text-[clamp(15px,1.3vw,20px)] leading-[1.35] font-light opacity-[0.92]">
+          {meta}
+        </span>
       </span>
     </>
   );
 }
 
 /**
- * Service cards in two columns (an odd last card sits centred), each a camera viewfinder; each
+ * Service cards in two columns (an odd last card sits centred), each a photo under a dark olive veil with a camera viewfinder; each
  * opens its service page, and a last "something else?" card opens the contact form.
  * The section starts in the works band's olive-soft and fades to cream once its title has
  * risen past the middle of the screen (and back again when scrolling up).
@@ -85,6 +89,9 @@ export function Services() {
           {services.map((s) => (
             <li key={s.slug}>
               <Link to="/services/$slug" params={{ slug: s.slug }} className={CARD}>
+                {s.image && (
+                  <Picture photo={s.image} decorative sizes="(max-width: 640px) 92vw, 46vw" />
+                )}
                 <CardFace title={s.title} meta={s.meta} />
               </Link>
             </li>
