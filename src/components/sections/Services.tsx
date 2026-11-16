@@ -5,37 +5,34 @@ import { services } from "@/content/services";
 import { useRise } from "@/hooks/useRise";
 import { Picture } from "@/components/ui/Picture";
 import { HomeLink } from "@/components/ui/HomeLink";
-import { ArrowLeft } from "@/components/ui/icons";
+import { ArrowLeft, ArrowUpLeft } from "@/components/ui/icons";
 
 const CARD =
-  "svc-card relative block aspect-video overflow-hidden rounded-[clamp(10px,1vw,14px)] bg-beige text-cream no-underline";
+  "svc-card relative block aspect-video overflow-hidden rounded-[clamp(12px,1.2vw,18px)] bg-beige text-cream no-underline";
 
-/** A card's dark veil and camera viewfinder (four corner brackets + REC) around the centred title and meta line. */
+/** A card's veil, centred title + meta line, and the round arrow. */
 function CardFace({ title, meta }: { title: string; meta: string }) {
   return (
     <>
       <span className="svc-veil absolute inset-0" aria-hidden="true" />
-      <span className="svc-corner svc-corner-tr" aria-hidden="true" />
-      <span className="svc-corner svc-corner-tl" aria-hidden="true" />
-      <span className="svc-corner svc-corner-br" aria-hidden="true" />
-      <span className="svc-corner svc-corner-bl" aria-hidden="true" />
-      <span className="svc-rec" aria-hidden="true">
-        REC
-      </span>
-      <span className="absolute inset-0 flex flex-col items-center justify-center gap-[clamp(6px,0.8vw,12px)] px-[16%] text-center">
-        <h3 className="text-[clamp(24px,2.5vw,38px)] leading-[1.15] font-light text-cream [text-shadow:0_1px_12px_rgb(0_0_0/0.25)]">
+      <span className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-[clamp(16px,2vw,28px)] text-center">
+        <h3 className="text-[clamp(24px,2.4vw,36px)] leading-[1.15] font-light text-cream [text-shadow:0_1px_12px_rgb(0_0_0/0.25)]">
           {title}
         </h3>
-        <span className="text-[clamp(15px,1.3vw,20px)] leading-[1.35] font-light opacity-[0.92]">
-          {meta}
-        </span>
+        <span className="text-[clamp(14px,1.1vw,17px)] font-light opacity-[0.92]">{meta}</span>
+      </span>
+      <span
+        className="svc-arrow absolute bottom-[clamp(12px,1.4vw,20px)] left-[clamp(12px,1.4vw,20px)] inline-flex h-11 w-11 items-center justify-center rounded-full border border-[rgb(250_240_235/0.85)] text-cream"
+        aria-hidden="true"
+      >
+        <ArrowUpLeft />
       </span>
     </>
   );
 }
 
 /**
- * Service cards in two columns (an odd last card sits centred), each a photo under a dark olive veil with a camera viewfinder; each
+ * Service cards in two columns (an odd last card sits centred) under a dark olive veil; each
  * opens its service page, and a last "something else?" card opens the contact form.
  * The section starts in the works band's olive-soft and fades to cream once its title has
  * risen past the middle of the screen (and back again when scrolling up).

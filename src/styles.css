@@ -75,7 +75,6 @@
   --cream: oklch(0.962 0.013 48.6); /* #FAF0EB page background */
   --paper: oklch(0.973 0.007 88.6); /* #F8F6F1 FAQ background */
   --olive-soft: oklch(0.928 0.015 106.7); /* #E8E8DD works, stills, "other services" */
-  --rec: #e8291f; /* the REC dot on service cards — the only red on the site */
   --beige: oklch(0.843 0.019 62.4); /* #D5C9BF dividers, focus ring, image placeholders */
   --brown: oklch(0.657 0.046 51.8); /* #A98A78 contact section, nav underline */
   --sage: oklch(0.713 0.031 113.5); /* #A2A58F green surfaces, always dark text */
@@ -408,13 +407,8 @@
 }
 
 /* Service cards: the photo keeps its own (slightly muted) colour under a dark olive veil —
-   the logo olive #656C51 taken much darker — with a cream camera viewfinder on top: four
-   corner brackets and a REC mark, cream titles that stay legible. On hover the veil lifts a
-   little, the photo zooms slowly and the REC dot blinks, as if recording. */
-.svc-card {
-  --svc-inset: clamp(10px, 2.6%, 18px);
-  --svc-line: clamp(2px, 0.25vw, 3px);
-}
+   the logo olive #656C51 taken much darker — so the cards read dark, green-toned and
+   consistent, with cream titles that stay legible. The veil lifts a little on hover. */
 .svc-card img {
   filter: saturate(0.8) contrast(1.04) brightness(0.9);
   transition:
@@ -434,68 +428,17 @@
 .svc-card:focus-visible .svc-veil {
   background: rgb(46 51 36 / 0.5);
 }
-.svc-corner {
-  position: absolute;
-  width: 17%;
-  height: 27%;
-  border: 0 solid var(--cream);
-  pointer-events: none;
+.svc-card .svc-arrow {
+  transition:
+    background-color 250ms ease,
+    color 250ms ease,
+    transform 250ms ease;
 }
-.svc-corner-tr {
-  top: var(--svc-inset);
-  right: var(--svc-inset);
-  border-top-width: var(--svc-line);
-  border-right-width: var(--svc-line);
-}
-.svc-corner-tl {
-  top: var(--svc-inset);
-  left: var(--svc-inset);
-  border-top-width: var(--svc-line);
-  border-left-width: var(--svc-line);
-}
-.svc-corner-br {
-  bottom: var(--svc-inset);
-  right: var(--svc-inset);
-  border-bottom-width: var(--svc-line);
-  border-right-width: var(--svc-line);
-}
-.svc-corner-bl {
-  bottom: var(--svc-inset);
-  left: var(--svc-inset);
-  border-bottom-width: var(--svc-line);
-  border-left-width: var(--svc-line);
-}
-.svc-rec {
-  position: absolute;
-  top: calc(var(--svc-inset) + clamp(10px, 4.5%, 18px));
-  right: calc(var(--svc-inset) + clamp(10px, 2.4%, 16px));
-  direction: ltr;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35em;
-  font-size: clamp(13px, 1.15vw, 17px);
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  line-height: 1;
-  color: var(--cream);
-}
-.svc-rec::before {
-  content: "";
-  width: 0.95em;
-  height: 0.95em;
-  border-radius: 50%;
-  background: var(--rec);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .svc-card:hover .svc-rec::before,
-  .svc-card:focus-visible .svc-rec::before {
-    animation: rec-blink 1.1s steps(1, end) infinite;
-  }
-}
-@keyframes rec-blink {
-  50% {
-    opacity: 0.15;
-  }
+.svc-card:hover .svc-arrow,
+.svc-card:focus-visible .svc-arrow {
+  background: var(--cream);
+  color: var(--ink);
+  transform: translate(-3px, -3px);
 }
 
 /* Horizontal scrollers (works carousel, mobile photo strip): no visible scrollbar. */
