@@ -1,22 +1,27 @@
 import type { CSSProperties } from "react";
+import { useRise } from "@/hooks/useRise";
 import { stills } from "@/content/home";
 import { Picture } from "@/components/ui/Picture";
 import type { StillPhoto } from "@/content/types";
 
 /** Stills band under the works: centred heading and text, then a full-width photo mosaic. */
 export function Stills() {
+  const grid = useRise<HTMLDivElement>("ul > li");
   return (
     <section
       id="stills"
       aria-label="צילומי סטילס"
       className="px-[var(--gutter)] pt-[clamp(72px,11vw,120px)] pb-[clamp(72px,11vw,140px)]"
     >
-      <div data-reveal className="mx-auto w-full max-w-[var(--content-max)]">
-        <div className="mx-auto mb-[clamp(36px,5vw,64px)] max-w-[760px] text-center">
+      <div className="mx-auto w-full max-w-[var(--content-max)]">
+        <div data-reveal className="mx-auto mb-[clamp(36px,5vw,64px)] max-w-[760px] text-center">
           <h3 className="heading-section mb-5">{stills.title}</h3>
           <p className="lead">{stills.text}</p>
         </div>
-        <StillsGrid />
+        {/* Photos rise in as they scroll into view, like the service cards. */}
+        <div ref={grid}>
+          <StillsGrid />
+        </div>
       </div>
     </section>
   );
@@ -41,11 +46,9 @@ const SLOTS = [
 
 function StillTile({ p, style }: { p: StillPhoto; style?: CSSProperties }) {
   return (
-    <li
-      style={style}
-      className="still img-zoom relative overflow-hidden rounded-[clamp(12px,1.2vw,18px)] bg-beige"
-    >
-      <figure className="m-0 h-full">
+    <li style={style}>
+      {/* The whole tile is the first child, so a rise-in moves the tile, not the photo inside it. */}
+      <figure className="still img-zoom relative m-0 h-full overflow-hidden rounded-[clamp(12px,1.2vw,18px)] bg-beige">
         <Picture photo={p} sizes="(max-width: 640px) 92vw, 40vw" />
         <div
           aria-hidden="true"
