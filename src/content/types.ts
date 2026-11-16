@@ -28,7 +28,7 @@ export type SiteSettings = {
   /** International digits only, e.g. "972500000000". Empty → WhatsApp opens without a number. */
   whatsapp: string;
   email: string;
-  /** Shown in the footer under "אזורי שירות:"; empty hides it. */
+  /** Shown in the footer under "אזורי שירות:" (a line break starts a new row); empty hides it. */
   serviceArea: string;
   /** Social links: empty (or a [placeholder]) hides the icon in the footer; filled in, it shows. */
   youtubeUrl: string;
