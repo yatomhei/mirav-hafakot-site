@@ -13,6 +13,8 @@ export const site: SiteSettings = {
   serviceArea: "יד בנימין, גדרה והסביבה,\nקריית מלאכי, חבל לכיש ואשדוד",
   youtubeUrl: "",
   facebookUrl: "",
+  instagramUrl: "",
+  tiktokUrl: "",
   whatsappGreeting: "היי מרב, הגעתי מהאתר ואשמח לשמוע פרטים",
 };
 

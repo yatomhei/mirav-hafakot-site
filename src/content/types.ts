@@ -18,6 +18,8 @@ export type Video = {
   title: string;
   youtubeId: string;
   thumb?: Photo;
+  /** Also shown in the homepage "selected works" carousel. */
+  featured?: boolean;
 };
 
 export type SiteSettings = {
@@ -33,6 +35,8 @@ export type SiteSettings = {
   /** Social links: empty (or a [placeholder]) hides the icon in the footer; filled in, it shows. */
   youtubeUrl: string;
   facebookUrl: string;
+  instagramUrl: string;
+  tiktokUrl: string;
   /** Text pre-filled in the WhatsApp chat from the floating button and menu. */
   whatsappGreeting: string;
 };
@@ -51,15 +55,22 @@ export type Service = {
   lead: string;
   videos: Video[];
   /**
-   * The page shows another section's gallery instead of its own videos: "works" = the
-   * homepage clips, "stills" = the stills photos. Fixed in code, never set from the admin.
+   * The page shows the stills photos instead of videos. Fixed in code, never set from the
+   * admin.
    */
-  gallery?: "works" | "stills";
+  gallery?: "stills";
+  /** Hidden from the site: no card, no links, and its page answers "not found". */
+  hidden?: boolean;
 };
 
 export type Testimonial = { quote: string; name: string; role: string };
 export type Faq = { q: string; a: string };
 export type IncludeItem = { num: string; title: string; meta: string; desc: string };
 /** `ratio` (width ÷ height) sizes the tile in the stills page masonry before the photo loads. */
-export type StillPhoto = Photo & { label: string; ratio: number };
+export type StillPhoto = Photo & {
+  label: string;
+  ratio: number;
+  /** Also shown in the homepage mosaic. */
+  featured?: boolean;
+};
 export type StripPhoto = Photo & { ratio: number };

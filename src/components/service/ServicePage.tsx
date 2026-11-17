@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { Service, Video } from "@/content/types";
 import { useContent } from "@/content/context";
+import { visibleServices } from "@/content/services";
 import { VideoThumb } from "@/components/ui/Picture";
 import { HomeLink } from "@/components/ui/HomeLink";
 import { useVideoLink } from "@/components/ui/VideoPlayer";
@@ -74,11 +75,10 @@ function Breadcrumbs({ current }: { current: string }) {
 /** Service page: title + lead, the work (videos, or photos for stills), CTA, other services. */
 export function ServicePage({ service }: { service: Service }) {
   const { services, servicePage, home } = useContent();
-  const others = services.filter((s) => s.slug !== service.slug);
+  const others = visibleServices(services).filter((s) => s.slug !== service.slug);
   const isPhotos = service.gallery === "stills" && home.stills.photos.length > 0;
   // Only videos with a YouTube id are shown; a gallery with none shows a short note instead.
-  const own = service.gallery === "works" ? home.works.clips : service.videos;
-  const videos = own.filter((v) => v.youtubeId);
+  const videos = service.videos.filter((v) => v.youtubeId);
   const isEmpty = !isPhotos && videos.length === 0;
   // Gallery items rise as they scroll in, like the homepage service cards.
   const gallery = useRise<HTMLDivElement>("ul > li");

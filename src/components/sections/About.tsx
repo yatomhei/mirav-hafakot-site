@@ -1,6 +1,7 @@
 import { Fragment } from "react";
 import { useHome } from "@/content/context";
 import { Picture } from "@/components/ui/Picture";
+import { BrokenLines } from "@/components/ui/BrokenLines";
 
 /** Renders **bold** spans from content text. */
 export function RichText({ text }: { text: string }) {
@@ -36,8 +37,7 @@ export function About() {
         <div>
           <p className="caption mb-8">{about.caption}</p>
           <h2 className="about-title mb-10 font-light leading-none tracking-[-0.015em]">
-            {about.title[0]}
-            <br /> {about.title[1]}
+            <BrokenLines lines={about.title} />
           </h2>
           <div className="flex max-w-[940px] flex-col gap-[0.9em] text-[clamp(19px,1.8vw,24px)] leading-[1.65] font-light max-[900px]:mx-auto">
             {about.body.map((p, i) => (

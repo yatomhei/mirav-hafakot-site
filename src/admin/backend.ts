@@ -1,7 +1,7 @@
 import { localStoreEnabled } from "@/content/backend-config";
 import type { StoredDocs } from "@/content/docs";
 import { PHOTO_WIDTHS, preparePhotoSet } from "./image";
-import { saveLocalDocs, uploadLocalImage } from "./local-store";
+import { saveLocalDocs, uploadLocalImage, uploadLocalVideo } from "./local-store";
 
 /** What the admin needs from wherever content is stored. */
 export interface AdminBackend {
@@ -13,6 +13,8 @@ export interface AdminBackend {
    * address; Picture adds "-<width>.webp") and its shape.
    */
   uploadPhoto(file: File): Promise<{ name: string; ratio: number }>;
+  /** Stores a video file as is (checked first by prepareVideo). Returns its address. */
+  uploadVideo(file: File, extension: string): Promise<string>;
 }
 
 async function toBase64(blob: Blob) {
@@ -43,12 +45,18 @@ function localBackend(): AdminBackend {
       }
       return { name: address, ratio };
     },
+    async uploadVideo(file, extension) {
+      const form = new FormData();
+      form.set("name", `u-${crypto.randomUUID()}.${extension}`);
+      form.set("file", file);
+      return uploadLocalVideo({ data: form });
+    },
   };
 }
 
 /**
  * Null when there is nowhere to save yet. Deploy phase: a Cloudflare backend (D1 for the
- * records, R2 for photos, the admin behind Cloudflare Access) goes here.
+ * records, R2 for photos and the hero video, the admin behind Cloudflare Access) goes here.
  */
 export function getBackend(): AdminBackend | null {
   return localStoreEnabled() ? localBackend() : null;

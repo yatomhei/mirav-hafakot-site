@@ -13,7 +13,7 @@ import {
 } from "@/content/docs";
 import type { DocKey } from "@/content/schema";
 import { getBackend, type AdminBackend } from "./backend";
-import { Doc } from "./fields";
+import { Doc, DraftContext } from "./fields";
 import { TABS } from "./tabs";
 
 /**
@@ -55,7 +55,7 @@ const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b)
 /** Turns a schema problem into something Merav can act on. */
 function describeIssue(
   key: DocKey,
-  issue: { path: PropertyKey[]; code: string; message: string },
+  issue: { path: PropertyKey[]; code: string; message: string; origin?: string },
   currentTab: string,
 ) {
   // A record can sit in two tabs (the services); name the open one when it is one of them.
@@ -64,10 +64,14 @@ function describeIssue(
   const last = issue.path[issue.path.length - 1];
   if (last === "whatsapp") return `${tab}: מספר הוואטסאפ צריך להכיל ספרות בלבד, למשל 972501234567`;
   if (last === "youtubeId") return `${tab}: לאחד הסרטונים חסר קישור תקין ליוטיוב`;
-  if (last === "youtubeUrl" || last === "facebookUrl") {
+  if (["youtubeUrl", "facebookUrl", "instagramUrl", "tiktokUrl"].includes(String(last))) {
     return `${tab}: הקישור צריך להתחיל ב־https://`;
   }
   if (last === "name") return `${tab}: חסרה תמונה`;
+  // A multi-line heading: more lines than the design holds, or left empty.
+  if (["title", "lead", "ctaText", "body"].includes(String(last)) && issue.origin === "array") {
+    return `${tab}: ${issue.message}`;
+  }
   if (issue.code === "too_big") return `${tab}: אחד הטקסטים ארוך מדי`;
   if (issue.code === "too_small") return `${tab}: צריך להשאיר לפחות פריט אחד ברשימה`;
   return `${tab}: ${issue.message}`;
@@ -213,16 +217,23 @@ function Dashboard({ backend }: { backend: AdminBackend }) {
           </div>
         )}
 
-        {tab?.docs.map((doc) => (
-          <Doc
-            key={`${tab.key}-${doc.key}`}
-            backend={backend}
-            value={getDoc(draft, doc.key)}
-            onChange={(next) => setDraft((current) => setDoc(current, doc.key, next))}
-          >
-            <div className="flex flex-col gap-5">{doc.render()}</div>
-          </Doc>
-        ))}
+        <DraftContext.Provider
+          value={{
+            draft,
+            update: (key, value) => setDraft((current) => setDoc(current, key, value)),
+          }}
+        >
+          {tab?.docs.map((doc) => (
+            <Doc
+              key={`${tab.key}-${doc.key}`}
+              backend={backend}
+              value={getDoc(draft, doc.key)}
+              onChange={(next) => setDraft((current) => setDoc(current, doc.key, next))}
+            >
+              <div className="flex flex-col gap-5">{doc.render()}</div>
+            </Doc>
+          ))}
+        </DraftContext.Provider>
 
         {tab?.key === "settings" && (
           <section className="rounded-xl border border-ink/12 bg-white p-4 sm:p-6">

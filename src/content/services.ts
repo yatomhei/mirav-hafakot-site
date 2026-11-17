@@ -1,4 +1,35 @@
-import type { Service } from "./types";
+import type { Service, Video } from "./types";
+
+/** The bar/bat mitzvah clips; at launch they are also the homepage "selected works". */
+export const barMitzvahClips: Video[] = (
+  [
+    {
+      title: "קליפ בת מצווה של גפן – בכרם עם המשפחה",
+      youtubeId: "QWX2MCzFjdk",
+      thumb: { name: "clip-gefen", alt: "" },
+    },
+    {
+      title: "קליפ בר מצווה בירושלים",
+      youtubeId: "0tKX4jDtYpc",
+      thumb: { name: "clip-home", alt: "" },
+    },
+    {
+      title: "קליפ בר מצווה – הנחת תפילין ראשונה",
+      youtubeId: "WSmlCo4dfOM",
+      thumb: { name: "clip-tefillin", alt: "" },
+    },
+    {
+      title: "קליפ בת מצווה – אופות עם סבתא",
+      youtubeId: "iiymbAVd0WM",
+      thumb: { name: "clip-baking", alt: "" },
+    },
+    {
+      title: "סרט בר מצווה – ברכות מהמשפחה",
+      youtubeId: "qHyDDsU9k34",
+      thumb: { name: "clip-blessings", alt: "" },
+    },
+  ] as Video[]
+).map((v) => ({ ...v, featured: true }));
 
 /**
  * The services: homepage cards (title, meta, optional image) and their pages (/services/<slug>).
@@ -13,8 +44,7 @@ export const services: Service[] = [
     desc: "קליפ אישי לבר או לבת המצווה — מהרעיון והלוקיישן ועד העריכה, סיפור שתחזרו אליו שוב ושוב.",
     image: { name: "svc-bar-mitzvah", alt: "" },
     lead: "קליפ אישי לבר או לבת המצווה — מהרעיון והלוקיישן ועד העריכה, סיפור שתחזרו אליו שוב ושוב.",
-    videos: [],
-    gallery: "works",
+    videos: barMitzvahClips,
   },
   {
     slug: "brand-films",
@@ -122,6 +152,13 @@ export const services: Service[] = [
 ];
 
 export const getService = (slug: string) => services.find((s) => s.slug === slug);
+
+/** The services the site shows and links to (the admin can hide any of them). */
+export const visibleServices = <T extends { hidden?: boolean | undefined }>(list: T[]) =>
+  list.filter((s) => !s.hidden);
+
+/** The services' addresses: fixed in code, whatever order the admin saves them in. */
+export const SERVICE_SLUGS = services.map((s) => s.slug);
 
 export const servicePage = {
   cta: "אהבתם? הסרט הבא יכול להיות שלכם.",

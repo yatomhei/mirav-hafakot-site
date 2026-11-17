@@ -1,3 +1,5 @@
+import { DEFAULT_MESSAGE_TEMPLATE } from "./whatsapp-message";
+import { barMitzvahClips } from "./services";
 import type { Faq, Photo, IncludeItem, StillPhoto, StripPhoto, Testimonial, Video } from "./types";
 
 /** Homepage copy, in page order. Copy is verbatim from the approved canvas. */
@@ -39,112 +41,94 @@ export const works = {
   caption: "01 / עבודות נבחרות",
   title: "סרטים וקליפים שהפקתי",
   lead: "הצצה לכמה מהסיפורים שזכיתי לספר דרך המצלמה, מאירועים משפחתיים ועד סרטי תדמית ופרסומת.",
-  /** The homepage carousel; also the gallery of the bar/bat mitzvah service page. */
-  clips: [
-    {
-      title: "קליפ בת מצווה של גפן – בכרם עם המשפחה",
-      youtubeId: "QWX2MCzFjdk",
-      thumb: { name: "clip-gefen", alt: "" },
-    },
-    {
-      title: "קליפ בר מצווה בירושלים",
-      youtubeId: "0tKX4jDtYpc",
-      thumb: { name: "clip-home", alt: "" },
-    },
-    {
-      title: "קליפ בר מצווה – הנחת תפילין ראשונה",
-      youtubeId: "WSmlCo4dfOM",
-      thumb: { name: "clip-tefillin", alt: "" },
-    },
-    {
-      title: "קליפ בת מצווה – אופות עם סבתא",
-      youtubeId: "iiymbAVd0WM",
-      thumb: { name: "clip-baking", alt: "" },
-    },
-    {
-      title: "סרט בר מצווה – ברכות מהמשפחה",
-      youtubeId: "qHyDDsU9k34",
-      thumb: { name: "clip-blessings", alt: "" },
-    },
-  ] as Video[],
+  /**
+   * The homepage carousel shows the service-page videos marked `featured` (up to 6, see
+   * featured.ts), in this order of YouTube ids; any not listed follow in service order.
+   */
+  order: barMitzvahClips.map((v) => v.youtubeId),
 };
+
+/** Every stills photo (the stills service page gallery). */
+const stillPhotos: StillPhoto[] = [
+  {
+    name: "still-bat-mitzvah-sea",
+    ratio: 3 / 2,
+    label: "בת מצווה",
+    alt: "ילדה בכובע קש ושמלה לבנה על שפת הים",
+  },
+  {
+    name: "still-family-stairs",
+    ratio: 2 / 3,
+    label: "משפחה",
+    alt: "משפחה מורחבת מצטלמת יחד על מדרגות הבית",
+    pos: "center 40%",
+  },
+  {
+    name: "still-lifestyle-bed",
+    ratio: 3 / 2,
+    label: "לייף סטייל",
+    alt: "משפחה צוחקת יחד על המיטה בבית",
+    pos: "center 30%",
+  },
+  {
+    name: "still-kids-cotton",
+    ratio: 16 / 9,
+    label: "ילדים",
+    alt: "פעוטה יושבת על כיסא עץ בשביל ליד שדה כותנה בשקיעה",
+    pos: "55% center",
+  },
+  {
+    name: "still-kids-tire",
+    ratio: 3 / 2,
+    label: "ילדים",
+    alt: "ילד מחייך מבעד לנדנדת צמיג בין עלי שלכת",
+    pos: "center 40%",
+  },
+  {
+    name: "still-brit",
+    ratio: 2 / 3,
+    label: "ברית",
+    alt: "הורים מחזיקים תינוק ביום הברית",
+    pos: "center 45%",
+  },
+  {
+    name: "still-newborn",
+    ratio: 3 / 2,
+    label: "ניו בורן",
+    alt: "תינוק ישן בכובע ארנב עם גזר סרוג",
+  },
+  {
+    name: "still-bar-mitzvah-stream",
+    ratio: 3 / 2,
+    label: "בר מצווה",
+    alt: "נער משיט ספינה בנחל",
+  },
+  {
+    name: "still-family-lake",
+    ratio: 3 / 2,
+    label: "משפחה",
+    alt: "משפחה מורחבת מחובקת ליד אגם בין עצי אקליפטוס",
+    pos: "center 60%",
+  },
+  {
+    name: "still-family-sunset",
+    ratio: 3 / 2,
+    label: "משפחה",
+    alt: "משפחה בשביל עפר בשקיעה",
+    pos: "center 55%",
+  },
+];
 
 export const stills = {
   title: "רגעים שתפסתי בעדשה",
   text: "צילומי משפחה, בריתות ובר ובת מצווה, בטבע, בבית או בסטודיו. אני אוהבת לצלם אנשים בסביבה שבה הם מרגישים בנוח ולתפוס את הרגעים שקורים באופן טבעי.",
   /**
-   * Order sets the homepage mosaic (the first 9; 3 rows of 3): slots 2 and 6 are narrow and
-   * tall on phones, so portrait photos go there. The stills service page shows all of them.
+   * The stills service page shows all of these. The homepage mosaic (3 rows of 3) shows the
+   * ones marked `featured`, in `order` (photo names): slots 2 and 6 are narrow and tall on
+   * phones, so portrait photos go there.
    */
-  photos: [
-    {
-      name: "still-bat-mitzvah-sea",
-      ratio: 3 / 2,
-      label: "בת מצווה",
-      alt: "ילדה בכובע קש ושמלה לבנה על שפת הים",
-    },
-    {
-      name: "still-family-stairs",
-      ratio: 2 / 3,
-      label: "משפחה",
-      alt: "משפחה מורחבת מצטלמת יחד על מדרגות הבית",
-      pos: "center 40%",
-    },
-    {
-      name: "still-lifestyle-bed",
-      ratio: 3 / 2,
-      label: "לייף סטייל",
-      alt: "משפחה צוחקת יחד על המיטה בבית",
-      pos: "center 30%",
-    },
-    {
-      name: "still-kids-cotton",
-      ratio: 16 / 9,
-      label: "ילדים",
-      alt: "פעוטה יושבת על כיסא עץ בשביל ליד שדה כותנה בשקיעה",
-      pos: "55% center",
-    },
-    {
-      name: "still-kids-tire",
-      ratio: 3 / 2,
-      label: "ילדים",
-      alt: "ילד מחייך מבעד לנדנדת צמיג בין עלי שלכת",
-      pos: "center 40%",
-    },
-    {
-      name: "still-brit",
-      ratio: 2 / 3,
-      label: "ברית",
-      alt: "הורים מחזיקים תינוק ביום הברית",
-      pos: "center 45%",
-    },
-    {
-      name: "still-newborn",
-      ratio: 3 / 2,
-      label: "ניו בורן",
-      alt: "תינוק ישן בכובע ארנב עם גזר סרוג",
-    },
-    {
-      name: "still-bar-mitzvah-stream",
-      ratio: 3 / 2,
-      label: "בר מצווה",
-      alt: "נער משיט ספינה בנחל",
-    },
-    {
-      name: "still-family-lake",
-      ratio: 3 / 2,
-      label: "משפחה",
-      alt: "משפחה מורחבת מחובקת ליד אגם בין עצי אקליפטוס",
-      pos: "center 60%",
-    },
-    {
-      name: "still-family-sunset",
-      ratio: 3 / 2,
-      label: "משפחה",
-      alt: "משפחה בשביל עפר בשקיעה",
-      pos: "center 55%",
-    },
-  ] satisfies StillPhoto[],
+  photos: stillPhotos.map((p, i) => ({ ...p, featured: i < 9 })),
+  order: stillPhotos.slice(0, 9).map((p) => p.name),
 };
 
 export const servicesIntro = {
@@ -153,8 +137,15 @@ export const servicesIntro = {
   lead: "לחצו על אחד התחומים כדי לגלות עוד על השירות, איך הוא עובד ומה הוא כולל.",
   ctaText: ["יש לכם רעיון לסרטון לעסק", "או רוצים לתעד אירוע משפחתי?"],
   cta: "דברו איתי ונתחיל לתכנן יחד",
-  /** Last card in the services grid; opens the contact form. */
-  otherCard: { title: "משהו אחר בראש? דברו איתי" },
+  /**
+   * Last card in the services grid; opens the contact form. It can be hidden everywhere, or
+   * only on phones (one column, where it fills no gap; the contact button follows anyway).
+   */
+  otherCard: {
+    title: "משהו אחר בראש? דברו איתי",
+    hidden: false as boolean,
+    hideOnMobile: true as boolean,
+  },
 };
 
 export const process = {
@@ -298,6 +289,11 @@ export const contact = {
   ],
   note: "* שדות חובה · ההודעה תיפתח בוואטסאפ",
   submit: "שליחה בוואטסאפ",
+  /** The WhatsApp message the form prepares; see whatsapp-message.ts for the placeholders. */
+  message: DEFAULT_MESSAGE_TEMPLATE,
+  /** The line under the send button. */
   after: "ואחזור אליכם בהקדם האפשרי.",
+  /** Shown once the form is sent and WhatsApp opens with the message. */
+  sent: "תודה! ההודעה מחכה לכם בוואטסאפ, נשאר רק ללחוץ על שליחה.",
   privacy: "מסירת הפרטים מרצון, לצורך חזרה אליכם בלבד. עוד ב",
 };

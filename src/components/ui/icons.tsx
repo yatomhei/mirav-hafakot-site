@@ -86,3 +86,16 @@ export const Facebook = ({ size = 20, className }: P) => (
     <path d="M14.5 21v-8h2.7l.4-3.2h-3.1V7.9c0-.9.3-1.6 1.6-1.6h1.7V3.5c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.2v2.2H8.5V13h2.7v8" />
   </svg>
 );
+export const Instagram = ({ size = 20, className }: P) => (
+  <svg {...base(size)} className={className}>
+    <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+    <circle cx="12" cy="12" r="4" />
+    <circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" />
+  </svg>
+);
+export const TikTok = ({ size = 20, className }: P) => (
+  <svg {...base(size)} className={className}>
+    <path d="M13.5 3.5v11.8a3.3 3.3 0 1 1-3.3-3.3" />
+    <path d="M13.5 3.5c.4 2.6 2.2 4.4 4.8 4.7" />
+  </svg>
+);

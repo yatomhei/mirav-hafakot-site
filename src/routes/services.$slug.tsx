@@ -6,9 +6,11 @@ import type { SiteContent } from "@/content/docs";
 import { getService } from "@/content/services";
 
 export const Route = createFileRoute("/services/$slug")({
-  loader: ({ params }) => {
+  loader: async ({ params, parentMatchPromise }) => {
     const service = getService(params.slug);
     if (!service) throw notFound();
+    const content = (await parentMatchPromise).loaderData as SiteContent | undefined;
+    if (content?.services.find((s) => s.slug === service.slug)?.hidden) throw notFound();
     return { slug: service.slug };
   },
   head: ({ loaderData, matches }) => {

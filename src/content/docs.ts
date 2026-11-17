@@ -67,12 +67,15 @@ export function validateDoc(key: DocKey, value: unknown) {
   return docSchemas[key].safeParse(value);
 }
 
-/** Service addresses and linked galleries always come from the code, by position. */
+/**
+ * The saved order is the site's order (homepage cards, footer, "other services"). Each
+ * service is matched to the code by its address, which also restores its linked gallery.
+ */
 function pinServices(saved: Service[]): Service[] {
-  return services.map((fixed, i) => {
-    const { gallery: _g, ...edited } = saved[i]!;
-    const pinned: Service = { ...edited, slug: fixed.slug };
-    if (fixed.gallery) pinned.gallery = fixed.gallery;
+  return saved.map(({ gallery: _g, ...edited }) => {
+    const fixed = services.find((s) => s.slug === edited.slug);
+    const pinned: Service = { ...edited };
+    if (fixed?.gallery) pinned.gallery = fixed.gallery;
     return pinned;
   });
 }

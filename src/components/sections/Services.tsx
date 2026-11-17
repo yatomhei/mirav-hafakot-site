@@ -1,10 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useContent } from "@/content/context";
+import { visibleServices } from "@/content/services";
 import { useRise } from "@/hooks/useRise";
 import { Picture } from "@/components/ui/Picture";
 import { HomeLink } from "@/components/ui/HomeLink";
 import { ArrowLeft, ArrowUpLeft } from "@/components/ui/icons";
+import { BrokenLines } from "@/components/ui/BrokenLines";
 
 const CARD =
   "svc-card relative block aspect-video overflow-hidden rounded-[clamp(12px,1.2vw,18px)] bg-beige text-cream no-underline";
@@ -86,7 +88,7 @@ export function Services() {
           ref={grid}
           className="svc-grid m-0 grid list-none grid-cols-2 gap-x-[clamp(16px,2vw,28px)] gap-y-[clamp(36px,4vw,56px)] p-0 max-[640px]:grid-cols-1"
         >
-          {services.map((s) => (
+          {visibleServices(services).map((s) => (
             <li key={s.slug}>
               <Link to="/services/$slug" params={{ slug: s.slug }} className={CARD}>
                 {s.image && (
@@ -96,13 +98,15 @@ export function Services() {
               </Link>
             </li>
           ))}
-          {/* Last card: not a service — it opens the contact form. Hidden on phones (one column),
-              where it only filled a gap; the section's own contact button follows right after. */}
-          <li className="max-[640px]:hidden">
-            <HomeLink hash="contact" className={CARD}>
-              <CardFace title={servicesIntro.otherCard.title} />
-            </HomeLink>
-          </li>
+          {/* Last card: not a service — it opens the contact form. The admin can hide it, or
+              hide it on phones only (one column, where the section's contact button follows). */}
+          {!servicesIntro.otherCard.hidden && (
+            <li className={servicesIntro.otherCard.hideOnMobile ? "max-[640px]:hidden" : undefined}>
+              <HomeLink hash="contact" className={CARD}>
+                <CardFace title={servicesIntro.otherCard.title} />
+              </HomeLink>
+            </li>
+          )}
         </ul>
 
         <div
@@ -110,8 +114,7 @@ export function Services() {
           className="mt-[clamp(48px,6vw,72px)] flex flex-col items-center gap-5 text-center"
         >
           <p className="text-[clamp(22px,2.2vw,30px)] leading-[1.3] font-light">
-            {servicesIntro.ctaText[0]}
-            <br className="min-[761px]:hidden" /> {servicesIntro.ctaText[1]}
+            <BrokenLines lines={servicesIntro.ctaText} brClassName="min-[761px]:hidden" />
           </p>
           <HomeLink
             hash="contact"

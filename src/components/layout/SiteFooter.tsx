@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { useContent } from "@/content/context";
+import { visibleServices } from "@/content/services";
 import { image } from "@/lib/asset";
 import { isPlaceholder, mailHref, telHref } from "@/lib/contact";
-import { ArrowUp, Facebook, YouTube } from "@/components/ui/icons";
+import { ArrowUp, Facebook, Instagram, TikTok, YouTube } from "@/components/ui/icons";
 
 /** Cream footer with dark ink (never the blue). Three columns, centred on mobile. */
 export function SiteFooter() {
@@ -10,6 +11,8 @@ export function SiteFooter() {
   const socials = [
     { label: "יוטיוב", href: site.youtubeUrl, Icon: YouTube },
     { label: "פייסבוק", href: site.facebookUrl, Icon: Facebook },
+    { label: "אינסטגרם", href: site.instagramUrl, Icon: Instagram },
+    { label: "טיקטוק", href: site.tiktokUrl, Icon: TikTok },
   ].filter((s) => !isPlaceholder(s.href)); // only links filled in from the admin are shown
 
   return (
@@ -38,7 +41,7 @@ export function SiteFooter() {
             הפקות סרטים וצילום אמנותי:
           </h2>
           <ul className="footer-svc m-0 flex max-w-[320px] list-none flex-col p-0 max-[760px]:max-w-none max-[760px]:flex-row max-[760px]:flex-wrap max-[760px]:justify-center max-[760px]:gap-y-1">
-            {services.map((s) => (
+            {visibleServices(services).map((s) => (
               <li key={s.slug}>
                 <Link
                   to="/services/$slug"

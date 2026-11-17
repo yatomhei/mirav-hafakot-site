@@ -122,16 +122,15 @@ export function SiteHeader() {
               </HomeLink>
             ))}
             <div className="mt-7 flex flex-col gap-3">
-              <a
-                href={links.whatsapp()}
-                target="_blank"
-                rel="noopener"
+              {/* To the contact form, which sends a WhatsApp message with the visitor's details. */}
+              <HomeLink
+                hash="contact"
                 onClick={close}
                 className="btn btn-primary !min-h-14 !text-[18px]"
               >
                 <WhatsApp />
                 דברו איתי בוואטסאפ
-              </a>
+              </HomeLink>
               <a
                 href={links.tel}
                 onClick={close}

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useContent } from "@/content/context";
 import { asset, image, photoFile } from "@/lib/asset";
+import { BrokenLines } from "@/components/ui/BrokenLines";
 
 /**
  * Rounded full-height frame, looping video under a 40% dark-blue overlay, cream logo and
@@ -78,9 +79,7 @@ export function Hero() {
             fetchPriority="high"
           />
           <h1 className="display">
-            {hero.title[0]}
-            <br />
-            {hero.title[1]}
+            <BrokenLines lines={hero.title} />
           </h1>
         </div>
       </div>

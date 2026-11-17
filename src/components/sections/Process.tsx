@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useHome } from "@/content/context";
 import { Minus, Plus } from "@/components/ui/icons";
+import { BrokenLines } from "@/components/ui/BrokenLines";
 
 /**
  * Rise-up entrance: the band rises quickly into place when its top passes 85% of the
@@ -77,13 +78,10 @@ export function Process() {
           <div className="mx-auto mb-[clamp(48px,6vw,88px)] max-w-[820px] text-center">
             <p className="caption mb-6 !text-cream">{process.caption}</p>
             <h2 id="process-title" className="heading-section-lg mb-6">
-              {process.title[0]}
-              <br />
-              {process.title[1]}
+              <BrokenLines lines={process.title} />
             </h2>
             <p className="lead">
-              {process.lead[0]}
-              <br className="max-[760px]:hidden" /> {process.lead[1]}
+              <BrokenLines lines={process.lead} brClassName="max-[760px]:hidden" />
             </p>
           </div>
 

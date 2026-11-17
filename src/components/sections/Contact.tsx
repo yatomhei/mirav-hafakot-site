@@ -3,19 +3,10 @@ import { useState, type FormEvent } from "react";
 import { useHome } from "@/content/context";
 import { useContactLinks } from "@/lib/contact";
 import { Phone, WhatsApp } from "@/components/ui/icons";
+import { contact as launchContact } from "@/content/home";
+import { DEFAULT_MESSAGE_TEMPLATE, fillMessage } from "@/content/whatsapp-message";
 
-/** The message Merav receives: one line per filled field. */
-function buildMessage(f: { name: string; phone: string; service: string; message: string }) {
-  return [
-    "היי מרב, הגעתי מהאתר",
-    `שם: ${f.name}`,
-    `טלפון: ${f.phone}`,
-    f.service && `מתעניינ/ת ב: ${f.service}`,
-    f.message && `\n${f.message}`,
-  ]
-    .filter(Boolean)
-    .join("\n");
-}
+const defaultSent = launchContact.sent;
 
 function CallButton({ className = "" }: { className?: string }) {
   const { contact } = useHome();
@@ -38,7 +29,9 @@ export function Contact() {
   const { contact } = useHome();
   const links = useContactLinks();
   const [error, setError] = useState("");
-  // When the browser blocks the new tab, offer the WhatsApp link to tap instead.
+  // After sending: the thank-you line, and when the browser blocked the new tab, the WhatsApp
+  // link to tap instead.
+  const [sent, setSent] = useState(false);
   const [fallback, setFallback] = useState("");
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -56,12 +49,13 @@ export function Contact() {
       return;
     }
     setError("");
-    const href = links.whatsapp(buildMessage(f));
+    const href = links.whatsapp(fillMessage(contact.message ?? DEFAULT_MESSAGE_TEMPLATE, f));
     // No "noopener" feature here: with it, window.open always returns null and we could not
     // tell a blocked tab from an opened one. Cut the link back to this page instead.
     const win = window.open(href, "_blank");
     if (win) win.opener = null;
     setFallback(win ? "" : href);
+    setSent(true);
   };
 
   return (
@@ -135,19 +129,22 @@ export function Contact() {
                 {error}
               </p>
             )}
-            {fallback && (
-              <p role="status" className="col-span-full text-center text-[15px]">
-                ההודעה מוכנה.{" "}
-                <a
-                  href={fallback}
-                  target="_blank"
-                  rel="noopener"
-                  className="font-medium underline underline-offset-4"
-                >
-                  פתיחת וואטסאפ
-                </a>
-              </p>
-            )}
+            <p role="status" className="col-span-full text-center text-[15px] empty:hidden">
+              {sent && (contact.sent ?? defaultSent)}
+              {fallback && (
+                <>
+                  {" "}
+                  <a
+                    href={fallback}
+                    target="_blank"
+                    rel="noopener"
+                    className="font-medium underline underline-offset-4"
+                  >
+                    פתיחת וואטסאפ
+                  </a>
+                </>
+              )}
+            </p>
             <button
               type="submit"
               className="btn btn-primary submit-btn col-span-full mt-2 !min-h-14 !px-9 !text-[18px]"
