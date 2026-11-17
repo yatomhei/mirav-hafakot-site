@@ -5,7 +5,7 @@ import type { Faq, Photo, IncludeItem, StillPhoto, StripPhoto, Testimonial, Vide
 export const hero = {
   title: ["הפקות סרטים", "וצילום אמנותי"],
   video: "video/hero.mp4",
-  poster: "hero-poster",
+  poster: { name: "hero-poster", alt: "" } as Photo,
 };
 
 /** Short intro right under the hero: one sentence and the contact button. */
@@ -39,35 +39,35 @@ export const works = {
   caption: "01 / עבודות נבחרות",
   title: "סרטים וקליפים שהפקתי",
   lead: "הצצה לכמה מהסיפורים שזכיתי לספר דרך המצלמה, מאירועים משפחתיים ועד סרטי תדמית ופרסומת.",
+  /** The homepage carousel; also the gallery of the bar/bat mitzvah service page. */
+  clips: [
+    {
+      title: "קליפ בת מצווה של גפן – בכרם עם המשפחה",
+      youtubeId: "QWX2MCzFjdk",
+      thumb: { name: "clip-gefen", alt: "" },
+    },
+    {
+      title: "קליפ בר מצווה בירושלים",
+      youtubeId: "0tKX4jDtYpc",
+      thumb: { name: "clip-home", alt: "" },
+    },
+    {
+      title: "קליפ בר מצווה – הנחת תפילין ראשונה",
+      youtubeId: "WSmlCo4dfOM",
+      thumb: { name: "clip-tefillin", alt: "" },
+    },
+    {
+      title: "קליפ בת מצווה – אופות עם סבתא",
+      youtubeId: "iiymbAVd0WM",
+      thumb: { name: "clip-baking", alt: "" },
+    },
+    {
+      title: "סרט בר מצווה – ברכות מהמשפחה",
+      youtubeId: "qHyDDsU9k34",
+      thumb: { name: "clip-blessings", alt: "" },
+    },
+  ] as Video[],
 };
-
-export const clips: Video[] = [
-  {
-    title: "קליפ בת מצווה של גפן – בכרם עם המשפחה",
-    youtubeId: "QWX2MCzFjdk",
-    thumb: { name: "clip-gefen", alt: "" },
-  },
-  {
-    title: "קליפ בר מצווה בירושלים",
-    youtubeId: "0tKX4jDtYpc",
-    thumb: { name: "clip-home", alt: "" },
-  },
-  {
-    title: "קליפ בר מצווה – הנחת תפילין ראשונה",
-    youtubeId: "WSmlCo4dfOM",
-    thumb: { name: "clip-tefillin", alt: "" },
-  },
-  {
-    title: "קליפ בת מצווה – אופות עם סבתא",
-    youtubeId: "iiymbAVd0WM",
-    thumb: { name: "clip-baking", alt: "" },
-  },
-  {
-    title: "סרט בר מצווה – ברכות מהמשפחה",
-    youtubeId: "qHyDDsU9k34",
-    thumb: { name: "clip-blessings", alt: "" },
-  },
-];
 
 export const stills = {
   title: "רגעים שתפסתי בעדשה",
@@ -195,7 +195,7 @@ export const process = {
 export const testimonials = {
   caption: "05 / המלצות של לקוחות",
   title: "לקוחות משתפים בחוויה",
-  background: "testimonials-bg",
+  background: { name: "testimonials-bg", alt: "", pos: "center 60%" } as Photo,
   items: [
     {
       quote:

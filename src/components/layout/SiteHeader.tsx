@@ -1,8 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { nav, site } from "@/content/site";
+import { nav } from "@/content/site";
 import { image } from "@/lib/asset";
-import { telHref, whatsappHref } from "@/lib/contact";
+import { useContactLinks } from "@/lib/contact";
 import { HomeLink } from "@/components/ui/HomeLink";
 import { Close, Menu, Phone, WhatsApp } from "@/components/ui/icons";
 
@@ -11,6 +11,8 @@ import { Close, Menu, Phone, WhatsApp } from "@/components/ui/icons";
  * up. At ≤820px the nav collapses into a numbered menu that drops down under the bar.
  */
 export function SiteHeader() {
+  const links = useContactLinks();
+  const { site } = links;
   const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
 
@@ -121,7 +123,7 @@ export function SiteHeader() {
             ))}
             <div className="mt-7 flex flex-col gap-3">
               <a
-                href={whatsappHref()}
+                href={links.whatsapp()}
                 target="_blank"
                 rel="noopener"
                 onClick={close}
@@ -131,7 +133,7 @@ export function SiteHeader() {
                 דברו איתי בוואטסאפ
               </a>
               <a
-                href={telHref()}
+                href={links.tel}
                 onClick={close}
                 className="btn btn-outline !min-h-14 !text-[18px]"
               >

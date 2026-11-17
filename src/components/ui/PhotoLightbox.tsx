@@ -1,7 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useEffect, useRef } from "react";
 import type { StillPhoto } from "@/content/types";
-import { image } from "@/lib/asset";
+import { photoFile } from "@/lib/asset";
 import { ArrowLeft, ArrowRight, Close } from "./icons";
 
 /**
@@ -32,7 +32,7 @@ export function PhotoLightbox({
     if (index === null) return;
     for (const d of [1, -1]) {
       const p = photos[(index + d + count) % count];
-      if (p) new Image().src = image(`${p.name}-1600.webp`);
+      if (p) new Image().src = photoFile(p.name, 1600);
     }
   }, [index, photos, count]);
 
@@ -79,8 +79,8 @@ export function PhotoLightbox({
             {photo && (
               <img
                 key={photo.name}
-                src={image(`${photo.name}-1600.webp`)}
-                srcSet={`${image(`${photo.name}-960.webp`)} 960w, ${image(`${photo.name}-1600.webp`)} 1600w`}
+                src={photoFile(photo.name, 1600)}
+                srcSet={`${photoFile(photo.name, 960)} 960w, ${photoFile(photo.name, 1600)} 1600w`}
                 sizes="100vw"
                 alt={photo.alt}
                 className="max-h-full max-w-full rounded-[clamp(8px,1vw,14px)] object-contain animate-in fade-in-0"

@@ -50,8 +50,11 @@ export type Service = {
   /** Service page */
   lead: string;
   videos: Video[];
-  /** Stills page shows photos instead of videos. */
-  photos?: Photo[];
+  /**
+   * The page shows another section's gallery instead of its own videos: "works" = the
+   * homepage clips, "stills" = the stills photos. Fixed in code, never set from the admin.
+   */
+  gallery?: "works" | "stills";
 };
 
 export type Testimonial = { quote: string; name: string; role: string };

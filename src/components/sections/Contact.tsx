@@ -1,8 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
-import { contact } from "@/content/home";
-import { site } from "@/content/site";
-import { telHref, whatsappHref } from "@/lib/contact";
+import { useHome } from "@/content/context";
+import { useContactLinks } from "@/lib/contact";
 import { Phone, WhatsApp } from "@/components/ui/icons";
 
 /** The message Merav receives: one line per filled field. */
@@ -19,8 +18,10 @@ function buildMessage(f: { name: string; phone: string; service: string; message
 }
 
 function CallButton({ className = "" }: { className?: string }) {
+  const { contact } = useHome();
+  const { site, tel } = useContactLinks();
   return (
-    <a href={telHref()} className={`btn call-btn !min-h-[54px] ${className}`}>
+    <a href={tel} className={`btn call-btn !min-h-[54px] ${className}`}>
       <Phone />
       <span>
         {contact.call}&nbsp;<span dir="ltr">{site.phone}</span>
@@ -34,6 +35,8 @@ function CallButton({ className = "" }: { className?: string }) {
  * WhatsApp message and opens the chat, so the visitor sees and sends it themselves.
  */
 export function Contact() {
+  const { contact } = useHome();
+  const links = useContactLinks();
   const [error, setError] = useState("");
   // When the browser blocks the new tab, offer the WhatsApp link to tap instead.
   const [fallback, setFallback] = useState("");
@@ -53,7 +56,7 @@ export function Contact() {
       return;
     }
     setError("");
-    const href = whatsappHref(buildMessage(f));
+    const href = links.whatsapp(buildMessage(f));
     // No "noopener" feature here: with it, window.open always returns null and we could not
     // tell a blocked tab from an opened one. Cut the link back to this page instead.
     const win = window.open(href, "_blank");

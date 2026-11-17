@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
-import { hero } from "@/content/home";
-import { site } from "@/content/site";
-import { asset, image } from "@/lib/asset";
+import { useContent } from "@/content/context";
+import { asset, image, photoFile } from "@/lib/asset";
 
 /**
  * Rounded full-height frame, looping video under a 40% dark-blue overlay, cream logo and
@@ -9,6 +8,8 @@ import { asset, image } from "@/lib/asset";
  * below the header. Reduced motion → poster.
  */
 export function Hero() {
+  const { site, home } = useContent();
+  const { hero } = home;
   const video = useRef<HTMLVideoElement>(null);
   const frame = useRef<HTMLDivElement>(null);
 
@@ -48,7 +49,7 @@ export function Hero() {
     v.play().catch(() => {});
   }, []);
 
-  const poster = image(`${hero.poster}-1600.webp`);
+  const poster = photoFile(hero.poster.name, 1600);
 
   return (
     <section className="px-[clamp(8px,1.4vw,20px)]">

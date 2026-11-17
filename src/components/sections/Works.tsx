@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { clips, works } from "@/content/home";
+import { useHome } from "@/content/context";
 import type { Video } from "@/content/types";
-import { Picture } from "@/components/ui/Picture";
+import { VideoThumb } from "@/components/ui/Picture";
 import { useVideoLink } from "@/components/ui/VideoPlayer";
 import { ArrowLeft, ArrowRight, Play } from "@/components/ui/icons";
 import { useRise } from "@/hooks/useRise";
@@ -31,9 +31,7 @@ function Slide({ clip, visible, basis }: { clip: Video; visible: boolean; basis:
       tabIndex={visible ? 0 : -1}
     >
       <span className="relative block aspect-[16/10] overflow-hidden rounded-[clamp(12px,1.2vw,18px)] bg-beige">
-        {clip.thumb && (
-          <Picture photo={clip.thumb} decorative sizes="(max-width: 640px) 92vw, 40vw" />
-        )}
+        <VideoThumb video={clip} sizes="(max-width: 640px) 92vw, 40vw" />
         <span aria-hidden="true" className="absolute inset-0 bg-[rgb(46_49_40/0.18)]" />
         <span
           aria-hidden="true"
@@ -48,6 +46,8 @@ function Slide({ clip, visible, basis }: { clip: Video; visible: boolean; basis:
 }
 
 export function Works() {
+  const { works } = useHome();
+  const { clips } = works;
   const pv = usePerView();
   // The title rises up quickly as it comes into view.
   const head = useRise<HTMLDivElement>(":scope > h2", { at: 0.92 });

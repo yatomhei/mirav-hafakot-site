@@ -1,12 +1,13 @@
 import { useState, type CSSProperties } from "react";
 import { useRise } from "@/hooks/useRise";
-import { stills } from "@/content/home";
+import { useHome } from "@/content/context";
 import { Picture } from "@/components/ui/Picture";
 import { PhotoLightbox } from "@/components/ui/PhotoLightbox";
 import type { StillPhoto } from "@/content/types";
 
 /** Stills band under the works: centred heading and text, then a full-width photo mosaic. */
 export function Stills() {
+  const { stills } = useHome();
   const grid = useRise<HTMLDivElement>("ul > li");
   return (
     <section
@@ -82,6 +83,7 @@ function StillTile({
  */
 export function StillsGrid({ layout = "mosaic" }: { layout?: "mosaic" | "masonry" }) {
   // The lightbox steps through the photos this gallery shows.
+  const { stills } = useHome();
   const [open, setOpen] = useState<number | null>(null);
   const photos = layout === "masonry" ? stills.photos : stills.photos.slice(0, SLOTS.length);
   const lightbox = <PhotoLightbox photos={photos} index={open} onIndex={setOpen} />;

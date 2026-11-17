@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { servicesIntro } from "@/content/home";
-import { services } from "@/content/services";
+import { useContent } from "@/content/context";
 import { useRise } from "@/hooks/useRise";
 import { Picture } from "@/components/ui/Picture";
 import { HomeLink } from "@/components/ui/HomeLink";
@@ -40,6 +39,8 @@ function CardFace({ title, meta }: { title: string; meta?: string }) {
  * risen past the middle of the screen (and back again when scrolling up).
  */
 export function Services() {
+  const { services, home } = useContent();
+  const servicesIntro = home.services;
   const title = useRef<HTMLHeadingElement>(null);
   const [cream, setCream] = useState(false);
   // Cards rise as they scroll in; cards in the same row share a top, so they rise together.

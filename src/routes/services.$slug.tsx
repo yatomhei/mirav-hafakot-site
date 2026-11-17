@@ -1,8 +1,9 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { PageShell } from "@/components/layout/PageShell";
 import { ServicePage } from "@/components/service/ServicePage";
+import { useContent } from "@/content/context";
+import type { SiteContent } from "@/content/docs";
 import { getService } from "@/content/services";
-import { site } from "@/content/site";
 
 export const Route = createFileRoute("/services/$slug")({
   loader: ({ params }) => {
@@ -10,9 +11,12 @@ export const Route = createFileRoute("/services/$slug")({
     if (!service) throw notFound();
     return { slug: service.slug };
   },
-  head: ({ loaderData }) => {
-    const s = loaderData && getService(loaderData.slug);
-    if (!s) return {};
+  head: ({ loaderData, matches }) => {
+    // Titles come from the saved content, which the root route loaded.
+    const content = matches[0]?.loaderData as SiteContent | undefined;
+    const s = content?.services.find((x) => x.slug === loaderData?.slug);
+    if (!content || !s) return {};
+    const { site } = content;
     const title = `${s.title} | ${site.name}`;
     return {
       meta: [
@@ -28,7 +32,7 @@ export const Route = createFileRoute("/services/$slug")({
 
 function ServiceRoute() {
   const { slug } = Route.useLoaderData();
-  const service = getService(slug)!;
+  const service = useContent().services.find((s) => s.slug === slug)!;
   return (
     <PageShell>
       <ServicePage key={slug} service={service} />

@@ -13,7 +13,8 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { siteConfig } from "@/config/site";
-import { seo, site } from "@/content/site";
+import { ContentProvider } from "@/content/context";
+import { loadSiteContent } from "@/content/load";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 function NotFoundComponent() {
@@ -65,36 +66,44 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { title: seo.home.title },
-      { name: "description", content: seo.home.description },
-      // Not indexed until launch (siteConfig.indexable).
-      ...(siteConfig.indexable ? [] : [{ name: "robots", content: "noindex, nofollow" }]),
-      { name: "theme-color", content: "#FAF0EB" },
-      { property: "og:title", content: seo.home.title },
-      { property: "og:description", content: seo.home.description },
-      { property: "og:type", content: "website" },
-      { property: "og:site_name", content: site.name },
-      { property: "og:locale", content: siteConfig.locale },
-      { property: "og:image", content: "/images/hero-poster-1600.webp" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", type: "image/png", href: "/favicon-32.png", sizes: "32x32" },
-      { rel: "icon", type: "image/png", href: "/favicon-192.png", sizes: "192x192" },
-      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500&display=swap",
-      },
-    ],
-  }),
+  // The saved content, loaded once and shared by every page. It only reloads when the admin
+  // saves (router.invalidate), not on every page change.
+  loader: () => loadSiteContent(),
+  staleTime: Infinity,
+  head: ({ loaderData }) => {
+    if (!loaderData) return {};
+    const { seo, site } = loaderData;
+    return {
+      meta: [
+        { charSet: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+        { title: seo.home.title },
+        { name: "description", content: seo.home.description },
+        // Not indexed until launch (siteConfig.indexable).
+        ...(siteConfig.indexable ? [] : [{ name: "robots", content: "noindex, nofollow" }]),
+        { name: "theme-color", content: "#FAF0EB" },
+        { property: "og:title", content: seo.home.title },
+        { property: "og:description", content: seo.home.description },
+        { property: "og:type", content: "website" },
+        { property: "og:site_name", content: site.name },
+        { property: "og:locale", content: siteConfig.locale },
+        { property: "og:image", content: "/images/hero-poster-1600.webp" },
+        { name: "twitter:card", content: "summary_large_image" },
+      ],
+      links: [
+        { rel: "stylesheet", href: appCss },
+        { rel: "icon", type: "image/png", href: "/favicon-32.png", sizes: "32x32" },
+        { rel: "icon", type: "image/png", href: "/favicon-192.png", sizes: "192x192" },
+        { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+        { rel: "preconnect", href: "https://fonts.googleapis.com" },
+        { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500&display=swap",
+        },
+      ],
+    };
+  },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
@@ -117,12 +126,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const content = Route.useLoaderData();
   useScrollReveal();
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. */}
-      <Outlet />
+      <ContentProvider value={content}>
+        {/* Required: nested routes render here. */}
+        <Outlet />
+      </ContentProvider>
     </QueryClientProvider>
   );
 }

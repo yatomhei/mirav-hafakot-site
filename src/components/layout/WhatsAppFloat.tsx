@@ -1,11 +1,12 @@
-import { whatsappHref } from "@/lib/contact";
+import { useContactLinks } from "@/lib/contact";
 import { WhatsApp } from "@/components/ui/icons";
 
 /** Always-visible WhatsApp button, bottom-left (the trailing corner in RTL). */
 export function WhatsAppFloat() {
+  const links = useContactLinks();
   return (
     <a
-      href={whatsappHref()}
+      href={links.whatsapp()}
       target="_blank"
       rel="noopener"
       aria-label="שליחת הודעה בוואטסאפ"

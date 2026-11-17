@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { process } from "@/content/home";
+import { useHome } from "@/content/context";
 import { Minus, Plus } from "@/components/ui/icons";
 
 /**
@@ -62,6 +62,7 @@ function useScrollRise() {
 
 /** "הרבה מעבר לצילום": olive band (#656C51), cream text, numbered rows that open one at a time. */
 export function Process() {
+  const { process } = useHome();
   const [open, setOpen] = useState(-1);
   const { band, rows } = useScrollRise();
 

@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { Service, Video } from "@/content/types";
-import { servicePage, services } from "@/content/services";
-import { Picture } from "@/components/ui/Picture";
+import { useContent } from "@/content/context";
+import { VideoThumb } from "@/components/ui/Picture";
 import { HomeLink } from "@/components/ui/HomeLink";
 import { useVideoLink } from "@/components/ui/VideoPlayer";
 import { StillsGrid } from "@/components/sections/Stills";
@@ -16,9 +16,7 @@ function VideoCard({ video }: { video: Video }) {
       {/* One wrapper, so the thumbnail and its title rise together (useRise moves the first child). */}
       <div className="flex flex-col gap-3.5">
         <div className="car-slide relative aspect-video overflow-hidden rounded-[clamp(12px,1.2vw,18px)] bg-beige">
-          {video.thumb && (
-            <Picture photo={video.thumb} decorative sizes="(max-width: 640px) 92vw, 46vw" />
-          )}
+          <VideoThumb video={video} sizes="(max-width: 640px) 92vw, 46vw" />
           {playable && (
             <>
               <span
@@ -75,10 +73,12 @@ function Breadcrumbs({ current }: { current: string }) {
 
 /** Service page: title + lead, the work (videos, or photos for stills), CTA, other services. */
 export function ServicePage({ service }: { service: Service }) {
+  const { services, servicePage, home } = useContent();
   const others = services.filter((s) => s.slug !== service.slug);
-  const isPhotos = !!service.photos?.length;
+  const isPhotos = service.gallery === "stills" && home.stills.photos.length > 0;
   // Only videos with a YouTube id are shown; a gallery with none shows a short note instead.
-  const videos = service.videos.filter((v) => v.youtubeId);
+  const own = service.gallery === "works" ? home.works.clips : service.videos;
+  const videos = own.filter((v) => v.youtubeId);
   const isEmpty = !isPhotos && videos.length === 0;
   // Gallery items rise as they scroll in, like the homepage service cards.
   const gallery = useRise<HTMLDivElement>("ul > li");

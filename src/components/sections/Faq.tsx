@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { faq } from "@/content/home";
+import { useHome } from "@/content/context";
 import { HomeLink } from "@/components/ui/HomeLink";
 import { ArrowLeft, Minus, Plus } from "@/components/ui/icons";
 
 /** One answer open at a time; the icon fills with the button green while open. */
 export function Faq() {
+  const { faq } = useHome();
   const [open, setOpen] = useState(-1);
 
   return (

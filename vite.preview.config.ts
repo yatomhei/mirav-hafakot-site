@@ -11,7 +11,13 @@ export default defineConfig({
   base: "./",
   publicDir: path.resolve(__dirname, "public"),
   plugins: [tsconfigPaths({ root: __dirname }), react(), tailwindcss()],
-  resolve: { alias: { "@": path.resolve(__dirname, "src") } },
+  resolve: {
+    alias: [
+      // No server here: the launch content stands in for the saved content.
+      { find: /^@\/content\/load$/, replacement: path.resolve(__dirname, "preview/load-stub.ts") },
+      { find: "@", replacement: path.resolve(__dirname, "src") },
+    ],
+  },
   build: {
     outDir: path.resolve(__dirname, "dist-preview"),
     emptyOutDir: true,

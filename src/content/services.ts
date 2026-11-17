@@ -1,4 +1,3 @@
-import { clips, stills } from "./home";
 import type { Service } from "./types";
 
 /**
@@ -14,7 +13,8 @@ export const services: Service[] = [
     desc: "קליפ אישי לבר או לבת המצווה — מהרעיון והלוקיישן ועד העריכה, סיפור שתחזרו אליו שוב ושוב.",
     image: { name: "svc-bar-mitzvah", alt: "" },
     lead: "קליפ אישי לבר או לבת המצווה — מהרעיון והלוקיישן ועד העריכה, סיפור שתחזרו אליו שוב ושוב.",
-    videos: clips,
+    videos: [],
+    gallery: "works",
   },
   {
     slug: "brand-films",
@@ -117,7 +117,7 @@ export const services: Service[] = [
     image: { name: "svc-stills", alt: "", pos: "center 62%" },
     lead: "תיעוד רגיש ולא פולשני של רגע משפחתי — תמונות טבעיות ואמיתיות שתשמרו לשנים.",
     videos: [],
-    photos: stills.photos,
+    gallery: "stills",
   },
 ];
 

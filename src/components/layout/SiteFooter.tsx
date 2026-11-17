@@ -1,12 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { site } from "@/content/site";
-import { services } from "@/content/services";
+import { useContent } from "@/content/context";
 import { image } from "@/lib/asset";
 import { isPlaceholder, mailHref, telHref } from "@/lib/contact";
 import { ArrowUp, Facebook, YouTube } from "@/components/ui/icons";
 
 /** Cream footer with dark ink (never the blue). Three columns, centred on mobile. */
 export function SiteFooter() {
+  const { site, services } = useContent();
   const socials = [
     { label: "יוטיוב", href: site.youtubeUrl, Icon: YouTube },
     { label: "פייסבוק", href: site.facebookUrl, Icon: Facebook },
@@ -59,7 +59,7 @@ export function SiteFooter() {
           <ul className="m-0 flex list-none flex-col gap-0.5 p-0 max-[760px]:items-center">
             <li>
               <a
-                href={telHref()}
+                href={telHref(site)}
                 dir="ltr"
                 className="footer-link inline-flex min-h-9 items-center text-[16px] font-light no-underline"
               >
@@ -68,7 +68,7 @@ export function SiteFooter() {
             </li>
             <li>
               <a
-                href={mailHref()}
+                href={mailHref(site)}
                 className="footer-link inline-flex min-h-9 items-center text-[16px] font-light no-underline"
               >
                 {site.email}

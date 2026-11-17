@@ -1,9 +1,10 @@
 import type { CSSProperties } from "react";
-import { strip } from "@/content/home";
+import { useHome } from "@/content/context";
 import { Picture } from "@/components/ui/Picture";
 
 /** Rounded photo strip on cream; widths follow each photo's ratio. Swipeable row on mobile. */
 export function PhotoStrip() {
+  const { strip } = useHome();
   return (
     <section aria-label="רצועת תמונות" className="bg-cream">
       <ul

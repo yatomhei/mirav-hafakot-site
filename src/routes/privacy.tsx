@@ -1,10 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageShell } from "@/components/layout/PageShell";
-import { site } from "@/content/site";
+import type { SiteContent } from "@/content/docs";
 
 /** Placeholder: the full privacy policy is written in phase 3, before launch. */
 export const Route = createFileRoute("/privacy")({
-  head: () => ({ meta: [{ title: `מדיניות פרטיות | ${site.name}` }] }),
+  head: ({ matches }) => {
+    const content = matches[0]?.loaderData as SiteContent | undefined;
+    return { meta: [{ title: `מדיניות פרטיות | ${content?.site.name ?? ""}` }] };
+  },
   component: PrivacyPage,
 });
 

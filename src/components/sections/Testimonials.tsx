@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { testimonials } from "@/content/home";
+import { useHome } from "@/content/context";
 import { Picture } from "@/components/ui/Picture";
 import { ArrowLeft, ArrowRight } from "@/components/ui/icons";
 
@@ -11,6 +11,7 @@ import { ArrowLeft, ArrowRight } from "@/components/ui/icons";
  * to that quote, so everything stays in step.
  */
 export function Testimonials() {
+  const { testimonials } = useHome();
   const items = testimonials.items;
   const [i, setI] = useState(0);
   const index = useRef(0);
@@ -95,7 +96,7 @@ export function Testimonials() {
           className="pointer-events-none absolute inset-x-0 top-0 h-full min-h-[100vh] will-change-transform"
         >
           <Picture
-            photo={{ name: testimonials.background, alt: "", pos: "center 60%" }}
+            photo={testimonials.background}
             decorative
             sizes="100vw"
             className="brightness-[0.8] contrast-[1.05] saturate-[0.95] sepia-[0.06]"

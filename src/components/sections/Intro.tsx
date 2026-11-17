@@ -1,9 +1,10 @@
-import { intro } from "@/content/home";
+import { useHome } from "@/content/context";
 import { HomeLink } from "@/components/ui/HomeLink";
 import { ArrowLeft } from "@/components/ui/icons";
 
 /** Short intro right under the hero: one sentence about Merav and the contact button. */
 export function Intro() {
+  const { intro } = useHome();
   return (
     <section aria-label="היכרות" className="px-[var(--gutter)]">
       <div

@@ -846,3 +846,26 @@
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
+
+/* Admin (/admin): plain, legible controls in the site's colours. */
+@layer components {
+  .admin-input {
+    @apply w-full rounded-md border border-ink/20 bg-white px-3 py-2 text-[15.5px] text-ink outline-none focus:border-olive-deep focus:ring-2 focus:ring-olive-deep/15;
+  }
+  .admin-btn,
+  .admin-btn-primary {
+    @apply inline-flex min-h-10 cursor-pointer items-center gap-1.5 rounded-md border px-3 py-2 text-[14.5px] transition-colors disabled:cursor-not-allowed disabled:opacity-45;
+  }
+  .admin-btn {
+    @apply border-ink/20 bg-white text-ink hover:border-ink/45;
+  }
+  .admin-btn-primary {
+    @apply border-olive-deep bg-olive-deep text-cream hover:opacity-90;
+  }
+  .admin-icon-btn {
+    @apply inline-flex size-9 cursor-pointer items-center justify-center rounded-md border border-ink/15 bg-white hover:border-ink/40 disabled:cursor-not-allowed disabled:opacity-35;
+  }
+  .admin-note {
+    @apply rounded-md bg-olive-soft px-3 py-2.5 text-[14px] leading-snug text-ink;
+  }
+}

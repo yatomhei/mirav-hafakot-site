@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { about } from "@/content/home";
+import { useHome } from "@/content/context";
 import { Picture } from "@/components/ui/Picture";
 
 /** Renders **bold** spans from content text. */
@@ -21,6 +21,7 @@ export function RichText({ text }: { text: string }) {
 
 /** About Merav, below the services: portrait beside the text on desktop, stacked below it on smaller screens. */
 export function About() {
+  const { about } = useHome();
   return (
     // Desktop: portrait beside the text (portrait on the right, the reading start in RTL).
     // ≤900px: stacked and centred, portrait below the text; phones: a square portrait.
