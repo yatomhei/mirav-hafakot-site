@@ -56,7 +56,8 @@ function localBackend(): AdminBackend {
 
 /**
  * Null when there is nowhere to save yet. Deploy phase: a Cloudflare backend (D1 for the
- * records, R2 for photos and the hero video, the admin behind Cloudflare Access) goes here.
+ * records, R2 for photos and the hero video) goes here. Its server functions call
+ * requireAdmin first, like the local ones, so only a signed-in admin can save.
  */
 export function getBackend(): AdminBackend | null {
   return localStoreEnabled() ? localBackend() : null;

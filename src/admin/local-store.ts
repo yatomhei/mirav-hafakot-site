@@ -3,10 +3,13 @@ import { localStoreEnabled } from "@/content/backend-config";
 import { validateDoc, type StoredDocs } from "@/content/docs";
 import { docSchemas, type DocKey } from "@/content/schema";
 
-// Local development only: the admin saves through these. Both refuse to run anywhere else,
-// so they do nothing on the live site (Cloudflare takes over there at deploy).
+// Local development only: the admin saves through these. They refuse to run anywhere else,
+// so they do nothing on the live site (Cloudflare takes over there at deploy). Each one
+// checks the admin sign-in first (auth/auth.server.ts), as the Cloudflare versions will.
 
-function assertLocal() {
+async function assertAdminLocal() {
+  const { requireAdmin } = await import("./auth/auth.server");
+  await requireAdmin();
   if (!localStoreEnabled()) throw new Error("Local content store is disabled here");
 }
 
@@ -20,7 +23,7 @@ export const saveLocalDocs = createServerFn({ method: "POST" })
     return docs;
   })
   .handler(async ({ data }) => {
-    assertLocal();
+    await assertAdminLocal();
     const { writeLocalDocs } = await import("@/content/dev-store.server");
     await writeLocalDocs(data);
   });
@@ -32,7 +35,7 @@ export const uploadLocalImage = createServerFn({ method: "POST" })
     return input;
   })
   .handler(async ({ data }) => {
-    assertLocal();
+    await assertAdminLocal();
     const { writeLocalUpload } = await import("@/content/dev-store.server");
     return writeLocalUpload(data.name, data.base64);
   });
@@ -51,7 +54,7 @@ export const uploadLocalVideo = createServerFn({ method: "POST" })
     return { name, file };
   })
   .handler(async ({ data }) => {
-    assertLocal();
+    await assertAdminLocal();
     const { writeLocalUpload } = await import("@/content/dev-store.server");
     return writeLocalUpload(data.name, new Uint8Array(await data.file.arrayBuffer()));
   });

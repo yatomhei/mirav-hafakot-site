@@ -13,6 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
+import { Route as AdminAuthCallbackRouteImport } from './routes/admin_.auth.callback'
+import { Route as AdminAuthGoogleRouteImport } from './routes/admin_.auth.google'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +36,32 @@ const ServicesSlugRoute = ServicesSlugRouteImport.update({
   path: '/services/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminAuthCallbackRoute = AdminAuthCallbackRouteImport.update({
+  id: '/admin_/auth/callback',
+  path: '/admin/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAuthGoogleRoute = AdminAuthGoogleRouteImport.update({
+  id: '/admin_/auth/google',
+  path: '/admin/auth/google',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/privacy': typeof PrivacyRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/admin/auth/callback': typeof AdminAuthCallbackRoute
+  '/admin/auth/google': typeof AdminAuthGoogleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/privacy': typeof PrivacyRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/admin/auth/callback': typeof AdminAuthCallbackRoute
+  '/admin/auth/google': typeof AdminAuthGoogleRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +69,34 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/privacy': typeof PrivacyRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/admin_/auth/callback': typeof AdminAuthCallbackRoute
+  '/admin_/auth/google': typeof AdminAuthGoogleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/privacy' | '/services/$slug'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/privacy'
+    | '/services/$slug'
+    | '/admin/auth/callback'
+    | '/admin/auth/google'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/privacy' | '/services/$slug'
-  id: '__root__' | '/' | '/admin' | '/privacy' | '/services/$slug'
+  to:
+    | '/'
+    | '/admin'
+    | '/privacy'
+    | '/services/$slug'
+    | '/admin/auth/callback'
+    | '/admin/auth/google'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/privacy'
+    | '/services/$slug'
+    | '/admin_/auth/callback'
+    | '/admin_/auth/google'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +104,8 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   PrivacyRoute: typeof PrivacyRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
+  AdminAuthCallbackRoute: typeof AdminAuthCallbackRoute
+  AdminAuthGoogleRoute: typeof AdminAuthGoogleRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +138,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin_/auth/callback': {
+      id: '/admin_/auth/callback'
+      path: '/admin/auth/callback'
+      fullPath: '/admin/auth/callback'
+      preLoaderRoute: typeof AdminAuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin_/auth/google': {
+      id: '/admin_/auth/google'
+      path: '/admin/auth/google'
+      fullPath: '/admin/auth/google'
+      preLoaderRoute: typeof AdminAuthGoogleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +160,8 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   PrivacyRoute: PrivacyRoute,
   ServicesSlugRoute: ServicesSlugRoute,
+  AdminAuthCallbackRoute: AdminAuthCallbackRoute,
+  AdminAuthGoogleRoute: AdminAuthGoogleRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

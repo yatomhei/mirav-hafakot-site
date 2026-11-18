@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "@tanstack/react-router";
-import { ExternalLink, RotateCcw, Save } from "lucide-react";
+import { ExternalLink, LogOut, RotateCcw, Save, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useContent } from "@/content/context";
 import {
@@ -15,17 +15,39 @@ import type { DocKey } from "@/content/schema";
 import { getBackend, type AdminBackend } from "./backend";
 import { Doc, DraftContext } from "./fields";
 import { TABS } from "./tabs";
+import { getAdminState, signOut, type AdminState } from "./auth/auth-fns";
+import { LoginScreen, UnavailableScreen } from "./auth/SignIn";
+import { AdminsPanel } from "./auth/AdminsPanel";
+import { SIGNED_OUT } from "./auth/session";
 
 /**
- * The content editor: one tab per section, one Save for all changes. There is no sign-in
- * screen: locally nobody else can reach it, and on the live site Cloudflare Access asks for
- * an approved email (with a one-time code) before this page even loads.
+ * The content editor: one tab per section, one Save for all changes. Admins sign in with a
+ * Google account on the allowed list (auth/), and the server checks the sign-in again on every
+ * save and upload.
  */
 export function AdminApp() {
   const [backend, setBackend] = useState<AdminBackend | null | undefined>(undefined);
-  useEffect(() => setBackend(getBackend()), []);
+  const [auth, setAuth] = useState<AdminState | "error" | undefined>(undefined);
+  // Why the last Google sign-in came back without signing in (see google.server.ts).
+  const [reason, setReason] = useState<string>();
+  const checkAuth = () =>
+    getAdminState()
+      .then(setAuth)
+      .catch(() => setAuth("error"));
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const signin = url.searchParams.get("signin");
+    if (signin) {
+      setReason(signin);
+      url.searchParams.delete("signin");
+      window.history.replaceState(null, "", url.pathname + url.search + url.hash);
+    }
+    const found = getBackend();
+    setBackend(found);
+    if (found) void checkAuth();
+  }, []);
 
-  if (backend === undefined) {
+  if (backend === undefined || (backend && auth === undefined)) {
     return (
       <Screen>
         <p className="text-ink/65">טוען…</p>
@@ -39,8 +61,22 @@ export function AdminApp() {
       </Screen>
     );
   }
-  return <Dashboard backend={backend} />;
+  if (auth === "error") {
+    return (
+      <Screen>
+        <p className="max-w-sm text-center text-ink">משהו השתבש. כדאי לרענן את הדף.</p>
+      </Screen>
+    );
+  }
+  if (auth?.state === "unavailable") {
+    return <UnavailableScreen missing={backend.local ? auth.missing : undefined} />;
+  }
+  if (auth?.state !== "signed-in") return <LoginScreen reason={reason} />;
+  return <Dashboard backend={backend} me={auth.email} onSignedOut={checkAuth} />;
 }
+
+/** The admins tab: not a content section, so it sits after the section tabs. */
+const ADMINS_TAB = "admins";
 
 function Screen({ children }: { children: ReactNode }) {
   return (
@@ -77,7 +113,15 @@ function describeIssue(
   return `${tab}: ${issue.message}`;
 }
 
-function Dashboard({ backend }: { backend: AdminBackend }) {
+function Dashboard({
+  backend,
+  me,
+  onSignedOut,
+}: {
+  backend: AdminBackend;
+  me: string;
+  onSignedOut: () => void;
+}) {
   const router = useRouter();
   const loaded = useContent();
   const [baseline, setBaseline] = useState<SiteContent>(loaded);
@@ -119,13 +163,27 @@ function Dashboard({ backend }: { backend: AdminBackend }) {
       setSavedAt(new Date().toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" }));
       await router.invalidate();
     } catch (caught) {
-      setErrors([`השמירה נכשלה: ${caught instanceof Error ? caught.message : String(caught)}`]);
+      const message = caught instanceof Error ? caught.message : String(caught);
+      // Signed out meanwhile (a new password elsewhere, or the session ran out): the changes
+      // stay on screen, and signing in again in another tab lets this one save them.
+      setErrors([
+        message === SIGNED_OUT
+          ? "החיבור לניהול נותק. כדי לא לאבד את השינויים: פותחים את ניהול האתר בלשונית חדשה, נכנסים שם, וחוזרים לכאן ללחוץ על שמירה"
+          : `השמירה נכשלה: ${message}`,
+      ]);
     } finally {
       setSaving(false);
     }
   }
 
-  const tab = TABS.find((t) => t.key === tabKey) ?? TABS[0];
+  async function leave() {
+    if (dirty && !window.confirm("יש שינויים שלא נשמרו. לצאת בכל זאת?")) return;
+    await signOut();
+    onSignedOut();
+  }
+
+  const onAdmins = tabKey === ADMINS_TAB;
+  const tab = onAdmins ? undefined : (TABS.find((t) => t.key === tabKey) ?? TABS[0]);
   const tabDirty = (key: string) =>
     TABS.find((t) => t.key === key)?.docs.some((d) => dirtyDocs.includes(d.key)) ?? false;
 
@@ -168,6 +226,10 @@ function Dashboard({ backend }: { backend: AdminBackend }) {
               <ExternalLink size={16} aria-hidden="true" />
               <span className="max-sm:sr-only">צפייה באתר</span>
             </a>
+            <button type="button" className="admin-btn" onClick={() => void leave()} title={me}>
+              <LogOut size={16} aria-hidden="true" />
+              <span className="max-sm:sr-only">יציאה</span>
+            </button>
           </div>
         </div>
 
@@ -199,6 +261,19 @@ function Dashboard({ backend }: { backend: AdminBackend }) {
               </button>
             </span>
           ))}
+          <span aria-hidden="true" className="mx-1 h-5 w-px shrink-0 self-center bg-ink/15" />
+          <button
+            type="button"
+            aria-current={onAdmins ? "page" : undefined}
+            onClick={() => setTabKey(ADMINS_TAB)}
+            className={cn(
+              "flex shrink-0 cursor-pointer items-center gap-1.5 rounded-md px-3 py-2 text-[14.5px] whitespace-nowrap transition-colors",
+              onAdmins ? "bg-olive-deep text-cream" : "hover:bg-ink/5",
+            )}
+          >
+            <Users size={15} aria-hidden="true" />
+            מנהלים
+          </button>
         </nav>
       </header>
 
@@ -216,6 +291,8 @@ function Dashboard({ backend }: { backend: AdminBackend }) {
             </ul>
           </div>
         )}
+
+        {onAdmins && <AdminsPanel me={me} />}
 
         <DraftContext.Provider
           value={{
