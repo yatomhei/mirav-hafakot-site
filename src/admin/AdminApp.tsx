@@ -176,6 +176,13 @@ function Dashboard({
     }
   }
 
+  /** Back to the last saved version. Asks first: it drops the edits in every tab. */
+  function discard() {
+    if (!window.confirm("לבטל את כל השינויים שלא נשמרו, בכל הלשוניות?")) return;
+    setDraft(baseline);
+    setErrors([]);
+  }
+
   async function leave() {
     if (dirty && !window.confirm("יש שינויים שלא נשמרו. לצאת בכל זאת?")) return;
     await signOut();
@@ -205,10 +212,7 @@ function Dashboard({
               type="button"
               className="admin-btn"
               disabled={!dirty || saving}
-              onClick={() => {
-                setDraft(baseline);
-                setErrors([]);
-              }}
+              onClick={discard}
             >
               <RotateCcw size={16} aria-hidden="true" />
               <span className="max-sm:sr-only">ביטול שינויים</span>
@@ -342,10 +346,7 @@ function Dashboard({
             className="admin-btn ms-auto"
             disabled={saving}
             aria-label="ביטול שינויים"
-            onClick={() => {
-              setDraft(baseline);
-              setErrors([]);
-            }}
+            onClick={discard}
           >
             <RotateCcw size={16} aria-hidden="true" />
           </button>

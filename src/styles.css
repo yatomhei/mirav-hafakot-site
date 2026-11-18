@@ -1,5 +1,8 @@
-/* Fonts are loaded via <link> in the root route head — an @import here would delay the
-   request until this stylesheet has downloaded and parsed. */
+/* Rubik, served from the site itself (no request to Google). Each weight's file lists its
+   character ranges, so the browser downloads only the Hebrew and Latin parts it needs. */
+@import "@fontsource/rubik/300.css";
+@import "@fontsource/rubik/400.css";
+@import "@fontsource/rubik/500.css";
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -328,11 +331,15 @@
   }
   .field::placeholder {
     color: var(--ink);
-    opacity: 0.6;
+    /* 0.78 keeps the hint readable on cream (about 6:1). */
+    opacity: 0.78;
   }
   .field:focus {
     outline: none;
-    box-shadow: 0 0 0 3px var(--beige);
+  }
+  /* Keyboard focus: a dark ring, clear on both the cream field and the brown section. */
+  .field:focus-visible {
+    box-shadow: 0 0 0 3px var(--ink-deep);
   }
   .field-area {
     border-radius: 24px;

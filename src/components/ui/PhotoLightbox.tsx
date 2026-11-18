@@ -1,4 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
+import { useReturnFocus } from "@/hooks/useReturnFocus";
 import { useEffect, useRef } from "react";
 import type { StillPhoto } from "@/content/types";
 import { photoFile } from "@/lib/asset";
@@ -9,7 +10,7 @@ import { ArrowLeft, ArrowRight, Close } from "./icons";
  * counter, previous/next buttons, arrow keys and swipe. RTL: "next" sits on the left, the
  * left arrow key goes forward and swiping right goes forward (as in the works carousel).
  * The gallery wraps around at both ends. Esc, the close button or a click beside the photo
- * closes it; focus returns to the photo that opened it (Radix Dialog).
+ * closes it; focus returns to the photo that opened it.
  */
 export function PhotoLightbox({
   photos,
@@ -26,6 +27,7 @@ export function PhotoLightbox({
   const count = photos.length;
   const go = (d: number) => index !== null && onIndex((index + d + count) % count);
   const touchX = useRef<number | null>(null);
+  const returnFocus = useReturnFocus(open);
 
   // Warm the cache with the neighbours so stepping through feels instant.
   useEffect(() => {
@@ -43,6 +45,7 @@ export function PhotoLightbox({
         <Dialog.Content
           dir="rtl"
           aria-describedby={undefined}
+          onCloseAutoFocus={returnFocus}
           className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-3 p-3 text-cream outline-none sm:gap-4 sm:p-8"
           onClick={(e) => e.target === e.currentTarget && onIndex(null)}
           onKeyDown={(e) => {

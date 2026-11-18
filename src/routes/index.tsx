@@ -8,8 +8,33 @@ import { Process } from "@/components/sections/Process";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { Faq } from "@/components/sections/Faq";
 import { PhotoStrip } from "@/components/sections/PhotoStrip";
+import type { SiteContent } from "@/content/docs";
+import { photoFile } from "@/lib/asset";
+import { homeJsonLd, pageAddress } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
+  head: ({ matches }) => {
+    const content = matches[0]?.loaderData as SiteContent | undefined;
+    const address = pageAddress("/");
+    return {
+      meta: address.meta,
+      links: [
+        ...address.links,
+        // The hero's poster is the first thing on screen: fetch it before the CSS asks for it.
+        ...(content
+          ? [
+              {
+                rel: "preload",
+                as: "image",
+                href: photoFile(content.home.hero.poster.name, 1600),
+                fetchPriority: "high" as const,
+              },
+            ]
+          : []),
+      ],
+      scripts: content ? [homeJsonLd(content)] : [],
+    };
+  },
   component: HomePage,
 });
 

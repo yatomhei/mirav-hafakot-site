@@ -23,7 +23,7 @@ export function SiteFooter() {
       />
       <div className="mx-auto grid max-w-[var(--content-max)] grid-cols-3 items-start gap-x-[clamp(24px,4vw,64px)] gap-y-10 max-[760px]:grid-cols-1 max-[760px]:text-center">
         <div>
-          <Link to="/" aria-label={`${site.name} — לדף הבית`} className="inline-block">
+          <Link to="/" aria-label={`${site.name}, לדף הבית`} className="inline-block">
             <img
               src={image("logo-color.webp")}
               alt={site.name}

@@ -4,6 +4,8 @@ import { ServicePage } from "@/components/service/ServicePage";
 import { useContent } from "@/content/context";
 import type { SiteContent } from "@/content/docs";
 import { getService } from "@/content/services";
+import { absImage, pageAddress, serviceJsonLd } from "@/lib/seo";
+import { photoFile } from "@/lib/asset";
 
 export const Route = createFileRoute("/services/$slug")({
   loader: async ({ params, parentMatchPromise }) => {
@@ -20,13 +22,24 @@ export const Route = createFileRoute("/services/$slug")({
     if (!content || !s) return {};
     const { site } = content;
     const title = `${s.title} | ${site.name}`;
+    const address = pageAddress(`/services/${s.slug}`);
     return {
       meta: [
         { title },
         { name: "description", content: s.lead },
         { property: "og:title", content: title },
         { property: "og:description", content: s.lead },
+        // The service's own photo when it has one (otherwise the site-wide hero image).
+        ...(s.image
+          ? [
+              { property: "og:image", content: absImage(photoFile(s.image.name, 1600)) },
+              { property: "og:image:alt", content: s.image.alt || s.title },
+            ]
+          : []),
+        ...address.meta,
       ],
+      links: address.links,
+      scripts: [serviceJsonLd(content, s)],
     };
   },
   component: ServiceRoute,

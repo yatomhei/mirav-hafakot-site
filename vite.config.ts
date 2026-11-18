@@ -12,4 +12,14 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  vite: {
+    server: {
+      // This computer only: other devices on the network can't reach the dev server.
+      host: "localhost",
+      fs: {
+        // Vite's defaults, plus the local admin data (its sign-in secret must never be served).
+        deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "**/.local-content/**"],
+      },
+    },
+  },
 });

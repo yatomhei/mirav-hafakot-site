@@ -75,7 +75,7 @@ export function Hero() {
           <img
             className="hero-logo"
             src={image("logo-cream.webp")}
-            alt={`${site.name} — ${site.tagline}`}
+            alt={`${site.name} - ${site.tagline}`}
             fetchPriority="high"
           />
           <h1 className="display">

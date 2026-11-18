@@ -107,6 +107,8 @@ export async function finishGoogleSignIn(request: Request) {
   try {
     const response = await fetch(GOOGLE_TOKEN_URL, {
       method: "POST",
+      // Don't leave the visitor waiting on Google forever.
+      signal: AbortSignal.timeout(10_000),
       headers: { "content-type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         code,

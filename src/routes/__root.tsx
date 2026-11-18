@@ -16,6 +16,7 @@ import { siteConfig } from "@/config/site";
 import { ContentProvider } from "@/content/context";
 import { loadSiteContent } from "@/content/load";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { absImage } from "@/lib/seo";
 
 function NotFoundComponent() {
   return (
@@ -87,7 +88,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         { property: "og:type", content: "website" },
         { property: "og:site_name", content: site.name },
         { property: "og:locale", content: siteConfig.locale },
-        { property: "og:image", content: "/images/hero-poster-1600.webp" },
+        // Full address once the domain is set (WhatsApp and Facebook ignore relative ones).
+        { property: "og:image", content: absImage("/images/hero-poster-1600.webp") },
+        { property: "og:image:width", content: "1600" },
+        { property: "og:image:height", content: "900" },
+        { property: "og:image:alt", content: `${site.name} - ${site.tagline}` },
         { name: "twitter:card", content: "summary_large_image" },
       ],
       links: [
@@ -95,12 +100,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         { rel: "icon", type: "image/png", href: "/favicon-32.png", sizes: "32x32" },
         { rel: "icon", type: "image/png", href: "/favicon-192.png", sizes: "192x192" },
         { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
-        { rel: "preconnect", href: "https://fonts.googleapis.com" },
-        { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-        {
-          rel: "stylesheet",
-          href: "https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500&display=swap",
-        },
       ],
     };
   },

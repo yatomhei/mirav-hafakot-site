@@ -48,6 +48,12 @@ export function Contact() {
       (e.currentTarget.elements.namedItem(f.name ? "phone" : "name") as HTMLInputElement)?.focus();
       return;
     }
+    // At least 9 digits: a landline (02-1234567) or a mobile (050-1234567), with or without +972.
+    if (f.phone.replace(/\D/g, "").length < 9) {
+      setError("נא להזין מספר טלפון תקין, למשל 050-1234567.");
+      (e.currentTarget.elements.namedItem("phone") as HTMLInputElement)?.focus();
+      return;
+    }
     setError("");
     const href = links.whatsapp(fillMessage(contact.message ?? DEFAULT_MESSAGE_TEMPLATE, f));
     // No "noopener" feature here: with it, window.open always returns null and we could not

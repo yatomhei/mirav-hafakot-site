@@ -54,7 +54,7 @@ export function SiteHeader() {
         <div className="flex items-center justify-between gap-6 px-[var(--gutter)] py-[14px]">
           <Link
             to="/"
-            aria-label={`${site.name} — לדף הבית`}
+            aria-label={`${site.name}, לדף הבית`}
             className="block leading-none"
             onClick={close}
           >

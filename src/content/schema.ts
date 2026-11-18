@@ -29,8 +29,12 @@ const videoSchema = z.object({
   featured: z.boolean().optional(),
 });
 
-/** Empty, a [placeholder] or a web address. */
-const link = z.union([z.literal(""), z.string().regex(/^\[.*\]$/), z.url().max(500)]);
+/** Empty, a [placeholder] or a secure web address (https only). */
+const link = z.union([
+  z.literal(""),
+  z.string().regex(/^\[.*\]$/),
+  z.url({ protocol: /^https$/ }).max(500),
+]);
 
 export const docSchemas = {
   site: z.object({

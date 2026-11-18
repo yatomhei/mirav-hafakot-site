@@ -1,4 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
+import { useReturnFocus } from "@/hooks/useReturnFocus";
 import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
 import type { Video } from "@/content/types";
 import { youtubeUrl } from "@/lib/contact";
@@ -14,6 +15,7 @@ const Ctx = createContext<(v: Video) => void>(() => {});
 export function VideoPlayerProvider({ children }: { children: ReactNode }) {
   const [video, setVideo] = useState<Video | null>(null);
   const open = useCallback((v: Video) => setVideo(v), []);
+  const returnFocus = useReturnFocus(!!video);
 
   return (
     <Ctx.Provider value={open}>
@@ -23,6 +25,7 @@ export function VideoPlayerProvider({ children }: { children: ReactNode }) {
           <Dialog.Overlay className="fixed inset-0 z-50 bg-[rgb(35_38_31/0.88)] data-[state=open]:animate-in data-[state=open]:fade-in-0" />
           <Dialog.Content
             dir="rtl"
+            onCloseAutoFocus={returnFocus}
             className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 p-4 outline-none sm:p-10"
             onClick={(e) => e.target === e.currentTarget && setVideo(null)}
           >

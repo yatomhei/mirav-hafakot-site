@@ -12,7 +12,13 @@ export async function preparePhotoSet(
 ): Promise<{ files: Record<PhotoWidth, Blob>; ratio: number }> {
   if (!file.type.startsWith("image/")) throw new Error("הקובץ שנבחר אינו תמונה");
 
-  const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+  let bitmap: ImageBitmap;
+  try {
+    bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+  } catch {
+    // Typically an iPhone HEIC photo on a desktop browser that can't open that format.
+    throw new Error("לא הצלחנו לפתוח את התמונה. נסו לשמור אותה כ־JPG ולהעלות שוב");
+  }
   const ratio = bitmap.width / bitmap.height;
   const files = {} as Record<PhotoWidth, Blob>;
   try {
