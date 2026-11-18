@@ -92,9 +92,21 @@ A dedicated page for "קליפים לבר ובת מצווה", designed separatel
     the homepage sections) or it stays fixed in code.
   - **Contact:** the same WhatsApp form as the rest of the site, or a version tuned for this
     page (for example, the interest preset to bar/bat mitzvah).
-  - **Ads and tracking:** if the page will run with Facebook or Google ads, a tracking pixel
-    changes the privacy picture. It then needs consent before it loads, a cookie notice, and
-    an update to the privacy policy (today the site has no tracking at all).
+  - **Ads and tracking (ask Merav: "Will you advertise this page with paid ads on Facebook,
+    Instagram or Google?"):**
+    - **No ads** (she shares the link herself, on WhatsApp or her Instagram bio): no pixel, no
+      consent banner, no privacy policy change. The page can have the full header and footer
+      and be indexed like any other page.
+    - **Ads:** she'll probably want a Facebook or Google pixel to see which ads brought
+      inquiries. Suggested setup: the pixel and its consent banner **on the landing page only**,
+      so the rest of the site stays without tracking and without a banner. The form is on the
+      page, so it still measures what matters. The pixel loads only after the visitor
+      approves. The choice is remembered so the banner doesn't come back, and declining
+      leaves the page fully working. Add a section to the privacy policy (one policy for the
+      whole site) about the landing page's pixel and consent. Ad pages usually keep visitors
+      focused on contacting her, with fewer links away.
+    - **Not sure yet:** build it without tracking, and add the pixel and banner if and when she
+      starts advertising.
 - **3. Check it like the rest of the site:** the four checkers (QA, security, legal and
   accessibility, SEO) on the new page, plus the sitemap and the structured data if it's
   indexed.
