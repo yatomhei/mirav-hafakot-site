@@ -61,6 +61,12 @@ export type Service = {
   gallery?: "stills";
   /** Hidden from the site: no card, no links, and its page answers "not found". */
   hidden?: boolean;
+  /**
+   * How the page appears in Google, the browser tab and shared links. Optional: when empty
+   * the wording in content/seo-pages.ts is used. Never shown on the page itself.
+   */
+  seoTitle?: string;
+  seoDescription?: string;
 };
 
 export type Testimonial = { quote: string; name: string; role: string };

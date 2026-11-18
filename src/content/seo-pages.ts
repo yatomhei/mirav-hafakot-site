@@ -1,7 +1,10 @@
+import { getService } from "./services";
+
 // What each service page shows in Google, in the browser tab and in shared-link previews.
-// It never appears on the page itself, where the service keeps its short name. Built in
-// code (not an admin field): each one pairs the service with the phrases people search for
-// and the towns Merav works in. A service with no entry here falls back to its name + area.
+// It never appears on the page itself, where the service keeps its short name. Each one pairs
+// the service with the phrases people search for and the towns Merav works in. Merav can
+// replace them in the admin (עמודי שירות). A renamed service, or one with no entry here,
+// falls back to its name + area (see autoServiceSeo).
 
 /** The area wording used in titles: her town first, then the nearest large town. */
 export const SEO_AREA = "יד בנימין, גדרה והסביבה";
@@ -44,14 +47,34 @@ export const serviceSeo: Record<string, { title: string; description: string }> 
   },
 };
 
-/** A service page's title and description for search, with the site name after the title. */
-export function serviceSeoFor(
-  service: { slug: string; title: string; lead: string },
-  siteName: string,
-) {
+type ServiceForSeo = {
+  slug: string;
+  title: string;
+  lead: string;
+  seoTitle?: string | undefined;
+  seoDescription?: string | undefined;
+};
+
+/**
+ * The automatic wording (before the site name), used when the admin fields are empty. The
+ * written wording above belongs to each service's launch name: once Merav renames a service,
+ * it follows the new name (name + area) and her opening paragraph instead.
+ */
+export function autoServiceSeo(service: ServiceForSeo) {
   const own = serviceSeo[service.slug];
+  const renamed = service.title.trim() !== getService(service.slug)?.title;
+  if (own && !renamed) return own;
+  return { title: `${service.title.trim()} - ${SEO_AREA}`, description: service.lead };
+}
+
+/**
+ * A service page's title and description for search: what Merav typed in the admin, or the
+ * automatic wording. The site name always follows the title.
+ */
+export function serviceSeoFor(service: ServiceForSeo, siteName: string) {
+  const auto = autoServiceSeo(service);
   return {
-    title: `${own?.title ?? `${service.title} - ${SEO_AREA}`} | ${siteName}`,
-    description: own?.description ?? service.lead,
+    title: `${service.seoTitle?.trim() || auto.title} | ${siteName}`,
+    description: service.seoDescription?.trim() || auto.description,
   };
 }

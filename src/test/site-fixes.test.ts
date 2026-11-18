@@ -59,6 +59,40 @@ describe("service page titles for search", () => {
     expect(other).toEqual({ title: `שירות חדש - ${SEO_AREA} | הפקת המרב`, description: "תיאור" });
   });
 
+  it("prefer what Merav typed in the admin, ignoring blank fields", () => {
+    const base = { slug: "kululam", title: "קולולם", lead: "x" };
+    const typed = serviceSeoFor(
+      { ...base, seoTitle: "קולולם בגדרה", seoDescription: "תיאור שלי" },
+      "הפקת המרב",
+    );
+    expect(typed).toEqual({ title: "קולולם בגדרה | הפקת המרב", description: "תיאור שלי" });
+    const blank = serviceSeoFor({ ...base, seoTitle: "  ", seoDescription: "" }, "הפקת המרב");
+    expect(blank.title).toBe("צילום קולולם לבית ספר ולקהילה | הפקת המרב");
+
+    const services = defaultContent.services;
+    const withTitle = services.map((s, i) => (i === 0 ? { ...s, seoTitle: "כותרת" } : s));
+    expect(validateDoc("services", withTitle).success).toBe(true);
+    const tooLong = services.map((s, i) => (i === 0 ? { ...s, seoTitle: "א".repeat(121) } : s));
+    expect(validateDoc("services", tooLong).success).toBe(false);
+  });
+
+  it("follow a renamed service: its new name and its opening paragraph", () => {
+    const renamed = serviceSeoFor(
+      { slug: "kululam", title: "קליפ קולולם", lead: "הפסקה החדשה" },
+      "הפקת המרב",
+    );
+    expect(renamed).toEqual({
+      title: `קליפ קולולם - ${SEO_AREA} | הפקת המרב`,
+      description: "הפסקה החדשה",
+    });
+    // What she types still wins over the automatic wording.
+    const typed = serviceSeoFor(
+      { slug: "kululam", title: "קליפ קולולם", lead: "x", seoTitle: "שלי" },
+      "הפקת המרב",
+    );
+    expect(typed.title).toBe("שלי | הפקת המרב");
+  });
+
   it("cover every service the site has", () => {
     for (const s of defaultContent.services) {
       expect(serviceSeoFor(s, "x").description).not.toBe(s.lead);

@@ -159,6 +159,9 @@ export const docSchemas = {
         videos: z.array(videoSchema).max(30),
         gallery: z.enum(["stills"]).optional(),
         hidden: z.boolean().optional(),
+        // Optional search wording (see seo-pages.ts); empty means the automatic one.
+        seoTitle: text.max(120).optional(),
+        seoDescription: text.max(300).optional(),
       }),
     )
     .length(7)

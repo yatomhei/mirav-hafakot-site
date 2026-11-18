@@ -10,6 +10,7 @@ import {
   featuredVideos,
 } from "@/content/featured";
 import { photoFile } from "@/lib/asset";
+import { ServiceSearchFields } from "./SearchFields";
 import {
   AddPhotoButton,
   Card,
@@ -616,6 +617,7 @@ export const TABS: TabDef[] = [
                 return (
                   <>
                     <Text path={`${p}.lead`} label="פסקה בראש העמוד" multiline />
+                    <ServiceSearchFields path={p} />
                     <StillsPageCheck path={p}>
                       {(stills) =>
                         stills ? (

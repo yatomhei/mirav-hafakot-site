@@ -86,7 +86,7 @@ export const DraftContext = createContext<{
   draft: SiteContent;
   update: (key: DocKey, value: unknown) => void;
 } | null>(null);
-function useDraftContext() {
+export function useDraftContext() {
   const context = useContext(DraftContext);
   if (!context) throw new Error("Used outside the admin");
   return context;
@@ -149,13 +149,24 @@ type TextProps = {
   hint?: string;
   /** English, a number or an address: typed left to right. */
   ltr?: boolean;
+  /** Grey example text while the field is empty. */
+  placeholder?: string;
   /** Several lines; Enter starts a new line on the site. */
   multiline?: boolean;
   rows?: number;
   inputMode?: "numeric" | "tel" | "url" | "email";
 };
 
-export function Text({ path, label, hint, ltr, multiline, rows = 3, inputMode }: TextProps) {
+export function Text({
+  path,
+  label,
+  hint,
+  ltr,
+  multiline,
+  rows = 3,
+  inputMode,
+  placeholder,
+}: TextProps) {
   const id = useId();
   const { value, set } = useField<string | undefined>(path);
   const common = {
@@ -164,6 +175,7 @@ export function Text({ path, label, hint, ltr, multiline, rows = 3, inputMode }:
     dir: ltr ? "ltr" : "rtl",
     className: cn("admin-input", ltr && "text-left"),
     onChange: (event: { target: { value: string } }) => set(event.target.value),
+    ...(placeholder ? { placeholder } : {}),
   } as const;
   return (
     <div>
