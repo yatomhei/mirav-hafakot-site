@@ -68,6 +68,37 @@ number of cards.
 
 Estimated: a few hours including tests.
 
+## Bar/bat mitzvah landing page: finish it, then build it into the site
+
+A dedicated page for "קליפים לבר ובת מצווה", designed separately from the site.
+
+- **Where it stands:** version 2 is designed on its own canvas
+  (https://claude.ai/artifact/Face9DiaM57eD626U2YpEU), with a shareable static preview
+  (https://claude.ai/artifact/LSZyrYKDazftJi6to4cde3, 15 November 2026). Version 1 has an older
+  preview (https://claude.ai/artifact/Jcsu8kSwvJDobw9Mvcqdc7). The canvas is the source of
+  truth; the preview is rebuilt from it.
+- **1. Finish the design:** review version 2 with Merav, settle the remaining copy, photos and
+  clips, and get her approval on the canvas.
+- **2. Build it into the site's code:** a real page in this project (React + Tailwind, the
+  site's own colours, fonts and components), not a copy of the static preview. Decisions to
+  make first:
+  - **Address:** for example `/bar-bat-mitzvah`. Not the same as the existing service page
+    `/services/bar-bat-mitzvah`, which stays.
+  - **Header and footer:** the site's own (visitors can reach the rest of the site), or a
+    stripped-down version focused on one action (typical for ad campaigns).
+  - **Google:** indexed alongside the service page, or `noindex` if it's only for ads and
+    shared links, so the two pages don't compete in search.
+  - **Editing:** whether Merav edits its texts, photos and clips in the admin (a new tab, like
+    the homepage sections) or it stays fixed in code.
+  - **Contact:** the same WhatsApp form as the rest of the site, or a version tuned for this
+    page (for example, the interest preset to bar/bat mitzvah).
+  - **Ads and tracking:** if the page will run with Facebook or Google ads, a tracking pixel
+    changes the privacy picture. It then needs consent before it loads, a cookie notice, and
+    an update to the privacy policy (today the site has no tracking at all).
+- **3. Check it like the rest of the site:** the four checkers (QA, security, legal and
+  accessibility, SEO) on the new page, plus the sitemap and the structured data if it's
+  indexed.
+
 ## Waiting on Merav
 
 - Her business number (מספר עוסק): replaces `[להשלים: מספר עוסק]` on the privacy policy and
