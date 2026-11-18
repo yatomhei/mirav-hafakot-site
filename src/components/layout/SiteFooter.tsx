@@ -111,6 +111,14 @@ export function SiteFooter() {
         <p className="text-[13px] text-[rgb(46_49_40/0.78)]">
           © {new Date().getFullYear()} {site.name} · {site.tagline}
         </p>
+        <nav aria-label="מסמכים" className="flex gap-x-6 text-[14px]">
+          <Link to="/privacy" className="inline-flex min-h-11 items-center text-ink">
+            מדיניות פרטיות
+          </Link>
+          <Link to="/accessibility" className="inline-flex min-h-11 items-center text-ink">
+            הצהרת נגישות
+          </Link>
+        </nav>
         <a href="#top" className="inline-flex min-h-11 items-center gap-2 text-[14px] text-ink">
           חזרה למעלה
           <ArrowUp />

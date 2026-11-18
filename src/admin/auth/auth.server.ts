@@ -3,7 +3,7 @@ import { localStoreEnabled } from "@/content/backend-config";
 import { isAllowed, parseOwners, type EmailStore } from "./allowlist";
 import { randomToken } from "./encoding";
 import {
-  SESSION_COOKIE,
+  sessionCookieName,
   SESSION_DAYS,
   SIGNED_OUT,
   readSession,
@@ -103,9 +103,12 @@ export async function emailStore(): Promise<EmailStore | null> {
   return localStoreEnabled() ? localEmailStore() : null;
 }
 
+/** This site's sign-in cookie name (__Host- on the live site, see session.ts). */
+const cookieName = () => sessionCookieName(!localStoreEnabled());
+
 /** The sign-in cookie, set when Google confirms an allowed email. */
 export async function sessionCookie(secret: string, email: string) {
-  return serializeCookie(SESSION_COOKIE, await signSession(secret, email), {
+  return serializeCookie(cookieName(), await signSession(secret, email), {
     path: "/",
     maxAge: SESSION_DAYS * 86400,
     sameSite: "Strict",
@@ -114,14 +117,14 @@ export async function sessionCookie(secret: string, email: string) {
 }
 
 export function endSession() {
-  deleteCookie(SESSION_COOKIE, { path: "/" });
+  deleteCookie(cookieName(), { path: "/", secure: !localStoreEnabled() });
 }
 
 /** The signed-in admin's email while it is still on the allowed list; otherwise null. */
 export async function currentAdmin(): Promise<string | null> {
   const [store, secret, owners] = await Promise.all([emailStore(), sessionSecret(), ownerEmails()]);
   if (!store || !secret) return null;
-  const session = await readSession(secret, getCookie(SESSION_COOKIE));
+  const session = await readSession(secret, getCookie(cookieName()));
   if (!session) return null;
   return (await isAllowed(store, owners, session.email)) ? session.email : null;
 }

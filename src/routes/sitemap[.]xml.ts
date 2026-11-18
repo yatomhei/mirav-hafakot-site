@@ -3,8 +3,8 @@ import { siteConfig } from "@/config/site";
 import { absUrl } from "@/lib/seo";
 
 // The public pages, at the same addresses as their canonical tags: the homepage, every
-// service that isn't hidden, and the privacy page. Empty until the site is indexable and its
-// domain is set (siteConfig).
+// service that isn't hidden, and the privacy and accessibility pages. Empty until the site
+// is indexable and its domain is set (siteConfig).
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
@@ -18,6 +18,7 @@ export const Route = createFileRoute("/sitemap.xml")({
             "/",
             ...content.services.filter((s) => !s.hidden).map((s) => `/services/${s.slug}`),
             "/privacy",
+            "/accessibility",
           ];
         }
         const urls = paths.map((p) => `  <url><loc>${absUrl(p)}</loc></url>`).join("\n");

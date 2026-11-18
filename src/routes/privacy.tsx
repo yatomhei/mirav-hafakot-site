@@ -1,9 +1,15 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { PageShell } from "@/components/layout/PageShell";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { LegalList, LegalPage, LegalSection } from "@/components/legal/LegalPage";
+import { useSite } from "@/content/context";
 import type { SiteContent } from "@/content/docs";
+import { legal } from "@/content/legal";
+import { mailHref, telHref } from "@/lib/contact";
 import { pageAddress } from "@/lib/seo";
 
-/** Placeholder: the full privacy policy is written in phase 3, before launch. */
+// The privacy policy. Every statement here describes how this site actually works: the form
+// builds a WhatsApp message on the visitor's device and sends nothing to the site's server;
+// there are no visitor cookies, analytics or ads; the font and video thumbnails are served
+// from the site; YouTube loads only when a video is played. Change it with the code.
 export const Route = createFileRoute("/privacy")({
   head: ({ matches }) => {
     const content = matches[0]?.loaderData as SiteContent | undefined;
@@ -25,12 +31,134 @@ export const Route = createFileRoute("/privacy")({
 });
 
 function PrivacyPage() {
+  const site = useSite();
+  const phone = (
+    <a href={telHref(site)} className="underline underline-offset-4" dir="ltr">
+      {site.phone}
+    </a>
+  );
+  const email = (
+    <a href={mailHref(site)} className="underline underline-offset-4" dir="ltr">
+      {site.email}
+    </a>
+  );
+
   return (
-    <PageShell>
-      <section className="mx-auto max-w-[760px] px-[var(--gutter)] py-[clamp(64px,9vw,130px)] text-center">
-        <h1 className="page-title mb-6">מדיניות פרטיות</h1>
-        <p className="lead">[מדיניות הפרטיות המלאה תתווסף לפני העלייה לאוויר]</p>
-      </section>
-    </PageShell>
+    <LegalPage
+      title="מדיניות פרטיות"
+      updated={legal.updated}
+      intro={
+        <p>
+          האתר של {site.name} אוסף רק את מה שצריך כדי לחזור אליכם. כאן מוסבר מה נמסר כשפונים אליי,
+          לאן זה מגיע, ומה הזכויות שלכם.
+        </p>
+      }
+    >
+      <LegalSection title="1. מי אחראית על המידע">
+        <p>
+          האתר מופעל על ידי {legal.ownerName}, {site.name} ({legal.businessType}, מספר עוסק{" "}
+          {legal.businessNumber}). לכל שאלה או בקשה בנושא פרטיות: טלפון {phone}, מייל {email}.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="2. טופס יצירת הקשר">
+        <p>
+          הטופס מבקש שם וטלפון, כדי שאוכל לחזור אליכם. אפשר להוסיף גם נושא והודעה, וזה לפי בחירתכם.
+          אין חובה חוקית למסור את הפרטים. בלי שם וטלפון אי אפשר לשלוח את הטופס, ואפשר תמיד לפנות
+          אליי ישירות בטלפון או במייל.
+        </p>
+        <p>
+          הטופס לא שולח את הפרטים לאתר ולא שומר אותם בו. הוא מכין הודעת וואטסאפ בטלפון או במחשב
+          שלכם, ואתם מחליטים אם לשלוח אותה. הודעה שנשלחה עוברת דרך WhatsApp ונשמרת אצלי בוואטסאפ.
+        </p>
+        <p>
+          אני משתמשת בפרטים רק כדי לחזור אליכם, לתאם ולתת את השירות. אני לא מוכרת אותם, לא מעבירה
+          אותם לאחרים לשיווק, ולא שולחת אליכם פרסומות.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="3. פנייה ישירה">
+        <p>
+          כשפונים אליי בטלפון, בוואטסאפ או במייל, אני מקבלת את מה שבחרתם לכתוב או לומר, ומשתמשת בזה
+          לאותן מטרות בדיוק.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="4. עוגיות, אנליטיקה ופרסום">
+        <p>
+          האתר לא שומר עוגיות אצל הגולשים, ולא משתמש בכלי אנליטיקה, בפיקסלים או בפרסום ממוקד. הגופן
+          ותמונות האתר נטענים מהאתר עצמו.
+        </p>
+        <p>
+          כמו בכל אתר, שרתי האחסון מקבלים את כתובת ה־IP ופרטים טכניים על הדפדפן, כדי להציג את האתר
+          ולהגן עליו מפני שימוש לרעה.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="5. סרטונים מיוטיוב">
+        <p>
+          הסרטונים באתר מאוחסנים ביוטיוב. הנגן נטען רק כשלוחצים על סרטון, בגרסה של YouTube שלא שומרת
+          עוגיות לפני הצפייה (youtube-nocookie). מרגע הלחיצה, Google מקבלת את פרטי הצפייה לפי
+          מדיניות הפרטיות שלה. תמונות התצוגה של הסרטונים מאוחסנות באתר, ואם לסרטון אין תמונה משלו
+          היא נטענת משרתי YouTube.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="6. שירותים שמקבלים מידע, והעברה לחו״ל">
+        <LegalList>
+          <li>Cloudflare: אחסון האתר והגנה עליו. מקבלת נתונים טכניים, כמו כתובת IP.</li>
+          <li>WhatsApp (Meta): העברת ההודעה ששלחתם מהטופס או ישירות.</li>
+          <li>Google: מייל (Gmail) כשפונים אליי במייל, ונגן YouTube כשמפעילים סרטון.</li>
+        </LegalList>
+        <p>
+          החברות האלה פועלות מחוץ לישראל, והמידע עשוי להישמר בשרתים שלהן בחו״ל, לפי התנאים ואמצעי
+          ההגנה שלהן.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="7. תמונות וסרטונים של לקוחות">
+        <p>
+          תמונות וסרטונים של לקוחות מתפרסמים באתר רק בהסכמת המצולמים, וכשמצולמים ילדים, בהסכמת
+          ההורים. מי שמופיע באתר ומבקש להסיר תמונה, סרטון או שם, מוזמן לפנות אליי, ואסיר אותם בהקדם.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="8. ממשק הניהול">
+        <p>
+          לממשק עריכת התוכן נכנסים רק מנהלי האתר, עם חשבון Google שאושר מראש. לצורך הכניסה נשמרת
+          בדפדפן של המנהל עוגייה חתומה עם כתובת המייל שלו, ורשימת המיילים המורשים שמורה באחסון של
+          האתר. זה לא נוגע לגולשים באתר.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="9. אבטחה ושמירה">
+        <p>
+          האתר מוגש בחיבור מוצפן (HTTPS), ולא מחזיק מאגר של פרטי גולשים. הודעות ומיילים שמגיעים אליי
+          נשמרים כל עוד הם נחוצים לטיפול בפנייה ולמתן השירות, וכפי שהדין מחייב לשמור מסמכים.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="10. הזכויות שלכם">
+        <p>
+          אתם זכאים לעיין במידע שלכם שנמצא אצלי, לבקש לתקן אותו או למחוק אותו. אפשר לפנות בטלפון{" "}
+          {phone} או במייל {email}. אענה לבקשת עיון תוך 30 יום. אם לא אוכל לבצע בקשה, אסביר בכתב
+          למה. אפשר גם לפנות לרשות להגנת הפרטיות.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="11. ילדים">
+        <p>האתר מיועד למבוגרים שמזמינים שירותי צילום והפקה. פנייה בשם ילד נעשית על ידי ההורה.</p>
+      </LegalSection>
+
+      <LegalSection title="12. שינויים במדיניות">
+        <p>
+          כשהאתר משתנה, המדיניות מתעדכנת, ותאריך העדכון מופיע בראש העמוד. ראו גם את{" "}
+          <Link to="/accessibility" className="underline underline-offset-4">
+            הצהרת הנגישות
+          </Link>
+          .
+        </p>
+      </LegalSection>
+    </LegalPage>
   );
 }

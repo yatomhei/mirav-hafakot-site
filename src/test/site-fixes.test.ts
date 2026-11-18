@@ -11,6 +11,15 @@ describe("WhatsApp number", () => {
     expect(waNumber("+972 58 770 2937")).toBe("972587702937");
     expect(waNumber("")).toBe("");
   });
+
+  it("saves only the wa.me form of an Israeli number", () => {
+    const site = defaultContent.site;
+    const ok = (whatsapp: string) => validateDoc("site", { ...site, whatsapp }).success;
+    expect(ok("972587702937")).toBe(true);
+    expect(ok("")).toBe(true);
+    expect(ok("9720587702937")).toBe(false);
+    expect(ok("0587702937")).toBe(false);
+  });
 });
 
 describe("search tags", () => {

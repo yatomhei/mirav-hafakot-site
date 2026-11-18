@@ -25,6 +25,7 @@ const FLOW_COOKIE = "mirav_google";
 const FLOW_MINUTES = 10;
 
 interface Flow {
+  typ: "flow";
   state: string;
   nonce: string;
   verifier: string;
@@ -61,6 +62,7 @@ export async function startGoogleSignIn(request: Request) {
   if (!google || !secret) return back(origin, "unavailable");
 
   const flow: Flow = {
+    typ: "flow",
     state: randomToken(),
     nonce: randomToken(),
     verifier: randomToken(48),
@@ -94,7 +96,8 @@ export async function finishGoogleSignIn(request: Request) {
   ]);
   if (!google || !secret || !store) return back(origin, "unavailable");
 
-  const flow = (await readSignedValue(secret, readCookie(request, FLOW_COOKIE))) as Flow | null;
+  const signed = (await readSignedValue(secret, readCookie(request, FLOW_COOKIE))) as Flow | null;
+  const flow = signed?.typ === "flow" ? signed : null;
   const done = [clearFlow()];
   // Cancelled on Google's screen.
   if (url.searchParams.get("error")) return back(origin, undefined, done);

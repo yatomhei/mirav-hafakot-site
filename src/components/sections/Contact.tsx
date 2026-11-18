@@ -84,47 +84,53 @@ export function Contact() {
             className="grid grid-cols-2 gap-3 text-right max-[640px]:grid-cols-1"
             aria-describedby="contact-note"
           >
+            {/* Labels stay visible above the fields; the placeholders are only examples. */}
             <label>
-              <span className="sr-only-he">שם מלא (חובה)</span>
+              <span className="field-label">
+                שם מלא <span aria-hidden="true">*</span>
+                <span className="sr-only-he">(חובה)</span>
+              </span>
               <input
                 className="field"
                 type="text"
                 name="name"
                 autoComplete="name"
-                placeholder="שם מלא *"
                 required
                 aria-required="true"
               />
             </label>
             <label>
-              <span className="sr-only-he">טלפון (חובה)</span>
+              <span className="field-label">
+                טלפון <span aria-hidden="true">*</span>
+                <span className="sr-only-he">(חובה)</span>
+              </span>
               <input
                 className="field"
                 type="tel"
                 name="phone"
                 autoComplete="tel"
                 inputMode="tel"
-                placeholder="טלפון *"
+                placeholder="050-1234567"
                 required
                 aria-required="true"
               />
             </label>
             <label className="col-span-full">
-              <span className="sr-only-he">במה אתם מתעניינים?</span>
+              <span className="field-label">במה אתם מתעניינים?</span>
               <select className="field field-select" name="service" defaultValue="">
-                <option value="">במה אתם מתעניינים?</option>
+                <option value="">בחרו נושא</option>
                 {contact.interests.map((o) => (
                   <option key={o}>{o}</option>
                 ))}
               </select>
             </label>
             <label className="col-span-full">
-              <span className="sr-only-he">ספרו לי קצת על הפרויקט שלכם</span>
+              <span className="field-label">ספרו לי קצת על הפרויקט שלכם</span>
               <textarea
                 className="field field-area"
                 name="message"
                 rows={4}
-                placeholder="ספרו לי קצת על הפרויקט שלכם"
+                placeholder="מה תרצו לצלם, מתי ואיפה"
               />
             </label>
             <span id="contact-note" className="col-span-full text-center text-[13px]">

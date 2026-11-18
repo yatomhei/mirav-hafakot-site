@@ -41,8 +41,9 @@ export const docSchemas = {
     name: text,
     tagline: text,
     phone: text,
-    // Digits only, international format without "+": 9725XXXXXXXX. Empty is allowed.
-    whatsapp: z.string().regex(/^(\d{8,15})?$/),
+    // An Israeli number in wa.me form: 972, then the number without its leading 0
+    // (972501234567). Empty is allowed.
+    whatsapp: z.string().regex(/^(972[1-9]\d{7,8})?$/),
     email: text,
     serviceArea: text,
     youtubeUrl: link,

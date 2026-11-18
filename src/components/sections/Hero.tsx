@@ -1,18 +1,21 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useContent } from "@/content/context";
 import { asset, image, photoFile } from "@/lib/asset";
 import { BrokenLines } from "@/components/ui/BrokenLines";
+import { Pause, Play } from "@/components/ui/icons";
 
 /**
  * Rounded full-height frame, looping video under a 40% dark-blue overlay, cream logo and
  * title centred on top. On phones the frame fills the screen
- * below the header. Reduced motion → poster.
+ * below the header. Reduced motion → poster. A small button in the corner pauses and resumes
+ * the video (anything that moves on its own for over 5 seconds needs one).
  */
 export function Hero() {
   const { site, home } = useContent();
   const { hero } = home;
   const video = useRef<HTMLVideoElement>(null);
   const frame = useRef<HTMLDivElement>(null);
+  const [paused, setPaused] = useState(false);
 
   // As the hero scrolls out of view its frame scales down (1 → 0.92), anchored at the top
   // edge, so the bottom and sides pull in (desktop and mobile). Off under reduced motion.
@@ -50,6 +53,18 @@ export function Hero() {
     v.play().catch(() => {});
   }, []);
 
+  const toggle = () => {
+    const v = video.current;
+    if (!v) return;
+    if (v.paused) {
+      v.play().catch(() => {});
+      setPaused(false);
+    } else {
+      v.pause();
+      setPaused(true);
+    }
+  };
+
   const poster = photoFile(hero.poster.name, 1600);
 
   return (
@@ -82,6 +97,15 @@ export function Hero() {
             <BrokenLines lines={hero.title} />
           </h1>
         </div>
+        {/* Hidden under reduced motion, where the video never plays. */}
+        <button
+          type="button"
+          className="hero-pause motion-reduce:hidden"
+          aria-label={paused ? "הפעלת הסרטון ברקע" : "עצירת הסרטון ברקע"}
+          onClick={toggle}
+        >
+          {paused ? <Play size={16} /> : <Pause size={16} />}
+        </button>
       </div>
     </section>
   );

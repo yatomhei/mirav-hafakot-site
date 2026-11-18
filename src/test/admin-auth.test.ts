@@ -10,7 +10,7 @@ import {
 } from "@/admin/auth/allowlist";
 import { toBase64Url } from "@/admin/auth/encoding";
 import { emailFromIdToken, googleAuthUrl, pkceChallenge } from "@/admin/auth/google";
-import { readSession, signSession } from "@/admin/auth/session";
+import { readSession, signSession, signValue } from "@/admin/auth/session";
 
 function memoryStore(): EmailStore {
   let emails: string[] = [];
@@ -79,6 +79,13 @@ describe("admin sessions", () => {
     expect(await readSession(secret, `${forged}.${signature}`)).toBeNull();
     expect(await readSession(secret, undefined)).toBeNull();
     expect(await readSession(secret, "a.b.c")).toBeNull();
+  });
+
+  it("refuses another kind of signed value, such as the Google sign-in flow", async () => {
+    const flow = await signValue(secret, { typ: "flow", email: "a@b.co", exp: 9e9 });
+    expect(await readSession(secret, flow)).toBeNull();
+    const untyped = await signValue(secret, { email: "a@b.co", exp: 9e9 });
+    expect(await readSession(secret, untyped)).toBeNull();
   });
 });
 

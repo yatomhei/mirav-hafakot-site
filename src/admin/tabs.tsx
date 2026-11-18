@@ -28,6 +28,9 @@ import {
   YouTubeInput,
 } from "./fields";
 
+/** Shown wherever photos or videos of people are added (privacy law: their consent). */
+const CONSENT = "מעלים רק עם הסכמה של המצולמים, ושל ההורים כשמצולמים ילדים";
+
 // One tab per homepage section in page order, then the service pages and the settings.
 // Each tab lists the records it edits and renders their fields; field paths are relative to
 // the record named by the <Doc> they sit in (see AdminApp). Only content is editable here:
@@ -216,14 +219,14 @@ export const TABS: TabDef[] = [
         render: () => (
           <Card
             title="החלק העליון של דף הבית"
-            hint="הסרטון שמתנגן ברקע, הכותרת שעליו והתמונה שמוצגת עד שהוא נטען"
+            hint={`הסרטון שמתנגן ברקע, הכותרת שעליו והתמונה שמוצגת עד שהוא נטען. ${CONSENT}`}
           >
             <Lines path="title" label="כותרת" />
             <VideoFileInput
               path="video"
               posterPath="poster"
               label="סרטון רקע"
-              hint="לולאה קצרה בלי קול (הסרטון מושתק), MP4 עד 30MB ועד דקה וחצי. כמה שניות של 5-10MB נטענות מהר גם בטלפון. העלאה מחליפה גם את תמונת הפתיחה בתמונה מהסרטון"
+              hint="לולאה קצרה בלי קול (הסרטון מושתק), MP4 עד 8MB ועד דקה וחצי. כל גולש מוריד אותו כשהאתר נפתח, אז עדיפה לולאה של כמה שניות ב־1080p. העלאה מחליפה גם את תמונת הפתיחה בתמונה מהסרטון"
             />
             <PhotoInput
               path="poster"
@@ -444,7 +447,10 @@ export const TABS: TabDef[] = [
               <Caption />
               <Text path="title" label="כותרת" />
             </Card>
-            <Card title="ההמלצות">
+            <Card
+              title="ההמלצות"
+              hint="רק המלצות אמיתיות, במילים של הלקוח, ועם אישור שלו לפרסם את השם והתפקיד"
+            >
               <List<Testimonial>
                 path="items"
                 itemTitle={(i) => `המלצה ${i + 1}`}
@@ -523,7 +529,7 @@ export const TABS: TabDef[] = [
         render: () => (
           <Card
             title="פס התמונות בתחתית דף הבית"
-            hint="בין 3 ל־8 תמונות. רוחב כל תמונה נקבע לפי הצורה שלה"
+            hint={`בין 3 ל־8 תמונות. רוחב כל תמונה נקבע לפי הצורה שלה. ${CONSENT}`}
           >
             <List<StripPhoto>
               path=""
@@ -603,7 +609,7 @@ export const TABS: TabDef[] = [
         render: () => (
           <Card
             title="עמוד לכל שירות"
-            hint="הפסקה בראש העמוד והסרטונים שבו. עמוד שאין בו סרטונים מציג 'עבודות לדוגמה יעלו לכאן בקרוב'. את שם השירות משנים בלשונית 'שירותים'"
+            hint={`הפסקה בראש העמוד והסרטונים שבו. עמוד שאין בו סרטונים מציג 'עבודות לדוגמה יעלו לכאן בקרוב'. את שם השירות משנים בלשונית 'שירותים'. ${CONSENT}`}
           >
             <List<Service> path="" itemTitle={serviceTitle} collapsible>
               {(p) => {
@@ -646,7 +652,7 @@ export const TABS: TabDef[] = [
         render: () => (
           <Card
             title="גלריית צילומי סטילס"
-            hint="כל התמונות בעמוד 'צילומי סטילס'. מה שמסומן ב'הצגה בדף הבית' מופיע גם בדף הבית, והסדר שם נקבע בלשונית 'סטילס'"
+            hint={`כל התמונות בעמוד 'צילומי סטילס'. מה שמסומן ב'הצגה בדף הבית' מופיע גם בדף הבית, והסדר שם נקבע בלשונית 'סטילס'. ${CONSENT}`}
           >
             <StillsGallery />
           </Card>
@@ -677,10 +683,7 @@ export const TABS: TabDef[] = [
         key: "site",
         render: () => (
           <>
-            <Card
-              title="פרטי קשר"
-              hint="ערך בסוגריים מרובעים, כמו [טלפון], הוא מקום שמור שעוד לא מולא"
-            >
+            <Card title="פרטי קשר" hint="מופיעים בתחתית כל עמוד ובטופס יצירת הקשר">
               <Text path="phone" label="טלפון להצגה" ltr inputMode="tel" hint="למשל 050-1234567" />
               <Text
                 path="whatsapp"

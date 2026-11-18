@@ -15,6 +15,10 @@ export default defineConfig({
     alias: [
       // No server here: the launch content stands in for the saved content.
       { find: /^@\/content\/load$/, replacement: path.resolve(__dirname, "preview/load-stub.ts") },
+      {
+        find: /^@tanstack\/react-start\/server$/,
+        replacement: path.resolve(__dirname, "preview/server-stub.ts"),
+      },
       { find: "@", replacement: path.resolve(__dirname, "src") },
     ],
   },

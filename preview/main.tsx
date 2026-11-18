@@ -8,7 +8,7 @@ import { RouterProvider, createMemoryHistory, createRouter } from "@tanstack/rea
 
 // claude.ai pages block web-font downloads, so the preview carries Rubik inside its own
 // script and registers it with the FontFace API (no font request for the page's rules to
-// block). The real site keeps the Google Fonts link.
+// block). The real site serves the same files as ordinary web fonts (styles.css).
 import heb300 from "@fontsource/rubik/files/rubik-hebrew-300-normal.woff2?inline";
 import heb400 from "@fontsource/rubik/files/rubik-hebrew-400-normal.woff2?inline";
 import heb500 from "@fontsource/rubik/files/rubik-hebrew-500-normal.woff2?inline";

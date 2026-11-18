@@ -1,15 +1,15 @@
 import type { NavItem, SiteSettings } from "./types";
 
 /**
- * Contact details and links. The bracketed values are placeholders until the client sends
- * the real ones; in phase 3 they move to the admin's settings screen.
+ * Contact details and links: the launch defaults. Merav edits them in the admin
+ * ("פרטים והגדרות"); empty social links are hidden.
  */
 export const site: SiteSettings = {
   name: "הפקת המרב",
   tagline: "הכי טבעי שלכם",
-  phone: "[טלפון]",
-  whatsapp: "",
-  email: "[אימייל]",
+  phone: "058-770-2937",
+  whatsapp: "972587702937",
+  email: "Meravi2340@gmail.com",
   serviceArea: "יד בנימין, גדרה והסביבה,\nקריית מלאכי, חבל לכיש ואשדוד",
   youtubeUrl: "",
   facebookUrl: "",

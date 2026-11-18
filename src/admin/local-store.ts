@@ -50,7 +50,7 @@ export const uploadLocalVideo = createServerFn({ method: "POST" })
       throw new Error("Bad file name");
     }
     if (!(file instanceof Blob)) throw new Error("Missing file");
-    if (file.size > 30 * 1024 * 1024) throw new Error("File too large");
+    if (file.size > 8 * 1024 * 1024) throw new Error("File too large");
     return { name, file };
   })
   .handler(async ({ data }) => {

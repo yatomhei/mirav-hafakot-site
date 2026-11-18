@@ -98,7 +98,9 @@ function describeIssue(
   const tabs = TABS.filter((t) => t.docs.some((d) => d.key === key));
   const tab = (tabs.find((t) => t.key === currentTab) ?? tabs[0])?.label ?? key;
   const last = issue.path[issue.path.length - 1];
-  if (last === "whatsapp") return `${tab}: מספר הוואטסאפ צריך להכיל ספרות בלבד, למשל 972501234567`;
+  if (last === "whatsapp") {
+    return `${tab}: מספר הוואטסאפ צריך להתחיל ב־972 ובלי ה־0 שאחריו, למשל 972501234567`;
+  }
   if (last === "youtubeId") return `${tab}: לאחד הסרטונים חסר קישור תקין ליוטיוב`;
   if (["youtubeUrl", "facebookUrl", "instagramUrl", "tiktokUrl"].includes(String(last))) {
     return `${tab}: הקישור צריך להתחיל ב־https://`;

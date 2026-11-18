@@ -1,7 +1,10 @@
 /** What the hero accepts: a short, silent loop that browsers play everywhere. */
 export const VIDEO_TYPES = ["video/mp4", "video/webm"] as const;
-export const VIDEO_MAX_MB = 30;
+// Every visitor downloads this file when the homepage opens, phones included, so it stays
+// small: up to 8MB and a moderate bitrate (the launch loop is 3MB, about 2.7 Mbps).
+export const VIDEO_MAX_MB = 8;
 export const VIDEO_MAX_SECONDS = 90;
+export const VIDEO_MAX_MBPS = 4;
 
 /**
  * Checks a chosen video before it is uploaded (type, size, length, that this browser can
@@ -13,7 +16,7 @@ export async function prepareVideo(file: File): Promise<{ poster: File; extensio
   }
   if (file.size > VIDEO_MAX_MB * 1024 * 1024) {
     throw new Error(
-      `הקובץ גדול מ־${VIDEO_MAX_MB}MB. כדאי לייצא אותו קצר יותר או באיכות נמוכה יותר (1080p מספיק)`,
+      `הקובץ גדול מ־${VIDEO_MAX_MB}MB. כל גולש מוריד אותו כשהאתר נפתח, גם בטלפון. כדאי לייצא לולאה קצרה יותר, ב־1080p ובאיכות בינונית`,
     );
   }
 
@@ -31,6 +34,13 @@ export async function prepareVideo(file: File): Promise<{ poster: File; extensio
     });
     if (video.duration > VIDEO_MAX_SECONDS) {
       throw new Error(`הסרטון ארוך מ־${VIDEO_MAX_SECONDS} שניות. בפתיח מספיקה לולאה קצרה`);
+    }
+    // Small but heavy (a few seconds at a very high quality) still loads slowly on phones.
+    const mbps = (file.size * 8) / 1_000_000 / video.duration;
+    if (mbps > VIDEO_MAX_MBPS) {
+      throw new Error(
+        `הסרטון באיכות גבוהה מדי לרקע (${mbps.toFixed(1)} Mbps). כדאי לייצא אותו שוב ב־1080p ובאיכות בינונית, עד ${VIDEO_MAX_MBPS} Mbps`,
+      );
     }
 
     // A frame a moment in, past any fade from black.

@@ -40,6 +40,11 @@ export const Play = ({ size = 18, className }: P) => (
     <path d="M17 12L8 6.5v11z" />
   </svg>
 );
+export const Pause = ({ size = 18, className }: P) => (
+  <svg {...base(size)} className={className}>
+    <path d="M9 6v12M15 6v12" />
+  </svg>
+);
 export const Plus = ({ size = 18, className }: P) => (
   <svg {...base(size)} className={className}>
     <path d="M12 5v14M5 12h14" />

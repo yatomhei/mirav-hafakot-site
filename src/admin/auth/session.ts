@@ -4,12 +4,20 @@ import { fromBase64Url, sameBytes, toBase64Url } from "./encoding";
 // (HMAC-SHA256). The email is checked against the allowed list on every request, so removing
 // someone from the list signs them out at once.
 
-export const SESSION_COOKIE = "mirav_admin";
-export const SESSION_DAYS = 14;
+/**
+ * The cookie's name. On the live site (HTTPS) the __Host- prefix makes the browser refuse it
+ * unless it is Secure, set for the whole site and from this exact host; plain HTTP on
+ * localhost can't use the prefix.
+ */
+export const sessionCookieName = (secure: boolean) =>
+  secure ? "__Host-mirav_admin" : "mirav_admin";
+export const SESSION_DAYS = 7;
 /** What a save or upload answers without a valid sign-in (the admin page recognizes it). */
 export const SIGNED_OUT = "צריך להתחבר מחדש";
 
 export interface Session {
+  /** Which kind of signed value this is, so a sign-in cookie can't pass for another kind. */
+  typ: "session";
   email: string;
   /** Expiry, in seconds since 1970. */
   exp: number;
@@ -47,7 +55,11 @@ export async function readSignedValue(secret: string, token: string | undefined)
 }
 
 export function signSession(secret: string, email: string, now = Date.now()) {
-  const session: Session = { email, exp: Math.floor(now / 1000) + SESSION_DAYS * 86400 };
+  const session: Session = {
+    typ: "session",
+    email,
+    exp: Math.floor(now / 1000) + SESSION_DAYS * 86400,
+  };
   return signValue(secret, session);
 }
 
@@ -58,9 +70,10 @@ export async function readSession(
   now = Date.now(),
 ): Promise<Session | null> {
   const session = (await readSignedValue(secret, token)) as Partial<Session> | null;
-  if (!session || typeof session.email !== "string" || typeof session.exp !== "number") return null;
+  if (!session || session.typ !== "session") return null;
+  if (typeof session.email !== "string" || typeof session.exp !== "number") return null;
   if (session.exp * 1000 <= now) return null;
-  return { email: session.email, exp: session.exp };
+  return { typ: "session", email: session.email, exp: session.exp };
 }
 
 /** A Set-Cookie header value. Always HttpOnly: page scripts never see sign-in cookies. */

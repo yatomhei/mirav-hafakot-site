@@ -2,6 +2,7 @@ import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/r
 
 import { renderErrorPage } from "./lib/error-page";
 import { siteConfig } from "@/config/site";
+import { securityHeaders } from "@/config/security-headers";
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
@@ -28,6 +29,18 @@ const robotsHeaderMiddleware = createMiddleware().server(async ({ next }) => {
   return result;
 });
 
+// Security headers on every server response (pages, server functions, robots.txt and so on).
+// The admin is never cached: it shows who is signed in and unsaved work.
+const securityHeaderMiddleware = createMiddleware().server(async ({ next, request }) => {
+  const result = await next();
+  const headers = result.response.headers;
+  for (const [name, value] of Object.entries(securityHeaders)) {
+    if (!headers.has(name)) headers.set(name, value);
+  }
+  if (new URL(request.url).pathname.startsWith("/admin")) headers.set("Cache-Control", "no-store");
+  return result;
+});
+
 // Start installs this automatically when src/start.ts is absent; defining the
 // file opts out, so re-add it explicitly to keep server functions protected
 // from cross-site requests.
@@ -36,5 +49,10 @@ const csrfMiddleware = createCsrfMiddleware({
 });
 
 export const startInstance = createStart(() => ({
-  requestMiddleware: [errorMiddleware, robotsHeaderMiddleware, csrfMiddleware],
+  requestMiddleware: [
+    errorMiddleware,
+    robotsHeaderMiddleware,
+    securityHeaderMiddleware,
+    csrfMiddleware,
+  ],
 }));

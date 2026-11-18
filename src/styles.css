@@ -86,7 +86,7 @@
   ); /* #656C51 logo olive: "הרבה מעבר לצילום" band, outline borders */
   --olive-hover: oklch(0.459 0.037 119.7); /* #555B44 */
   --btn: var(--sage); /* #A2A58F buttons, always dark text */
-  --btn-hover: oklch(0.645 0.031 113.5); /* #8E927A button hover */
+  --btn-hover: oklch(0.68 0.031 113.5); /* #989B85 button hover (ink text 4.6:1) */
   --btn-ink: var(--ink);
   --olive-deep: oklch(0.497 0.041 120.1); /* #5F664C section captions; testimonials backdrop */
   --blue: oklch(0.516 0.024 203.9); /* #586C6E: dark version used for photo overlays only */
@@ -356,6 +356,14 @@
   }
 
   /* Visually hidden, read by screen readers. */
+  /* Visible field labels in the contact form, lined up with the text inside the pill. */
+  .field-label {
+    display: block;
+    margin-bottom: 6px;
+    padding-inline: 24px;
+    font-size: 15px;
+    font-weight: 500;
+  }
   .sr-only-he {
     position: absolute;
     width: 1px;
@@ -526,6 +534,26 @@
   text-align: center;
   gap: clamp(24px, 3vw, 36px);
   color: var(--cream);
+}
+/* Pause/play for the background video: small and quiet, in the bottom corner. */
+.hero-pause {
+  position: absolute;
+  bottom: clamp(14px, 1.6vw, 24px);
+  inset-inline-start: clamp(14px, 1.6vw, 24px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid rgb(250 240 235 / 0.7);
+  background: rgb(35 38 31 / 0.35);
+  color: var(--cream);
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+.hero-pause:hover {
+  background: rgb(35 38 31 / 0.6);
 }
 .hero-logo {
   display: block;
