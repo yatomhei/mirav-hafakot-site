@@ -111,13 +111,21 @@ export function SiteFooter() {
         <p className="text-[13px] text-[rgb(46_49_40/0.78)]">
           © {new Date().getFullYear()} {site.name} · {site.tagline}
         </p>
-        <nav aria-label="מסמכים" className="flex gap-x-6 text-[14px]">
+        <nav
+          aria-label="מסמכים וניהול"
+          className="flex flex-wrap justify-center gap-x-6 text-[14px]"
+        >
           <Link to="/privacy" className="inline-flex min-h-11 items-center text-ink">
             מדיניות פרטיות
           </Link>
           <Link to="/accessibility" className="inline-flex min-h-11 items-center text-ink">
             הצהרת נגישות
           </Link>
+          {/* For Merav: the admin sits behind Google sign-in. A plain link (the admin loads on
+              its own), and search engines are asked not to follow it. */}
+          <a href="/admin" rel="nofollow" className="inline-flex min-h-11 items-center text-ink">
+            כניסת מנהלים
+          </a>
         </nav>
         <a href="#top" className="inline-flex min-h-11 items-center gap-2 text-[14px] text-ink">
           חזרה למעלה

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { waNumber } from "@/lib/contact";
 import { absUrl, jsonLd, pageAddress } from "@/lib/seo";
 import { validateDoc, defaultContent } from "@/content/docs";
+import { SEO_AREA, serviceSeoFor } from "@/content/seo-pages";
 
 describe("WhatsApp number", () => {
   it("repairs the usual slips and keeps a correct number", () => {
@@ -47,5 +48,20 @@ describe("social links", () => {
     expect(validateDoc("site", { ...site, facebookUrl: "javascript:alert(1)" }).success).toBe(
       false,
     );
+  });
+});
+
+describe("service page titles for search", () => {
+  it("use the written wording, or fall back to the name and area", () => {
+    const known = serviceSeoFor({ slug: "kululam", title: "קולולם", lead: "x" }, "הפקת המרב");
+    expect(known.title).toBe("צילום קולולם לבית ספר ולקהילה | הפקת המרב");
+    const other = serviceSeoFor({ slug: "new", title: "שירות חדש", lead: "תיאור" }, "הפקת המרב");
+    expect(other).toEqual({ title: `שירות חדש - ${SEO_AREA} | הפקת המרב`, description: "תיאור" });
+  });
+
+  it("cover every service the site has", () => {
+    for (const s of defaultContent.services) {
+      expect(serviceSeoFor(s, "x").description).not.toBe(s.lead);
+    }
   });
 });

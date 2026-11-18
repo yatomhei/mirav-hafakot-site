@@ -5,6 +5,7 @@ import { useContent } from "@/content/context";
 import type { SiteContent } from "@/content/docs";
 import { getService } from "@/content/services";
 import { absImage, pageAddress, serviceJsonLd } from "@/lib/seo";
+import { serviceSeoFor } from "@/content/seo-pages";
 import { photoFile } from "@/lib/asset";
 
 export const Route = createFileRoute("/services/$slug")({
@@ -21,14 +22,15 @@ export const Route = createFileRoute("/services/$slug")({
     const s = content?.services.find((x) => x.slug === loaderData?.slug);
     if (!content || !s) return {};
     const { site } = content;
-    const title = `${s.title} | ${site.name}`;
+    // Search wording per service (seo-pages.ts); the page itself keeps the short name.
+    const { title, description } = serviceSeoFor(s, site.name);
     const address = pageAddress(`/services/${s.slug}`);
     return {
       meta: [
         { title },
-        { name: "description", content: s.lead },
+        { name: "description", content: description },
         { property: "og:title", content: title },
-        { property: "og:description", content: s.lead },
+        { property: "og:description", content: description },
         // The service's own photo when it has one (otherwise the site-wide hero image).
         ...(s.image
           ? [

@@ -33,6 +33,8 @@ export function jsonLd(data: unknown) {
 }
 
 const BUSINESS_ID = "#business";
+/** Where Merav is based. City level only: never a street address. */
+const BASE_TOWN = "יד בנימין";
 const id = (hash: string) => `${absUrl("/") ?? "/"}${hash}`;
 
 /** The business itself: who Merav is, what she does and where she works. */
@@ -57,6 +59,8 @@ export function businessGraph(content: SiteContent) {
     image: absImage("/images/hero-poster-1600.webp"),
     ...(phone ? { telephone: phone.startsWith("972") ? `+${phone}` : phone } : {}),
     ...(isPlaceholder(site.email) ? {} : { email: site.email }),
+    // Her town only (city level): the street address stays private, so no street here.
+    address: { "@type": "PostalAddress", addressLocality: BASE_TOWN, addressCountry: "IL" },
     areaServed: areas.map((name) => ({ "@type": "Place", name })),
     founder: { "@type": "Person", name: "מרב ורנר", jobTitle: "צלמת, עורכת וידאו ומפיקה" },
     ...(sameAs.length ? { sameAs } : {}),
