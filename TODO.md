@@ -158,6 +158,12 @@ services in `src/content/seo-pages.ts`) come from a first keyword plan, not from
 - At launch, her own task: a Google Business profile, from her Google account, as a
   service-area business with the address hidden (areas only), linking to the site. Yatom can
   send her a short how-to; she does the sign-up and Google's verification herself.
+- As soon as the site is deployed: Merav reads the privacy policy (/privacy) and the
+  accessibility statement (/accessibility) on the live site, so she knows what she commits to
+  in her own name: she is the contact for privacy and accessibility requests and has to answer
+  them, what happens to inquiries sent through the form and WhatsApp, and keeping what she adds
+  in the admin accessible (for example alt text for photos). Her questions or corrections go
+  back into `src/content/legal.ts` and the two pages before the lawyer's review.
 
 ## Before launch
 
