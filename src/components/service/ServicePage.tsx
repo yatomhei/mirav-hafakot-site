@@ -72,14 +72,19 @@ function Breadcrumbs({ current }: { current: string }) {
   );
 }
 
-/** Service page: title + lead, the work (videos, or photos for stills), CTA, other services. */
+/** Service page: title + lead, the work (its videos, then its photos), CTA, other services. */
 export function ServicePage({ service }: { service: Service }) {
   const { services, servicePage, home } = useContent();
   const others = visibleServices(services).filter((s) => s.slug !== service.slug);
-  const isPhotos = service.gallery === "stills" && home.stills.photos.length > 0;
-  // Only videos with a YouTube id are shown; a gallery with none shows a short note instead.
+  // A page shows whatever it has: its videos, then its photos (the stills page shows the
+  // stills gallery). One with neither shows a short note instead.
+  const stillsPage = service.gallery === "stills";
+  const photos = stillsPage ? home.stills.photos : (service.photos ?? []);
+  // Only videos with a YouTube id are shown.
   const videos = service.videos.filter((v) => v.youtubeId);
-  const isEmpty = !isPhotos && videos.length === 0;
+  const hasPhotos = photos.length > 0;
+  const hasVideos = videos.length > 0;
+  const isEmpty = !hasPhotos && !hasVideos;
   // Gallery items rise as they scroll in, like the homepage service cards.
   const gallery = useRise<HTMLDivElement>("ul > li");
 
@@ -98,13 +103,14 @@ export function ServicePage({ service }: { service: Service }) {
       </section>
 
       <section
-        aria-label={isPhotos ? "תמונות" : "סרטונים"}
+        aria-label={hasVideos && hasPhotos ? "עבודות" : hasPhotos ? "תמונות" : "סרטונים"}
         className="px-[var(--gutter)] pb-[clamp(56px,7vw,96px)]"
       >
-        <div ref={gallery} className="mx-auto max-w-[var(--content-max)]">
-          {isPhotos ? (
-            <StillsGrid layout="masonry" />
-          ) : isEmpty ? (
+        <div
+          ref={gallery}
+          className="mx-auto flex max-w-[var(--content-max)] flex-col gap-[clamp(56px,7vw,96px)]"
+        >
+          {isEmpty ? (
             <p
               data-reveal
               className="mx-auto max-w-[760px] rounded-[clamp(12px,1.2vw,18px)] bg-olive-soft px-6 py-[clamp(40px,5vw,64px)] text-center text-[clamp(19px,1.8vw,24px)] leading-[1.5] font-light"
@@ -112,11 +118,21 @@ export function ServicePage({ service }: { service: Service }) {
               {servicePage.empty}
             </p>
           ) : (
-            <ul className="m-0 grid list-none grid-cols-2 gap-x-[clamp(16px,2vw,28px)] gap-y-[clamp(36px,4vw,56px)] p-0 max-[640px]:grid-cols-1">
-              {videos.map((v) => (
-                <VideoCard key={v.youtubeId} video={v} />
-              ))}
-            </ul>
+            <>
+              {hasVideos && (
+                <ul className="m-0 grid list-none grid-cols-2 gap-x-[clamp(16px,2vw,28px)] gap-y-[clamp(36px,4vw,56px)] p-0 max-[640px]:grid-cols-1">
+                  {videos.map((v) => (
+                    <VideoCard key={v.youtubeId} video={v} />
+                  ))}
+                </ul>
+              )}
+              {hasPhotos && (
+                <StillsGrid
+                  layout="masonry"
+                  {...(stillsPage ? {} : { own: photos, label: `תמונות: ${service.title}` })}
+                />
+              )}
+            </>
           )}
         </div>
       </section>
@@ -124,7 +140,7 @@ export function ServicePage({ service }: { service: Service }) {
       <section aria-label="יצירת קשר" className="px-[var(--gutter)] pb-[clamp(88px,11vw,150px)]">
         <div data-reveal className="flex flex-col items-center gap-5 text-center">
           <p className="text-[clamp(22px,2.2vw,30px)] leading-[1.3] font-light">
-            {isPhotos ? servicePage.ctaPhotos : isEmpty ? servicePage.ctaEmpty : servicePage.cta}
+            {servicePage.cta}
           </p>
           <HomeLink hash="contact" className="btn btn-primary !font-normal">
             {servicePage.ctaButton}
@@ -133,35 +149,41 @@ export function ServicePage({ service }: { service: Service }) {
         </div>
       </section>
 
-      <section
-        aria-labelledby="more-svc-title"
-        className="bg-olive-soft px-[var(--gutter)] py-[clamp(72px,9vw,120px)]"
-      >
-        <div data-reveal className="mx-auto max-w-[var(--content-max)]">
-          <div className="mx-auto mb-[clamp(36px,5vw,64px)] max-w-[720px] text-center">
-            <p className="caption mb-[18px]">{servicePage.moreCaption}</p>
-            <h2 id="more-svc-title" className="heading-section !leading-[1.1] !tracking-[-0.01em]">
-              {servicePage.moreTitle}
-            </h2>
+      {/* Nothing to suggest when this is the only service shown. */}
+      {others.length > 0 && (
+        <section
+          aria-labelledby="more-svc-title"
+          className="bg-olive-soft px-[var(--gutter)] py-[clamp(72px,9vw,120px)]"
+        >
+          <div data-reveal className="mx-auto max-w-[var(--content-max)]">
+            <div className="mx-auto mb-[clamp(36px,5vw,64px)] max-w-[720px] text-center">
+              <p className="caption mb-[18px]">{servicePage.moreCaption}</p>
+              <h2
+                id="more-svc-title"
+                className="heading-section !leading-[1.1] !tracking-[-0.01em]"
+              >
+                {servicePage.moreTitle}
+              </h2>
+            </div>
+            <ul className="more-list mx-auto grid max-w-[1000px] list-none grid-cols-2 gap-x-[clamp(24px,5vw,72px)] border-t border-[rgb(46_49_40/0.18)] p-0">
+              {others.map((s) => (
+                <li key={s.slug} className="border-b border-[rgb(46_49_40/0.18)]">
+                  <Link
+                    to="/services/$slug"
+                    params={{ slug: s.slug }}
+                    className="more-link flex min-h-16 items-center justify-between gap-4 py-2 text-ink no-underline"
+                  >
+                    <span className="text-[25px] font-light">{s.title}</span>
+                    <span className="more-go inline-flex flex-none" aria-hidden="true">
+                      <ArrowLeft size={20} />
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
-          <ul className="more-list mx-auto grid max-w-[1000px] list-none grid-cols-2 gap-x-[clamp(24px,5vw,72px)] border-t border-[rgb(46_49_40/0.18)] p-0">
-            {others.map((s) => (
-              <li key={s.slug} className="border-b border-[rgb(46_49_40/0.18)]">
-                <Link
-                  to="/services/$slug"
-                  params={{ slug: s.slug }}
-                  className="more-link flex min-h-16 items-center justify-between gap-4 py-2 text-ink no-underline"
-                >
-                  <span className="text-[25px] font-light">{s.title}</span>
-                  <span className="more-go inline-flex flex-none" aria-hidden="true">
-                    <ArrowLeft size={20} />
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+        </section>
+      )}
     </>
   );
 }

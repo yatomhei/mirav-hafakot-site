@@ -583,7 +583,14 @@ type ListProps<T> = {
    * Items can be removed and reordered within these limits, and added with `create`.
    * Photo lists leave `create` out and add through <AddPhotoButton> instead.
    */
-  editable?: { min: number; max: number; create?: () => T; addLabel?: string };
+  editable?: {
+    min: number;
+    max: number;
+    create?: () => T;
+    addLabel?: string;
+    /** The question asked before deleting (default: "למחוק את <title>?"). */
+    confirmRemove?: (index: number, item: T) => string;
+  };
   /** Lay items out two per row on wide screens. */
   grid?: boolean;
   /** Collapse each item to its title; click to open (long lists). */
@@ -644,7 +651,9 @@ export function List<T>({
             aria-label="מחיקה"
             disabled={items.length <= editable.min}
             onClick={() => {
-              if (window.confirm(`למחוק את "${itemTitle(index, item)}"?`)) {
+              const question =
+                editable.confirmRemove?.(index, item) ?? `למחוק את "${itemTitle(index, item)}"?`;
+              if (window.confirm(question)) {
                 set(items.filter((_, i) => i !== index));
               }
             }}

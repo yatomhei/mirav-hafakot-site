@@ -1,7 +1,11 @@
-import { createContext, useContext, type ReactNode } from "react";
+import { createContext, useContext, type Context, type ReactNode } from "react";
 import { defaultContent, type SiteContent } from "./docs";
 
-const ContentContext = createContext<SiteContent>(defaultContent);
+// One context for the whole app, kept on globalThis. When the dev server swaps in edited code,
+// this file runs again; a second context would leave readers (the admin) cut off from the
+// provider, quietly showing the launch content, and a save from there overwrote saved edits.
+const shared = globalThis as typeof globalThis & { __miravContent?: Context<SiteContent> };
+const ContentContext = (shared.__miravContent ??= createContext<SiteContent>(defaultContent));
 
 /** Provided once in __root.tsx from the root loader, so every page shares one copy. */
 export function ContentProvider({ value, children }: { value: SiteContent; children: ReactNode }) {

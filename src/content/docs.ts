@@ -68,13 +68,16 @@ export function validateDoc(key: DocKey, value: unknown) {
 }
 
 /**
- * The saved order is the site's order (homepage cards, footer, "other services"). Each
- * service is matched to the code by its address, which also restores its linked gallery.
+ * The saved order is the site's order (homepage cards, footer, "other services"). A launch
+ * service is matched to the code by its address, which restores its linked gallery and marks
+ * it as published (records saved before that field existed). A service Merav added has no
+ * gallery, only videos.
  */
 function pinServices(saved: Service[]): Service[] {
   return saved.map(({ gallery: _g, ...edited }) => {
     const fixed = services.find((s) => s.slug === edited.slug);
     const pinned: Service = { ...edited };
+    if (fixed) pinned.published = true;
     if (fixed?.gallery) pinned.gallery = fixed.gallery;
     return pinned;
   });

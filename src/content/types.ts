@@ -59,8 +59,19 @@ export type Service = {
    * admin.
    */
   gallery?: "stills";
+  /**
+   * The page's own photos, shown in a photo gallery under its videos (a page shows whichever
+   * it has). The launch stills service shows the stills gallery instead.
+   */
+  photos?: StillPhoto[];
   /** Hidden from the site: no card, no links, and its page answers "not found". */
   hidden?: boolean;
+  /**
+   * Shown on the site at least once (set when first un-hidden in the admin; the launch
+   * services always). Its address is then locked, so shared links and Google results keep
+   * working. A new service starts hidden, with its address still editable.
+   */
+  published?: boolean;
   /**
    * How the page appears in Google, the browser tab and shared links. Optional: when empty
    * the wording in content/seo-pages.ts is used. Never shown on the page itself.

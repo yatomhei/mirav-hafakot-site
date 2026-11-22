@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { DEFAULT_MESSAGE_TEMPLATE, REQUIRED_FIELDS } from "./whatsapp-message";
 import { contact } from "./home";
-import { SERVICE_SLUGS } from "./services";
 import { MAX_FEATURED_STILLS, MAX_FEATURED_VIDEOS, countFeaturedVideos } from "./featured";
 
 // The shape every saved record must have before the site uses it (see docs.ts). Counts the
@@ -20,6 +19,23 @@ export const photoSchema = z.object({
   pos: z.string().max(40).optional(),
 });
 const ratio = z.number().positive().max(10);
+
+/** The most services the site holds (the homepage grid works with any number). */
+export const MAX_SERVICES = 12;
+
+/** A service page address after /services/: lowercase English letters, digits and dashes. */
+export const SERVICE_SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+export const MAX_SLUG = 40;
+
+/** What is wrong with a service address, in Hebrew for the admin, or null when it's fine. */
+export function slugProblem(slug: string): string | null {
+  if (!slug) return "חסרה כתובת לעמוד";
+  if (slug.length > MAX_SLUG) return `הכתובת ארוכה מדי (עד ${MAX_SLUG} תווים)`;
+  if (!SERVICE_SLUG.test(slug)) {
+    return "בכתובת יכולים להיות רק אותיות באנגלית, ספרות ומקפים בין מילים";
+  }
+  return null;
+}
 
 export const YOUTUBE_ID = /^[\w-]{11}$/;
 const videoSchema = z.object({
@@ -144,12 +160,13 @@ export const docSchemas = {
     sent: text.default(contact.sent),
     privacy: text,
   }),
-  // The seven services, in the order the site shows them. Their addresses (slug) are fixed
-  // in code, and docs.ts restores each one's linked gallery from the launch content.
+  // The services, in the order the site shows them. Merav adds, deletes and reorders them;
+  // each one's address (slug) is checked here, and docs.ts restores a launch service's linked
+  // gallery by its address.
   services: z
     .array(
       z.object({
-        slug: z.string(),
+        slug: z.string().max(100),
         num: text,
         title: text,
         meta: text,
@@ -158,19 +175,43 @@ export const docSchemas = {
         lead: longText,
         videos: z.array(videoSchema).max(30),
         gallery: z.enum(["stills"]).optional(),
+        photos: z
+          .array(photoSchema.extend({ label: text, ratio, featured: z.boolean().optional() }))
+          .max(60)
+          .optional(),
         hidden: z.boolean().optional(),
+        // Shown on the site at least once: its address can no longer change.
+        published: z.boolean().optional(),
         // Optional search wording (see seo-pages.ts); empty means the automatic one.
         seoTitle: text.max(120).optional(),
         seoDescription: text.max(300).optional(),
       }),
     )
-    .length(7)
+    .min(1)
+    .max(MAX_SERVICES)
     .superRefine((services, ctx) => {
-      // The same seven addresses, in any order (a new service is added in code).
-      const slugs = new Set(services.map((s) => s.slug));
-      if (slugs.size !== SERVICE_SLUGS.length || SERVICE_SLUGS.some((s) => !slugs.has(s))) {
-        ctx.addIssue({ code: "custom", message: "רשימת השירותים לא תואמת לאתר" });
-      }
+      const seen = new Set<string>();
+      services.forEach((s, i) => {
+        const name = s.title.trim() || `שירות ${i + 1}`;
+        const problem = slugProblem(s.slug);
+        if (problem) {
+          ctx.addIssue({ code: "custom", path: [i, "slug"], message: `${name}: ${problem}` });
+        } else if (seen.has(s.slug)) {
+          ctx.addIssue({
+            code: "custom",
+            path: [i, "slug"],
+            message: `${name}: הכתובת /services/${s.slug} כבר שייכת לשירות אחר`,
+          });
+        }
+        seen.add(s.slug);
+        if (!s.hidden && !s.title.trim()) {
+          ctx.addIssue({
+            code: "custom",
+            path: [i, "title"],
+            message: "לשירות שמוצג באתר חייב להיות שם",
+          });
+        }
+      });
       if (services.every((s) => s.hidden)) {
         ctx.addIssue({ code: "custom", message: "צריך להשאיר לפחות שירות אחד גלוי באתר" });
       }
@@ -187,10 +228,8 @@ export const docSchemas = {
     }),
   servicePage: z.object({
     cta: text,
-    ctaPhotos: text,
     ctaButton: text,
     empty: text,
-    ctaEmpty: text,
     moreCaption: text,
     moreTitle: text,
   }),

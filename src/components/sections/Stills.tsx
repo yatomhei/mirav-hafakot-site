@@ -82,17 +82,27 @@ function StillTile({
  * (the stills service page): every photo in its own shape, in up to 3 columns. Clicking a
  * photo opens it in the lightbox.
  */
-export function StillsGrid({ layout = "mosaic" }: { layout?: "mosaic" | "masonry" }) {
+export function StillsGrid({
+  layout = "mosaic",
+  own,
+  label = "דוגמאות לצילומי סטילס",
+}: {
+  layout?: "mosaic" | "masonry";
+  /** A service page's own photos, instead of the stills gallery (masonry only). */
+  own?: StillPhoto[];
+  label?: string;
+}) {
   // The lightbox steps through the photos this gallery shows.
   const { stills } = useHome();
   const [open, setOpen] = useState<number | null>(null);
-  const photos = layout === "masonry" ? stills.photos : featuredStills(stills.photos, stills.order);
+  const photos =
+    layout === "masonry" ? (own ?? stills.photos) : featuredStills(stills.photos, stills.order);
   const lightbox = <PhotoLightbox photos={photos} index={open} onIndex={setOpen} />;
 
   if (layout === "masonry") {
     return (
       <>
-        <ul className="stills-masonry m-0 list-none p-0" aria-label="דוגמאות לצילומי סטילס">
+        <ul className="stills-masonry m-0 list-none p-0" aria-label={label}>
           {photos.map((p, k) => (
             <StillTile key={p.name} p={p} natural onOpen={() => setOpen(k)} />
           ))}

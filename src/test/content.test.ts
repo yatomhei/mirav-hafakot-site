@@ -26,15 +26,14 @@ describe("saved content", () => {
     expect(content.home.faq.title).toBe("כותרת");
   });
 
-  it("keeps service addresses and linked galleries from the code", () => {
-    const saved = defaultContent.services.map((s) => ({
+  it("restores the launch services' linked gallery and locked addresses", () => {
+    const saved = defaultContent.services.map(({ published: _p, ...s }) => ({
       ...s,
-      slug: "hacked",
       gallery: undefined,
     }));
     const content = assembleContent({ services: saved });
-    expect(content.services.map((s) => s.slug)).toEqual(defaultContent.services.map((s) => s.slug));
     expect(content.services.find((s) => s.slug === "stills")?.gallery).toBe("stills");
+    expect(content.services.every((s) => s.published)).toBe(true);
   });
 
   it("keeps a saved service order and each page's linked gallery", () => {
@@ -44,8 +43,77 @@ describe("saved content", () => {
     const content = assembleContent({ services: reversed });
     expect(content.services.map((s) => s.slug)).toEqual(reversed.map((s) => s.slug));
     expect(content.services.find((s) => s.slug === "stills")?.gallery).toBe("stills");
-    const unknown = reversed.map((s, i) => (i === 0 ? { ...s, slug: "other" } : s));
-    expect(validateDoc("services", unknown).success).toBe(false);
+  });
+
+  const newService = {
+    slug: "wedding-clips",
+    num: "",
+    title: "קליפים לחתונה",
+    meta: "",
+    desc: "",
+    lead: "פסקה",
+    videos: [],
+    hidden: true,
+  };
+
+  it("adds a new service, hidden, with videos and no gallery", () => {
+    const saved = [...defaultContent.services, { ...newService, gallery: "stills" as const }];
+    expect(validateDoc("services", saved).success).toBe(true);
+    const added = assembleContent({ services: saved }).services.at(-1);
+    expect(added?.slug).toBe("wedding-clips");
+    expect(added?.gallery).toBeUndefined();
+    expect(added?.published).toBeUndefined();
+    expect(visibleServices([added!])).toHaveLength(0);
+  });
+
+  it("publishes a new service once it is shown", () => {
+    const shown = { ...newService, hidden: undefined, published: true };
+    const content = assembleContent({ services: [...defaultContent.services, shown] });
+    expect(visibleServices(content.services).map((s) => s.slug)).toContain("wedding-clips");
+  });
+
+  it("gives any service its own photos alongside its videos", () => {
+    const photo = { name: "still-brit", alt: "", label: "ברית", ratio: 1.5 };
+    const withPhotos = { ...newService, photos: [photo] };
+    const saved = [...defaultContent.services, withPhotos];
+    expect(validateDoc("services", saved).success).toBe(true);
+    expect(assembleContent({ services: saved }).services.at(-1)?.photos).toEqual([photo]);
+    const tooMany = { ...newService, photos: Array.from({ length: 61 }, () => photo) };
+    expect(validateDoc("services", [...defaultContent.services, tooMany]).success).toBe(false);
+  });
+
+  it("refuses a bad, missing or duplicate address", () => {
+    const check = (slug: string) =>
+      validateDoc("services", [...defaultContent.services, { ...newService, slug }]).success;
+    expect(check("")).toBe(false);
+    expect(check("Wedding")).toBe(false);
+    expect(check("חתונה")).toBe(false);
+    expect(check("wedding--clips")).toBe(false);
+    expect(check("-wedding")).toBe(false);
+    expect(check("a".repeat(41))).toBe(false);
+    expect(check("kululam")).toBe(false); // already a launch service
+    expect(check("clips-2027")).toBe(true);
+  });
+
+  it("refuses showing a service with no name", () => {
+    const unnamed = { ...newService, title: " " };
+    expect(validateDoc("services", [...defaultContent.services, unnamed]).success).toBe(true);
+    const shown = { ...unnamed, hidden: undefined };
+    expect(validateDoc("services", [...defaultContent.services, shown]).success).toBe(false);
+  });
+
+  it("deletes any service, launch ones included, within 1 to 12", () => {
+    const withoutKululam = defaultContent.services.filter((s) => s.slug !== "kululam");
+    expect(validateDoc("services", withoutKululam).success).toBe(true);
+    const content = assembleContent({ services: withoutKululam });
+    expect(content.services.some((s) => s.slug === "kululam")).toBe(false);
+    expect(validateDoc("services", []).success).toBe(false);
+    const thirteen = [
+      ...defaultContent.services,
+      ...Array.from({ length: 6 }, (_, i) => ({ ...newService, slug: `extra-${i}` })),
+    ];
+    expect(validateDoc("services", thirteen).success).toBe(false);
+    expect(validateDoc("services", thirteen.slice(0, 12)).success).toBe(true);
   });
 
   it("lets services be hidden, but not all of them", () => {

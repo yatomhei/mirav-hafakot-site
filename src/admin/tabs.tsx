@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
-import type { DocKey } from "@/content/schema";
+import { useId, type ReactNode } from "react";
+import { MAX_SERVICES, MAX_SLUG, slugProblem, type DocKey } from "@/content/schema";
 import type { Faq, Service, StillPhoto, StripPhoto, Testimonial, Video } from "@/content/types";
 import { defaultContent } from "@/content/docs";
 import {
@@ -10,6 +10,7 @@ import {
   featuredVideos,
 } from "@/content/featured";
 import { photoFile } from "@/lib/asset";
+import { useContent } from "@/content/context";
 import { ServiceSearchFields } from "./SearchFields";
 import {
   AddPhotoButton,
@@ -102,7 +103,124 @@ function StillsPageCheck({
   );
 }
 
-const serviceTitle = (_: number, s: Service) => (s.hidden ? `${s.title} (מוסתר)` : s.title);
+const serviceTitle = (i: number, s: Service) => {
+  const name = s.title.trim() || `שירות ${i + 1}`;
+  return s.hidden ? `${name} (מוסתר)` : name;
+};
+
+/** A new service starts hidden, so nothing goes public half-finished. */
+function newService(): Service {
+  return {
+    slug: "",
+    num: "",
+    title: "",
+    meta: "",
+    desc: "",
+    lead: "",
+    videos: [],
+    hidden: true,
+  };
+}
+
+/** Typed text made into an address: lowercase, spaces to dashes, nothing but a-z, 0-9 and -. */
+const toSlug = (raw: string) =>
+  raw
+    .toLowerCase()
+    .replace(/[\s_]+/g, "-")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-{2,}/g, "-")
+    .slice(0, MAX_SLUG);
+
+/**
+ * The page address. Editable until the service is first shown on the site; from then on it
+ * is locked, so links already shared and Google's results never break.
+ */
+function ServiceAddress({ path, index }: { path: string; index: number }) {
+  const id = useId();
+  const draft = useDraft();
+  const { value: service } = useField<Service>(path);
+  const { set } = useField<string>(`${path}.slug`);
+  if (service.published) {
+    return (
+      <div>
+        <span className="block text-[14px] font-medium text-ink">כתובת העמוד</span>
+        <p dir="ltr" className="text-left text-[14px] text-ink/80">
+          /services/{service.slug}
+        </p>
+        <p className="admin-note">
+          נעולה, כי השירות כבר הוצג באתר: כך קישורים ששלחו ותוצאות בגוגל ממשיכים לעבוד.
+        </p>
+      </div>
+    );
+  }
+  const taken = draft.services.some((s, i) => i !== index && s.slug && s.slug === service.slug);
+  const problem = taken ? "הכתובת כבר שייכת לשירות אחר" : slugProblem(service.slug);
+  return (
+    <div>
+      <label htmlFor={id} className="mb-1.5 block">
+        <span className="block text-[14px] font-medium text-ink">כתובת העמוד</span>
+        <span className="block text-[13px] leading-snug text-ink/65">
+          באנגלית, עם מקפים בין מילים, למשל wedding-clips. אפשר לשנות כל עוד השירות מוסתר; אחרי
+          שמציגים אותו באתר בפעם הראשונה, הכתובת ננעלת
+        </span>
+      </label>
+      <div dir="ltr" className="flex items-center gap-1">
+        <span className="text-[14px] text-ink/60">/services/</span>
+        <input
+          id={id}
+          type="text"
+          dir="ltr"
+          className="admin-input text-left"
+          placeholder="wedding-clips"
+          value={service.slug}
+          aria-invalid={problem ? true : undefined}
+          onChange={(event) => set(toSlug(event.target.value))}
+          // A dash left at either end while typing is dropped on leaving the field.
+          onBlur={() => set(service.slug.replace(/^-+|-+$/g, ""))}
+        />
+      </div>
+      {problem && <p className="mt-1 text-[13px] text-red-700">{problem}</p>}
+    </div>
+  );
+}
+
+/**
+ * Hide or show a service. Showing it for the first time marks it as published, which locks its
+ * address; hiding it again before saving undoes that, unless it was already live.
+ */
+function ServiceVisibility({ path }: { path: string }) {
+  const id = useId();
+  const loaded = useContent();
+  const { value: service, set } = useField<Service>(path);
+  const wasLive = loaded.services.some((s) => s.slug === service.slug && s.published);
+  const hide = (hidden: boolean) => {
+    const { hidden: _h, published: _p, ...rest } = service;
+    set({
+      ...rest,
+      ...(hidden ? { hidden: true } : {}),
+      ...(!hidden || wasLive ? { published: true } : {}),
+    });
+  };
+  return (
+    <div>
+      <label htmlFor={id} className="flex cursor-pointer items-center gap-2 text-[14px] text-ink">
+        <input
+          id={id}
+          type="checkbox"
+          className="size-4 accent-[var(--color-olive-deep)]"
+          checked={Boolean(service.hidden)}
+          onChange={(event) => hide(event.target.checked)}
+        />
+        הסתרת השירות מהאתר
+      </label>
+      <p className="ms-6 text-[12.5px] leading-snug text-ink/65">
+        {service.published
+          ? "הכרטיס, הקישורים בתחתית האתר ועמוד השירות עצמו לא יוצגו. אפשר להחזיר בכל רגע"
+          : "שירות חדש מתחיל מוסתר. כשהכול מוכן (שם, תמונה, פסקה, סרטונים בלשונית 'עמודי שירות'), מורידים את הסימון ושומרים, והשירות עולה לאתר"}
+      </p>
+    </div>
+  );
+}
 
 /**
  * A strip photo, cropped the way the homepage shows it on a typical computer screen (1440px):
@@ -208,6 +326,65 @@ function StillsGallery() {
 
 const newVideo = (): Video => ({ title: "", youtubeId: "" });
 const videoTitle = (i: number) => `סרטון ${i + 1}`;
+
+/**
+ * A service page's work: its videos, then its photos. The page shows whichever it has; the
+ * stills page's photos are the stills gallery, edited in its own card.
+ */
+function ServiceGallery({ path, stills }: { path: string; stills: boolean }) {
+  return (
+    <>
+      <div className="flex flex-col gap-2">
+        <h4 className="text-[14px] font-medium text-ink">סרטונים</h4>
+        <List<Video>
+          path={`${path}.videos`}
+          itemTitle={videoTitle}
+          grid
+          editable={{
+            min: 0,
+            max: 30,
+            create: newVideo,
+            addLabel: "הוספת סרטון",
+          }}
+        >
+          {(v) => <VideoFields path={v} />}
+        </List>
+      </div>
+      <div className="flex flex-col gap-2">
+        <h4 className="text-[14px] font-medium text-ink">תמונות</h4>
+        {stills ? (
+          <p className="admin-note">
+            התמונות בעמוד הזה נמצאות בכרטיס 'גלריית צילומי סטילס' שמתחת לרשימת העמודים.
+          </p>
+        ) : (
+          <>
+            <p className="text-[12.5px] leading-snug text-ink/65">
+              מוצגות מתחת לסרטונים, בגלריה כמו בעמוד צילומי הסטילס. עמוד בלי סרטונים מציג רק תמונות
+            </p>
+            <List<StillPhoto>
+              path={`${path}.photos`}
+              itemTitle={(i, ph) => `${i + 1}. ${ph.label || "תמונה"}`}
+              grid
+              editable={{ min: 0, max: 60 }}
+            >
+              {(ph) => (
+                <>
+                  <PhotoInput path={ph} label="תמונה" withRatio />
+                  <Text path={`${ph}.label`} label="סוג הצילום" hint="מוצג בתצוגה המוגדלת" />
+                </>
+              )}
+            </List>
+            <AddPhotoButton<StillPhoto>
+              path={`${path}.photos`}
+              max={60}
+              make={({ name, ratio }) => ({ name, ratio, alt: "", label: "" })}
+            />
+          </>
+        )}
+      </div>
+    </>
+  );
+}
 
 export const TABS: TabDef[] = [
   {
@@ -321,13 +498,20 @@ export const TABS: TabDef[] = [
         render: () => (
           <Card
             title="כרטיסי השירותים"
-            hint="שבעת השירותים בסדר שבו הם מופיעים באתר: החיצים משנים את הסדר. שירות חדש מוסיפים דרך הקוד"
+            hint={`השירותים בסדר שבו הם מופיעים באתר: החיצים משנים את הסדר. אפשר להוסיף שירות (עד ${MAX_SERVICES}) ולמחוק כל שירות, כל עוד נשאר לפחות אחד גלוי`}
           >
             <List<Service>
               path=""
               itemTitle={serviceTitle}
               grid
-              editable={{ min: 7, max: 7 }}
+              editable={{
+                min: 1,
+                max: MAX_SERVICES,
+                create: newService,
+                addLabel: "הוספת שירות",
+                confirmRemove: (_, s) =>
+                  `למחוק את השירות "${s.title.trim() || "בלי שם"}"? הכרטיס, העמוד והסרטונים שבו יימחקו מהאתר אחרי השמירה. אי אפשר לשחזר אחרי השמירה`,
+              }}
               extra={
                 <SubDoc docKey="home.services">
                   <div className="rounded-lg border border-dashed border-ink/25 p-3">
@@ -352,7 +536,7 @@ export const TABS: TabDef[] = [
                 </SubDoc>
               }
             >
-              {(p) => (
+              {(p, i) => (
                 <>
                   {/* Same shape as the card on the homepage (16:9). */}
                   <PhotoInput
@@ -364,11 +548,8 @@ export const TABS: TabDef[] = [
                   />
                   <Text path={`${p}.title`} label="שם השירות" />
                   <Text path={`${p}.meta`} label="שורה קטנה מתחת לשם" />
-                  <Toggle
-                    path={`${p}.hidden`}
-                    label="הסתרת השירות מהאתר"
-                    hint="הכרטיס, הקישורים בתחתית האתר ועמוד השירות עצמו לא יוצגו. אפשר להחזיר בכל רגע"
-                  />
+                  <ServiceAddress path={p} index={i} />
+                  <ServiceVisibility path={p} />
                 </>
               )}
             </List>
@@ -610,7 +791,7 @@ export const TABS: TabDef[] = [
         render: () => (
           <Card
             title="עמוד לכל שירות"
-            hint={`הפסקה בראש העמוד והסרטונים שבו. עמוד שאין בו סרטונים מציג 'עבודות לדוגמה יעלו לכאן בקרוב'. את שם השירות משנים בלשונית 'שירותים'. ${CONSENT}`}
+            hint={`הפסקה בראש העמוד והעבודות שבו: סרטונים, תמונות או שניהם. עמוד בלי עבודות מציג 'עבודות לדוגמה יעלו לכאן בקרוב'. את שם השירות משנים בלשונית 'שירותים'. ${CONSENT}`}
           >
             <List<Service> path="" itemTitle={serviceTitle} collapsible>
               {(p) => {
@@ -619,28 +800,7 @@ export const TABS: TabDef[] = [
                     <Text path={`${p}.lead`} label="פסקה בראש העמוד" multiline />
                     <ServiceSearchFields path={p} />
                     <StillsPageCheck path={p}>
-                      {(stills) =>
-                        stills ? (
-                          <p className="admin-note">
-                            התמונות בעמוד הזה נמצאות בכרטיס 'גלריית צילומי סטילס' שמתחת לרשימת
-                            העמודים.
-                          </p>
-                        ) : (
-                          <List<Video>
-                            path={`${p}.videos`}
-                            itemTitle={videoTitle}
-                            grid
-                            editable={{
-                              min: 0,
-                              max: 30,
-                              create: newVideo,
-                              addLabel: "הוספת סרטון",
-                            }}
-                          >
-                            {(v) => <VideoFields path={v} />}
-                          </List>
-                        )
-                      }
+                      {(stills) => <ServiceGallery path={p} stills={stills} />}
                     </StillsPageCheck>
                   </>
                 );
@@ -664,9 +824,7 @@ export const TABS: TabDef[] = [
         key: "servicePage",
         render: () => (
           <Card title="טקסטים שחוזרים בכל עמודי השירות">
-            <Text path="cta" label="משפט לפני הכפתור (עמוד עם סרטונים)" />
-            <Text path="ctaPhotos" label="משפט לפני הכפתור (עמוד הסטילס)" />
-            <Text path="ctaEmpty" label="משפט לפני הכפתור (עמוד בלי עבודות)" />
+            <Text path="cta" label="משפט לפני הכפתור" hint="אותו משפט בכל עמודי השירות" />
             <Text path="empty" label="הודעה בעמוד בלי עבודות" />
             <Text path="ctaButton" label="טקסט הכפתור" />
             <Text path="moreCaption" label="תווית מעל 'שירותים נוספים'" />

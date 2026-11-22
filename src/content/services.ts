@@ -32,10 +32,11 @@ export const barMitzvahClips: Video[] = (
 ).map((v) => ({ ...v, featured: true }));
 
 /**
- * The services: homepage cards (title, meta, optional image) and their pages (/services/<slug>).
- * Order is the homepage order. A service with no videos yet shows a short "coming soon" note.
+ * The launch services: homepage cards (title, meta, optional image) and their pages
+ * (/services/<slug>). Order is the homepage order. A service with no videos yet shows a short
+ * "coming soon" note. Merav can add, delete and reorder services in the admin.
  */
-export const services: Service[] = [
+const launchServices: Service[] = [
   {
     slug: "bar-bat-mitzvah",
     num: "01",
@@ -151,23 +152,22 @@ export const services: Service[] = [
   },
 ];
 
+/** All of them are live from launch, so their addresses are locked (see Service.published). */
+export const services: Service[] = launchServices.map((s) => ({ ...s, published: true }));
+
+/** A launch service by its address (new services exist only in the saved content). */
 export const getService = (slug: string) => services.find((s) => s.slug === slug);
 
 /** The services the site shows and links to (the admin can hide any of them). */
 export const visibleServices = <T extends { hidden?: boolean | undefined }>(list: T[]) =>
   list.filter((s) => !s.hidden);
 
-/** The services' addresses: fixed in code, whatever order the admin saves them in. */
-export const SERVICE_SLUGS = services.map((s) => s.slug);
-
 export const servicePage = {
-  cta: "אהבתם? הסרט הבא יכול להיות שלכם.",
-  ctaPhotos: "אהבתם? הצילומים הבאים יכולים להיות שלכם.",
+  /** The line above the button, the same on every page (videos, photos or no work yet). */
+  cta: "רוצים שהסיפור הבא יהיה שלכם?",
   ctaButton: "דברו איתי ונתחיל לתכנן יחד",
   /** Shown instead of the gallery while a service has no videos or photos yet. */
   empty: "עבודות לדוגמה יעלו לכאן בקרוב.",
-  /** The CTA line on a page whose gallery is still empty. */
-  ctaEmpty: "רוצים לשמוע עוד או לראות עבודות קודמות? דברו איתי.",
   moreCaption: "שירותים נוספים",
   moreTitle: "אולי יעניין אתכם גם…",
 };

@@ -2,18 +2,20 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { PageShell } from "@/components/layout/PageShell";
 import { ServicePage } from "@/components/service/ServicePage";
 import { useContent } from "@/content/context";
-import type { SiteContent } from "@/content/docs";
-import { getService } from "@/content/services";
+import { defaultContent, type SiteContent } from "@/content/docs";
 import { absImage, pageAddress, serviceJsonLd } from "@/lib/seo";
 import { serviceSeoFor } from "@/content/seo-pages";
 import { photoFile } from "@/lib/asset";
 
 export const Route = createFileRoute("/services/$slug")({
   loader: async ({ params, parentMatchPromise }) => {
-    const service = getService(params.slug);
-    if (!service) throw notFound();
+    // The saved content holds every service, including ones Merav added; a deleted or hidden
+    // one answers "not found".
     const content = (await parentMatchPromise).loaderData as SiteContent | undefined;
-    if (content?.services.find((s) => s.slug === service.slug)?.hidden) throw notFound();
+    const service = (content?.services ?? defaultContent.services).find(
+      (s) => s.slug === params.slug,
+    );
+    if (!service || service.hidden) throw notFound();
     return { slug: service.slug };
   },
   head: ({ loaderData, matches }) => {

@@ -2,71 +2,13 @@
 
 What's left before and after launch, grouped by what each item waits on. Updated 2026-11-22.
 
-## Next up: Merav can add, delete and edit services
+## Done 2026-11-22: Merav can add, delete and edit services
 
-Today the site has exactly seven services, fixed in code: Merav can edit and hide them but not
-add or remove one. The plan below lets her manage the list herself from the admin. It doesn't
-change the design: the homepage grid is two columns (one on phones) and already handles any
-number of cards.
-
-### What Merav gets
-
-1. **Add:** a "הוספת שירות" button under "שירותים". A new service appears **hidden**, so nothing
-   goes public half-finished. She fills it in like the existing ones: name, subtitle, card
-   photo, opening paragraph, videos. The Google title and description fill in automatically from
-   the name and her paragraph, and she can change them in "איך העמוד מופיע בגוגל".
-2. **Page address:** she types a short address in English letters (for example `wedding-clips`),
-   with a hint and an example beside the field. It stays editable while the service is hidden
-   and **locks once she publishes it**, so links already shared, and Google's results, never
-   break. English rather than Hebrew, because Hebrew addresses turn into long `%D7%A7…` codes
-   when copied into WhatsApp or email.
-3. **Publish:** she un-hides it. The card appears on the homepage, in the footer and in the menus,
-   and the page goes live and into the sitemap.
-4. **Edit:** everything she can edit today, for every service, including ones she added.
-5. **Delete:** any service, including the original seven, with a confirmation that names it. At
-   least one visible service must remain (already a rule today).
-6. **Order:** the existing arrows keep working for the full list.
-
-### Search and the sitemap
-
-- `/sitemap.xml` is built from the live content on every request, so a new service is listed
-  automatically and a deleted one disappears. Nothing to update by hand.
-- After launch, submit the sitemap address to Google Search Console **once**; Google keeps
-  re-reading it. New pages are also found through the homepage and footer links.
-- A deleted service's address answers "not found". Optional: send it to the homepage instead
-  (a permanent redirect) so old links and Google results land somewhere useful. Decide when
-  building.
-
-### What changes in the code (where to start)
-
-- `src/content/schema.ts`: the `services` rule says exactly seven, with the addresses from code
-  (`length(7)` and the `SERVICE_SLUGS` check). Replace it with:
-  - between 1 and 12 services, at least one visible (already checked);
-  - each address unique and in the form `^[a-z0-9]+(-[a-z0-9]+)*$`, up to 40 characters;
-  - addresses that can't be used, because they would clash with other pages (`admin`, `privacy`,
-    `accessibility`, and so on);
-  - the featured-videos limits stay as they are.
-- `src/content/docs.ts`: today each saved service is matched to the code by its address, which
-  restores its linked gallery (the stills page). Keep that for the original seven; a new service
-  has no gallery, only videos.
-- `src/routes/services.$slug.tsx`: the page looks the service up in the code (`getService`), so
-  a new one would answer "not found". Look it up in the saved content instead, as the hidden check
-  already does.
-- Add a field to `Service` recording that it was published once (for example `published: true`,
-  set on first un-hide), so the admin knows to lock the address.
-- `src/admin/tabs.tsx`, "שירותים" tab: the add and delete buttons (the `List` component already
-  supports `editable` with create/min/max, as used for videos), plus the address field with
-  its lock.
-- `src/content/seo-pages.ts`: nothing needed. A service with no written entry already falls back
-  to its name + area, and to Merav's own wording when she types it.
-- Footer, menu and homepage grid read the list from content: check they all pick up new
-  services, and that a deleted one disappears everywhere.
-- At deploy, the same rules apply to the Cloudflare storage (D1); nothing extra.
-- Tests: add, rename, publish (address locks), delete (including an original), refusing a
-  duplicate or reserved address, refusing to delete the last visible service, and the sitemap
-  listing.
-
-Estimated: a few hours including tests.
+In the admin's "שירותים" tab: add (up to 12, a new one starts hidden), a page address in English
+that locks once the service is first shown, delete any service (at least one visible remains),
+reorder, and edit as before. Pages, homepage cards, footer links and the sitemap follow the saved
+list. Left open: a deleted service's old address answers "not found"; a permanent redirect to the
+homepage could be added later if old links matter.
 
 ## Bar/bat mitzvah landing page: finish it, then build it into the site
 
@@ -233,6 +175,27 @@ to reach it:
 - **The admin:** https://hafakathamerav.co.il/admin. She signs in with her Google account
   (Meravi2340@gmail.com), no password of its own. A short guide: editing texts, photos, videos
   and services, hiding a service, adding another admin, and the reminders the admin shows.
+- **Services: best practices** (part of the guide, in plain words):
+  - **Adding:** a new service starts hidden. Fill in everything (name, card photo, opening
+    paragraph, videos and/or photos), check it, then untick "hidden" and save.
+  - **The address:** choose it carefully, short, in English, and describing the service
+    (`wedding-clips`, not `new-service-2`). It locks the first time the service is shown, so
+    shared links and Google results keep working.
+  - **Hide rather than delete** when a service pauses (a season, a break): hiding keeps
+    everything and it comes back with one click. Delete only when it's gone for good.
+  - **Deleting:** the card, the page, its videos and photos are gone after saving, and the old
+    address shows "not found". A video marked for the homepage disappears from there too.
+  - **Reusing an old address:** fine for an address that was never shown. For one that was live,
+    only for a closely related service: old links and Google results will lead to it.
+  - **Renaming:** only to reword the same service (for example "סרטי תדמית" to "סרטי תדמית
+    לעסקים"). The address stays, and Google's title follows the new name unless she wrote her
+    own in "איך העמוד מופיע בגוגל". **Never turn a service into a different one** (rename it and
+    swap its photos and videos): the old, locked address wouldn't match (wedding clips at
+    `/services/kululam`), old links and Google results would lead to the wrong service, and the
+    old service would be lost. For a new service: add a new one, then hide or delete the old.
+  - **Photos and videos of people:** only with their consent, and the parents' for children.
+  - **One admin tab at a time:** saving from an old tab can overwrite newer changes. Reload
+    before editing if a tab was left open.
 - **Her hero video:** the requirements (MP4, up to 8MB, a 6-15 second loop, 1080p landscape, no
   sound, calm framing with the key part in the middle), and where to upload it in the admin.
 - **Cloudflare** (dash.cloudflare.com): hosting, DNS, storage. Her login, and a reminder that
