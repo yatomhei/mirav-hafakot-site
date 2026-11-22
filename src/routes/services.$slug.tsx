@@ -1,4 +1,4 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { PageShell } from "@/components/layout/PageShell";
 import { ServicePage } from "@/components/service/ServicePage";
 import { useContent } from "@/content/context";
@@ -16,6 +16,10 @@ export const Route = createFileRoute("/services/$slug")({
       (s) => s.slug === params.slug,
     );
     if (!service || service.hidden) throw notFound();
+    // A service that leads to its own page (a landing page) forwards its old address there
+    // for good, so shared links and Google's results move with it.
+    const link = service.link?.trim();
+    if (link) throw redirect({ href: link, statusCode: 301 });
     return { slug: service.slug };
   },
   head: ({ loaderData, matches }) => {

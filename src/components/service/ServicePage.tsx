@@ -6,6 +6,7 @@ import { VideoThumb } from "@/components/ui/Picture";
 import { HomeLink } from "@/components/ui/HomeLink";
 import { useVideoLink } from "@/components/ui/VideoPlayer";
 import { StillsGrid } from "@/components/sections/Stills";
+import { ServiceLink } from "./ServiceLink";
 import { ArrowLeft, Play } from "@/components/ui/icons";
 import { useRise } from "@/hooks/useRise";
 
@@ -168,16 +169,15 @@ export function ServicePage({ service }: { service: Service }) {
             <ul className="more-list mx-auto grid max-w-[1000px] list-none grid-cols-2 gap-x-[clamp(24px,5vw,72px)] border-t border-[rgb(46_49_40/0.18)] p-0">
               {others.map((s) => (
                 <li key={s.slug} className="border-b border-[rgb(46_49_40/0.18)]">
-                  <Link
-                    to="/services/$slug"
-                    params={{ slug: s.slug }}
+                  <ServiceLink
+                    service={s}
                     className="more-link flex min-h-16 items-center justify-between gap-4 py-2 text-ink no-underline"
                   >
                     <span className="text-[25px] font-light">{s.title}</span>
                     <span className="more-go inline-flex flex-none" aria-hidden="true">
                       <ArrowLeft size={20} />
                     </span>
-                  </Link>
+                  </ServiceLink>
                 </li>
               ))}
             </ul>

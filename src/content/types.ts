@@ -64,6 +64,12 @@ export type Service = {
    * it has). The launch stills service shows the stills gallery instead.
    */
   photos?: StillPhoto[];
+  /**
+   * Where the card and every link to the service lead instead of its regular page: a page on
+   * this site ("/bar-mitzvah", e.g. a landing page) or another site (https://...). The regular
+   * page then redirects there permanently and leaves the sitemap. Empty = the regular page.
+   */
+  link?: string;
   /** Hidden from the site: no card, no links, and its page answers "not found". */
   hidden?: boolean;
   /**

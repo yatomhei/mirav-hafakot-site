@@ -37,6 +37,34 @@ export function slugProblem(slug: string): string | null {
   return null;
 }
 
+/**
+ * Where a service's card and links lead instead of its regular page, e.g. a landing page.
+ * Empty means the regular page (/services/<slug>). A page on this site starts with "/"
+ * (/bar-mitzvah); another site starts with https://. Service pages are not allowed, so a
+ * redirect can never loop.
+ */
+export function serviceLinkProblem(link: string): string | null {
+  const l = link.trim();
+  if (!l) return null;
+  if (l.length > 500) return "הכתובת ארוכה מדי";
+  if (l.startsWith("/")) {
+    if (!/^(\/[a-z0-9]+(-[a-z0-9]+)*)+$/.test(l)) {
+      return "בכתובת באתר יכולים להיות רק אותיות קטנות באנגלית, ספרות ומקפים, למשל /bar-mitzvah";
+    }
+    if (l === "/services" || l.startsWith("/services/")) {
+      return "אי אפשר לקשר לעמוד שירות. כדי להפנות לשירות אחר, מסתירים את השירות הזה";
+    }
+    if (l === "/admin" || l.startsWith("/admin/")) return "אי אפשר לקשר לממשק הניהול";
+    return null;
+  }
+  try {
+    if (new URL(l).protocol === "https:" && /^https:\/\/[^/\s]+\.[^/\s]+/.test(l)) return null;
+  } catch {
+    // not an address
+  }
+  return "כתובת באתר מתחילה ב־/ (למשל /bar-mitzvah), ואתר אחר מתחיל ב־https://";
+}
+
 export const YOUTUBE_ID = /^[\w-]{11}$/;
 const videoSchema = z.object({
   title: text,
@@ -180,6 +208,8 @@ export const docSchemas = {
           .max(60)
           .optional(),
         hidden: z.boolean().optional(),
+        // Where the card and links lead instead of the regular page (see serviceLinkProblem).
+        link: z.string().max(500).optional(),
         // Shown on the site at least once: its address can no longer change.
         published: z.boolean().optional(),
         // Optional search wording (see seo-pages.ts); empty means the automatic one.
@@ -204,6 +234,10 @@ export const docSchemas = {
           });
         }
         seen.add(s.slug);
+        const linkProblem = serviceLinkProblem(s.link ?? "");
+        if (linkProblem) {
+          ctx.addIssue({ code: "custom", path: [i, "link"], message: `${name}: ${linkProblem}` });
+        }
         if (!s.hidden && !s.title.trim()) {
           ctx.addIssue({
             code: "custom",

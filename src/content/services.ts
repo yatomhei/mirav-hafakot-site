@@ -162,6 +162,13 @@ export const getService = (slug: string) => services.find((s) => s.slug === slug
 export const visibleServices = <T extends { hidden?: boolean | undefined }>(list: T[]) =>
   list.filter((s) => !s.hidden);
 
+/** Where a service's card and links lead: its own link (a landing page), or its regular page. */
+export const serviceHref = (s: { slug: string; link?: string | undefined }) =>
+  s.link?.trim() || `/services/${s.slug}`;
+
+/** A link that leaves this site (opens in a new tab). */
+export const isExternalHref = (href: string) => /^https?:\/\//.test(href);
+
 export const servicePage = {
   /** The line above the button, the same on every page (videos, photos or no work yet). */
   cta: "רוצים שהסיפור הבא יהיה שלכם?",

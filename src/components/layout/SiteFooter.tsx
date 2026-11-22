@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useContent } from "@/content/context";
 import { visibleServices } from "@/content/services";
 import { image } from "@/lib/asset";
+import { ServiceLink } from "@/components/service/ServiceLink";
 import { isPlaceholder, mailHref, telHref } from "@/lib/contact";
 import { ArrowUp, Facebook, Instagram, TikTok, YouTube } from "@/components/ui/icons";
 
@@ -43,13 +44,12 @@ export function SiteFooter() {
           <ul className="footer-svc m-0 flex max-w-[320px] list-none flex-col p-0 max-[760px]:max-w-none max-[760px]:flex-row max-[760px]:flex-wrap max-[760px]:justify-center max-[760px]:gap-y-1">
             {visibleServices(services).map((s) => (
               <li key={s.slug}>
-                <Link
-                  to="/services/$slug"
-                  params={{ slug: s.slug }}
+                <ServiceLink
+                  service={s}
                   className="footer-link inline-flex min-h-8 items-center text-[15px] font-light no-underline max-[760px]:min-h-11 max-[760px]:text-[16px]"
                 >
                   {s.title}
-                </Link>
+                </ServiceLink>
               </li>
             ))}
           </ul>

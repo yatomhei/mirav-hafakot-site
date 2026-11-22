@@ -1,5 +1,12 @@
-import { useId, type ReactNode } from "react";
-import { MAX_SERVICES, MAX_SLUG, slugProblem, type DocKey } from "@/content/schema";
+import { useId, useState, type ReactNode } from "react";
+import { useRouter } from "@tanstack/react-router";
+import {
+  MAX_SERVICES,
+  MAX_SLUG,
+  serviceLinkProblem,
+  slugProblem,
+  type DocKey,
+} from "@/content/schema";
 import type { Faq, Service, StillPhoto, StripPhoto, Testimonial, Video } from "@/content/types";
 import { defaultContent } from "@/content/docs";
 import {
@@ -181,6 +188,132 @@ function ServiceAddress({ path, index }: { path: string; index: number }) {
       </div>
       {problem && <p className="mt-1 text-[13px] text-red-700">{problem}</p>}
     </div>
+  );
+}
+
+/**
+ * Where the card leads, as one choice: the regular service page (with its address), or another
+ * page such as a landing page (with that page's address). Only the chosen option's field shows,
+ * so there is never more than one address to fill in. A page of this site is checked against
+ * the site's pages, so a typo shows a warning before it reaches the site.
+ */
+function ServiceDestination({ path, index }: { path: string; index: number }) {
+  const name = useId();
+  const linkId = useId();
+  const router = useRouter();
+  const draft = useDraft();
+  const { value: service, set } = useField<Service>(path);
+  const link = service.link ?? "";
+  // "Another page" stays chosen while its field is still empty (until something is typed).
+  const [wantOther, setWantOther] = useState(false);
+  const other = Boolean(link) || wantOther;
+
+  const withLink = (next: string, base: Service = service) => {
+    const { link: _l, ...rest } = base;
+    return next ? { ...rest, link: next } : rest;
+  };
+  const choose = (toOther: boolean) => {
+    setWantOther(toOther);
+    if (!toOther) return set(withLink(""));
+    // The regular page's address is hidden now but still required (the old address forwards
+    // from it): a new service with none yet gets one quietly.
+    const taken = (slug: string) => draft.services.some((s, i) => i !== index && s.slug === slug);
+    if (slugProblem(service.slug) || taken(service.slug)) {
+      let n = index + 1;
+      while (taken(`service-${n}`)) n++;
+      set({ ...service, slug: `service-${n}` });
+    }
+  };
+
+  const problem = serviceLinkProblem(link);
+  const l = link.trim();
+  const missing =
+    !problem &&
+    l.startsWith("/") &&
+    !(router.routesByPath as unknown as Record<string, unknown>)[l];
+  const option = "flex cursor-pointer items-start gap-2 text-[14px] text-ink";
+  return (
+    <fieldset className="flex flex-col gap-2">
+      <legend className="mb-1.5 text-[14px] font-medium text-ink">לחיצה על הכרטיס מובילה ל־</legend>
+      <label className={option}>
+        <input
+          type="radio"
+          name={name}
+          className="mt-1 size-4 accent-[var(--color-olive-deep)]"
+          checked={!other}
+          onChange={() => choose(false)}
+        />
+        <span>
+          עמוד השירות
+          <span className="block text-[12.5px] leading-snug text-ink/65">
+            העמוד הרגיל, עם הפסקה והעבודות מלשונית 'עמודי שירות'
+          </span>
+        </span>
+      </label>
+      <label className={option}>
+        <input
+          type="radio"
+          name={name}
+          className="mt-1 size-4 accent-[var(--color-olive-deep)]"
+          checked={other}
+          onChange={() => choose(true)}
+        />
+        <span>
+          דף אחר, למשל דף נחיתה
+          <span className="block text-[12.5px] leading-snug text-ink/65">
+            עמוד השירות הרגיל לא יוצג, ומי שמגיע לכתובת שלו יועבר לדף הזה
+          </span>
+        </span>
+      </label>
+      <div className="ms-6">
+        {other ? (
+          <div>
+            <label htmlFor={linkId} className="mb-1.5 block">
+              <span className="block text-[14px] font-medium text-ink">כתובת הדף</span>
+              <span className="block text-[13px] leading-snug text-ink/65">
+                דף באתר מתחיל ב־/ (למשל /bar-mitzvah). אתר אחר מתחיל ב־https:// ונפתח בכרטיסייה חדשה
+              </span>
+            </label>
+            <input
+              id={linkId}
+              type="text"
+              dir="ltr"
+              className="admin-input text-left"
+              placeholder="/bar-mitzvah"
+              value={link}
+              aria-invalid={problem || missing ? true : undefined}
+              onChange={(event) => set(withLink(event.target.value.replace(/\s/g, "")))}
+            />
+            {!l && (
+              <p className="mt-1 text-[13px] text-ink/65">
+                כל עוד אין כתובת, הכרטיס ממשיך להוביל לעמוד השירות
+              </p>
+            )}
+            {problem && <p className="mt-1 text-[13px] text-red-700">{problem}</p>}
+            {missing && (
+              <p className="mt-1 text-[13px] text-red-700">
+                אין באתר עמוד בכתובת {l}. בדקו את האיות: אחרת הכרטיס יוביל לעמוד שלא קיים
+              </p>
+            )}
+          </div>
+        ) : (
+          <ServiceAddress path={path} index={index} />
+        )}
+      </div>
+    </fieldset>
+  );
+}
+
+/** On the service-pages tab: the regular page isn't shown when the card leads elsewhere. */
+function LinkedAwayNote({ path }: { path: string }) {
+  const { value: service } = useField<Service>(path);
+  const link = service.link?.trim();
+  if (!link) return null;
+  return (
+    <p className="admin-note">
+      הכרטיס של השירות הזה מוביל ל־<span dir="ltr">{link}</span> (בלשונית 'שירותים'), ולכן העמוד
+      הרגיל לא מוצג באתר. סרטונים שמסומנים כאן ל'עבודות הנבחרות' עדיין מופיעים בדף הבית
+    </p>
   );
 }
 
@@ -548,7 +681,7 @@ export const TABS: TabDef[] = [
                   />
                   <Text path={`${p}.title`} label="שם השירות" />
                   <Text path={`${p}.meta`} label="שורה קטנה מתחת לשם" />
-                  <ServiceAddress path={p} index={i} />
+                  <ServiceDestination path={p} index={i} />
                   <ServiceVisibility path={p} />
                 </>
               )}
@@ -797,6 +930,7 @@ export const TABS: TabDef[] = [
               {(p) => {
                 return (
                   <>
+                    <LinkedAwayNote path={p} />
                     <Text path={`${p}.lead`} label="פסקה בראש העמוד" multiline />
                     <ServiceSearchFields path={p} />
                     <StillsPageCheck path={p}>

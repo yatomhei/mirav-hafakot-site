@@ -1,10 +1,10 @@
-import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useContent } from "@/content/context";
 import { visibleServices } from "@/content/services";
 import { useRise } from "@/hooks/useRise";
 import { Picture } from "@/components/ui/Picture";
 import { HomeLink } from "@/components/ui/HomeLink";
+import { ServiceLink } from "@/components/service/ServiceLink";
 import { ArrowLeft, ArrowUpLeft } from "@/components/ui/icons";
 import { BrokenLines } from "@/components/ui/BrokenLines";
 
@@ -90,12 +90,12 @@ export function Services() {
         >
           {visibleServices(services).map((s) => (
             <li key={s.slug}>
-              <Link to="/services/$slug" params={{ slug: s.slug }} className={CARD}>
+              <ServiceLink service={s} className={CARD}>
                 {s.image && (
                   <Picture photo={s.image} decorative sizes="(max-width: 640px) 92vw, 46vw" />
                 )}
                 <CardFace title={s.title} meta={s.meta} />
-              </Link>
+              </ServiceLink>
             </li>
           ))}
           {/* Last card: not a service — it opens the contact form. The admin can hide it, or

@@ -1,4 +1,5 @@
-import { visibleServices } from "@/content/services";
+import { isExternalHref, serviceHref, visibleServices } from "@/content/services";
+import { serviceLinkProblem } from "@/content/schema";
 import { featuredStills, featuredVideos } from "@/content/featured";
 import { DEFAULT_MESSAGE_TEMPLATE, fillMessage } from "@/content/whatsapp-message";
 import { describe, expect, it } from "vitest";
@@ -178,5 +179,42 @@ describe("saved content", () => {
     expect(validateDoc("site", { ...defaultContent.site, whatsapp: "050-123" }).success).toBe(
       false,
     );
+  });
+});
+
+describe("service links (landing pages)", () => {
+  const withLink = (link: string) =>
+    defaultContent.services.map((s) => (s.slug === "bar-bat-mitzvah" ? { ...s, link } : s));
+
+  it("leads to the regular page by default", () => {
+    expect(serviceHref({ slug: "kululam" })).toBe("/services/kululam");
+    expect(serviceHref({ slug: "kululam", link: "  " })).toBe("/services/kululam");
+  });
+
+  it("accepts a page of this site or another https site", () => {
+    for (const link of ["/bar-mitzvah", "/landing/bat-mitzvah", "https://example.co.il/page"]) {
+      expect(validateDoc("services", withLink(link)).success, link).toBe(true);
+    }
+    const content = assembleContent({ services: withLink("/bar-mitzvah") });
+    expect(serviceHref(content.services[0]!)).toBe("/bar-mitzvah");
+    expect(isExternalHref("https://example.co.il/page")).toBe(true);
+    expect(isExternalHref("/bar-mitzvah")).toBe(false);
+  });
+
+  it("rejects service pages, the admin, http and bad addresses", () => {
+    for (const link of [
+      "/services/kululam",
+      "/services",
+      "/admin",
+      "/Bar Mitzvah",
+      "/",
+      "bar-mitzvah",
+      "http://example.co.il",
+      "https://",
+      "javascript:alert(1)",
+    ]) {
+      expect(serviceLinkProblem(link), link).not.toBeNull();
+      expect(validateDoc("services", withLink(link)).success, link).toBe(false);
+    }
   });
 });

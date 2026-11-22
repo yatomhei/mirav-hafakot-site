@@ -24,12 +24,18 @@ A dedicated page for "קליפים לבר ובת מצווה", designed separatel
 - **2. Build it into the site's code:** a real page in this project (React + Tailwind, the
   site's own colours, fonts and components), not a copy of the static preview. Decisions to
   make first:
-  - **Address:** for example `/bar-bat-mitzvah`. Not the same as the existing service page
-    `/services/bar-bat-mitzvah`, which stays.
+  - **Address:** for example `/bar-mitzvah`. It replaces the service page: once it's live,
+    type its address in the admin (שירותים > the service's card > "הכרטיס מוביל ל־"). The
+    homepage card, the footer and "more services" then lead there, and
+    `/services/bar-bat-mitzvah` forwards to it permanently (301). The option is built and
+    works for any service (done 2026-11-22). Until the page exists, leave the field empty. The
+    admin warns if the address isn't a page of the site.
   - **Header and footer:** the site's own (visitors can reach the rest of the site), or a
     stripped-down version focused on one action (typical for ad campaigns).
-  - **Google:** indexed alongside the service page, or `noindex` if it's only for ads and
-    shared links, so the two pages don't compete in search.
+  - **Google:** the service page leaves the sitemap once it forwards, so **add the landing
+    page's address to `sitemap.xml`** and give it its own title, description, canonical and
+    service structured data (moved from the service page). Indexed, not `noindex`, since it
+    now is the service's page in search.
   - **Editing:** whether Merav edits its texts, photos and clips in the admin (a new tab, like
     the homepage sections) or it stays fixed in code.
   - **Contact:** the same WhatsApp form as the rest of the site, or a version tuned for this
