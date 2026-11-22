@@ -1,5 +1,6 @@
 import { isExternalHref, serviceHref, visibleServices } from "@/content/services";
 import { serviceLinkProblem } from "@/content/schema";
+import { sitemapPaths } from "@/lib/sitemap";
 import { featuredStills, featuredVideos } from "@/content/featured";
 import { DEFAULT_MESSAGE_TEMPLATE, fillMessage } from "@/content/whatsapp-message";
 import { describe, expect, it } from "vitest";
@@ -216,5 +217,35 @@ describe("service links (landing pages)", () => {
       expect(serviceLinkProblem(link), link).not.toBeNull();
       expect(validateDoc("services", withLink(link)).success, link).toBe(false);
     }
+  });
+});
+
+describe("sitemap", () => {
+  const lead = (slug: string, link: string) =>
+    defaultContent.services.map((s) => (s.slug === slug ? { ...s, link } : s));
+
+  it("lists every visible service page by default", () => {
+    const paths = sitemapPaths(defaultContent);
+    expect(paths).toContain("/services/bar-bat-mitzvah");
+    expect(paths.slice(0, 1)).toEqual(["/"]);
+    expect(paths.slice(-2)).toEqual(["/privacy", "/accessibility"]);
+  });
+
+  it("lists a landing page in place of the service it replaces", () => {
+    const content = assembleContent({ services: lead("bar-bat-mitzvah", "/bar-mitzvah") });
+    const paths = sitemapPaths(content);
+    expect(paths).toContain("/bar-mitzvah");
+    expect(paths).not.toContain("/services/bar-bat-mitzvah");
+  });
+
+  it("leaves out outside sites, hidden services and duplicates", () => {
+    const services = lead("kululam", "https://example.co.il/page").map((s) =>
+      s.slug === "stills" ? { ...s, hidden: true } : s,
+    );
+    const paths = sitemapPaths(assembleContent({ services }), ["/standalone", "/privacy"]);
+    expect(paths.some((p) => p.includes("example") || p.includes("kululam"))).toBe(false);
+    expect(paths).not.toContain("/services/stills");
+    expect(paths).toContain("/standalone");
+    expect(paths.filter((p) => p === "/privacy")).toHaveLength(1);
   });
 });

@@ -32,10 +32,14 @@ A dedicated page for "קליפים לבר ובת מצווה", designed separatel
     admin warns if the address isn't a page of the site.
   - **Header and footer:** the site's own (visitors can reach the rest of the site), or a
     stripped-down version focused on one action (typical for ad campaigns).
-  - **Google:** the service page leaves the sitemap once it forwards, so **add the landing
-    page's address to `sitemap.xml`** and give it its own title, description, canonical and
-    service structured data (moved from the service page). Indexed, not `noindex`, since it
-    now is the service's page in search.
+  - **Google:** once the service leads to it, the sitemap lists the landing page in place of
+    the service page automatically (done 2026-11-22). Give it its own title, description,
+    canonical and service structured data (moved from the service page). Indexed, not
+    `noindex`, since it now is the service's page in search.
+  - **A landing page no service leads to** (the site only hosts it, and visitors arrive from
+    outside links such as ads, WhatsApp or Instagram): nothing lists it automatically. If Google
+    should find it, add its address by hand to `STANDALONE_PAGES` in `src/lib/sitemap.ts`. If
+    it's only for ads or shared links, leave it out of the sitemap and give it `noindex`.
   - **Editing:** whether Merav edits its texts, photos and clips in the admin (a new tab, like
     the homepage sections) or it stays fixed in code.
   - **Contact:** the same WhatsApp form as the rest of the site, or a version tuned for this
