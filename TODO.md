@@ -2,6 +2,44 @@
 
 What's left before and after launch, grouped by what each item waits on. Updated 2026-11-22.
 
+## Next: put the site on Cloudflare for Ortal's review (start 2026-11-23)
+
+Ortal reviews the site and the landing page on the real domain, not the preview link. The site
+goes up early, kept out of Google until launch (`indexable: false`, the image-blocking rules
+stay). Nothing is created in Cloudflare without Yatom's OK; Yatom clicks through the screens.
+
+**Phase 1: Ortal's link (a few hours)**
+1. **Content snapshot:** a script copies the content saved on this computer
+   (`.local-content/site-content.json`) and the uploaded photos (`public/local-uploads`) into the
+   code, and the live site reads them from there. The live admin shows "editing isn't available
+   yet". The testimonials stay visible.
+2. **Landing page:** version 2 as one standalone static page at `/bar-mitzvah` (noindex, no
+   links to it). Ortal's changes, including added, removed or reordered sections, are made
+   directly in that file from now on: the canvas is no longer the source.
+3. **Merge `admin` into `main`.** `main` is what the live site publishes; everyday work stays on
+   `admin` and is merged when ready. (This replaces "merge only at launch".)
+4. **Cloudflare (Merav's account):** create the Worker, connect the GitHub repository (builds
+   from `main`), connect `hafakathamerav.co.il`, decide www or not.
+5. **Check the live site** (pages, landing page, phone sizes, headers, nothing indexable), then
+   send Ortal the link.
+6. **During the review:** content: local admin → snapshot script → commit and push. Code and
+   landing page: commit and push. The live site updates about two minutes after a push.
+
+**Phase 2: the live admin (in parallel, about 1-2 days)**
+1. **Cloudflare:** a D1 database (content, admins) and an R2 bucket (photos, hero video), each
+   with Yatom's OK.
+2. **Code, on its own branch**, tested on that branch's Cloudflare test address, not the live
+   site: read and save content in D1, uploads to R2 with their checks, Google sign-in on the
+   live site (details under "Deploy" below).
+3. **Security check** of the live admin before it's switched on.
+4. **The switch:** pause content edits, fill D1 from the latest snapshot, merge into `main`. The
+   content is identical, so Ortal sees no change.
+5. **After the switch:** content is edited only on the live admin (instant, no push); only code
+   goes through GitHub. Remove the snapshot script. The local copy is for testing only.
+- The admin can keep changing after the switch. Adding a field or section is safe (saved
+  content gets the code's defaults); renaming or removing one needs a step that carries saved
+  content over.
+
 ## Done 2026-11-22: Merav can add, delete and edit services
 
 In the admin's "שירותים" tab: add (up to 12, a new one starts hidden), a page address in English
@@ -21,11 +59,14 @@ A dedicated page for "קליפים לבר ובת מצווה", designed separatel
   truth; the preview is rebuilt from it.
 - **1. Finish the design:** review version 2 with Merav, settle the remaining copy, photos and
   clips, and get her approval on the canvas.
-- **2. Build it into the site's code:** a real page in this project (React + Tailwind, the
-  site's own colours, fonts and components), not a copy of the static preview. Decisions to
-  make first:
+- **Meanwhile (from 2026-11-23):** the static version is on the live site at `/bar-mitzvah` for
+  Ortal's review (see "Next" above), and her changes are made in that file.
+- **2. Build it into the site's code, once Ortal approves and its sections are settled:** a real
+  page in this project (React + Tailwind, the site's own colours, fonts and components), built
+  from the approved static version. Most likely with its own admin tab so Merav can edit its
+  texts, photos and clips (Yatom confirms with Ortal). Decisions to make first:
   - **Address:** for example `/bar-mitzvah`. It replaces the service page: once it's live,
-    type its address in the admin (שירותים > the service's card > "הכרטיס מוביל ל־"). The
+    choose "דף אחר" in the admin (שירותים > the service's card) and type its address. The
     homepage card, the footer and "more services" then lead there, and
     `/services/bar-bat-mitzvah` forwards to it permanently (301). The option is built and
     works for any service (done 2026-11-22). Until the page exists, leave the field empty. The
@@ -91,7 +132,7 @@ services in `src/content/seo-pages.ts`) come from a first keyword plan, not from
 - **Compare wording:** Google Trends for close variants (for example "קליפ בת מצווה" vs "סרט
   בת מצווה"). Optional: Google Keyword Planner for monthly volumes (needs a Google Ads
   account; skip the campaign and payment steps).
-- **Result:** suggested adjustments to the homepage and the seven service titles and
+- **Result:** suggested adjustments to the homepage and all the service titles and
   descriptions, one main phrase per page, written for people, plus FAQ ideas. Apply after the
   user approves.
 - **Then optimize the site's copy** with the phrases the research settles on: headings, service
@@ -156,7 +197,21 @@ services in `src/content/seo-pages.ts`) come from a first keyword plan, not from
 - `src/config/site.ts`: `indexable: true` and the domain in `url` (this turns on canonical
   tags, the sitemap and robots.txt).
 - `public/_headers`: remove the two "keep images and video out of search" blocks.
-- Merge `admin` into `main` (this publishes the site).
+- Merge `admin` into `main` (the site is already live from Phase 1; this publishes the launch
+  changes).
+- **Test that the sitemap follows the admin, before submitting it to Google (step 5 below).**
+  Locally it stays empty until launch, so this is its first real check, and on the live site
+  it reads the saved content from the database, not from this computer.
+  1. Open `https://hafakathamerav.co.il/sitemap.xml`: the homepage, every visible service,
+     `/privacy` and `/accessibility`, each with the full domain (no localhost, no `/admin`).
+  2. In the admin, hide one service and save: reload the sitemap, it's gone. Show it again and
+     save: it's back.
+  3. Choose "דף אחר" for a service with a page of the site (for example `/privacy`) and save:
+     the sitemap lists that page and not `/services/<slug>`, and the old address forwards to it
+     (301). With an `https://` address, the service is left out. Switch back to "עמוד השירות"
+     and save.
+  4. If the sitemap didn't change, look for caching (Cloudflare, or the Worker serving an old
+     copy) before anything else.
 - Google Search Console. Yatom sets it up from **his own Google account** and adds Merav as
   Owner, so nobody shares a password. Whoever proves control of the domain becomes a verified
   owner, and Yatom has that control through her Cloudflare account. Can be done as soon as the
