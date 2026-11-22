@@ -167,7 +167,10 @@ services in `src/content/seo-pages.ts`) come from a first keyword plan, not from
 
 ## Before launch
 
-- A lawyer reviews the privacy policy and the accessibility statement.
+- A lawyer reviews the privacy policy and the accessibility statement. Also ask: may Merav
+  publish testimonials as screenshots of clients' WhatsApp messages with the name removed, or
+  does she need each client's consent (the plan meanwhile: ask on WhatsApp and keep the reply,
+  blur the profile photo, number and identifying details; many messages concern minors)?
 - **Domain: bought 2026-11-22: `hafakathamerav.co.il`** (owner "Merav Verner", Yatom as
   technical and DNS contact, renews 22 November 2027). Added to her Cloudflare (Free), nameservers
   at mynames switched to `aida.ns.cloudflare.com` and `greg.ns.cloudflare.com`. Active in Cloudflare and verified in Search Console (Yatom's account, TXT record added by Google; never delete it) 2026-11-22. Left:
