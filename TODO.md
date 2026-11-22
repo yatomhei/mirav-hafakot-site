@@ -215,6 +215,36 @@ services in `src/content/seo-pages.ts`) come from a first keyword plan, not from
   6. Optional: Bing Webmaster Tools, imported from Search Console in one click.
   After a few weeks, Performance shows the real searches (feeds the second keyword round).
 
+## Handover to Merav
+
+When the site is live, Yatom sends Merav one email (keep a copy) with everything she owns and how
+to reach it:
+
+- **The site:** https://hafakathamerav.co.il (or the www version, whichever is chosen).
+- **The admin:** https://hafakathamerav.co.il/admin. She signs in with her Google account
+  (Meravi2340@gmail.com), no password of its own. A short guide: editing texts, photos, videos
+  and services, hiding a service, adding another admin, and the reminders the admin shows.
+- **Her hero video:** the requirements (MP4, up to 8MB, a 6-15 second loop, 1080p landscape, no
+  sound, calm framing with the key part in the middle), and where to upload it in the admin.
+- **Cloudflare** (dash.cloudflare.com): hosting, DNS, storage. Her login, and a reminder that
+  two-factor authentication is on and Yatom is a Super Administrator there.
+- **mynames.co.il:** the domain registrar. Her login, the renewal date (22 November 2027,
+  auto-renew on, about 74₪ a year), and that the card on file must stay valid.
+- **Google Search Console** (search.google.com/search-console): with her Google account, no
+  separate login. What it shows, in two lines.
+- **Google Cloud** (console.cloud.google.com): the project behind the admin's Google sign-in,
+  once she has accepted the owner invitation.
+- **GitHub:** where the site's code lives, and who owns the repository.
+- **Google Business profile** (if she made it) and **Meta Business / Google Ads** (if she
+  advertises): where the pixel IDs go in the admin.
+- **Who to call:** Yatom's contact details for changes and problems, and what's included.
+
+**Logins, not in the email body:** don't put passwords in plain email (anyone who gets into her
+inbox gets everything). Share them through a password manager (for example a shared Bitwarden
+or 1Password item), or have her set new passwords herself during a call. The email lists where
+each login is kept. After handover, ask her to turn on two-factor authentication wherever it's
+offered (Google, mynames).
+
 ## Small cleanups, any time
 
 - Hydration warnings from the scroll-in animations (console noise only).
