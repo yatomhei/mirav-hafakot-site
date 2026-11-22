@@ -1,6 +1,6 @@
 # To-do
 
-What's left before and after launch, grouped by what each item waits on. Updated 2026-11-18.
+What's left before and after launch, grouped by what each item waits on. Updated 2026-11-22.
 
 ## Next up: Merav can add, delete and edit services
 
@@ -105,31 +105,81 @@ A dedicated page for "קליפים לבר ובת מצווה", designed separatel
       leaves the page fully working. Add a section to the privacy policy (one policy for the
       whole site) about the landing page's pixel and consent. Ad pages usually keep visitors
       focused on contacting her, with fewer links away.
-    - **Not sure yet:** build it without tracking, and add the pixel and banner if and when she
-      starts advertising.
+    - **Decided 2026-11-22: build the consent banner in, ready for ads.** It stays switched off
+      while there is no pixel (a banner with nothing to approve only bothers visitors, and no
+      cookies means no consent is needed). It turns on by itself once a pixel ID is set (Facebook
+      / Meta, Google Ads, or both), and the pixel loads only after the visitor approves. Write the
+      privacy policy section for the landing page's pixel at the same time, published together
+      with the pixel.
+      **Ready in advance, so advertising after launch needs no code change or deploy:**
+      - A pixel ID field (Meta, Google Ads ID and label) in the admin settings. Saving an ID
+        turns on the banner and the pixel; clearing it turns both off.
+      - The privacy policy's pixel section is written now, reviewed by the lawyer with the
+        rest of the policy, and shown automatically only while a pixel ID is set.
+      - The content policy (security headers) on the landing page allows Meta's and Google's
+        addresses from the start; nothing loads from them without an ID and the visitor's
+        approval.
+      - Only a new platform (for example TikTok) or a different kind of tracking needs code.
 - **3. Check it like the rest of the site:** the four checkers (QA, security, legal and
   accessibility, SEO) on the new page, plus the sitemap and the structured data if it's
   indexed.
 
+## Search phrases: a research pass before launch
+
+The current Google titles and descriptions (homepage in the admin's "גוגל ושיתוף ברשתות",
+services in `src/content/seo-pages.ts`) come from a first keyword plan, not from research.
+
+- **Ask Merav** which words her clients use when they contact her (for example "סרטון לבת
+  מצווה", "קליפ בטבע", "צלמת לברית"), and whether she works in more towns (גן יבנה, בני עי"ש,
+  קריית עקרון, רחובות).
+- **Google's suggestions:** autocomplete, "related searches" and "people also ask" for the main
+  phrase of each page. The questions are also material for the FAQ.
+- **Who ranks now:** search each main phrase with her towns (for example "צלמת בר מצווה
+  אשדוד") and note how the top local businesses word their titles.
+- **Compare wording:** Google Trends for close variants (for example "קליפ בת מצווה" vs "סרט
+  בת מצווה"). Optional: Google Keyword Planner for monthly volumes (needs a Google Ads
+  account; skip the campaign and payment steps).
+- **Result:** suggested adjustments to the homepage and the seven service titles and
+  descriptions, one main phrase per page, written for people, plus FAQ ideas. Apply after the
+  user approves.
+- **Then optimize the site's copy** with the phrases the research settles on: headings, service
+  pages' opening paragraphs, the homepage and the FAQ, so they use the words her clients search
+  for, naturally and written for people. Suggest the changes first; apply after approval. Copy
+  Merav edits in the admin goes in as new defaults or as suggestions for her.
+- **After launch:** Google Search Console shows the real searches that bring visitors. Revisit
+  the titles after a month or two of data.
+
 ## Waiting on Merav
 
-- Her business number (מספר עוסק): replaces `[להשלים: מספר עוסק]` on the privacy policy and
-  the accessibility statement (`src/content/legal.ts`).
 - Real testimonials to replace the four sample ones (two still contain `[שם התיאטרון]` and
   `[שם העסק]`), or remove them.
-- Her own hero video (requirements: MP4, up to 8MB, 6-15 second loop, 1080p landscape, no
-  sound, calm framing with the key part in the middle).
 - Whether the music in her clips is licensed.
 - Accepting the Google Cloud owner invitation; switching the support email to hers.
+- At launch, her own task: a Google Business profile, from her Google account, as a
+  service-area business with the address hidden (areas only), linking to the site. Yatom can
+  send her a short how-to; she does the sign-up and Google's verification herself.
 
 ## Before launch
 
 - A lawyer reviews the privacy policy and the accessibility statement.
-- Decide the domain (with or without www).
+- **Domain: bought 2026-11-22: `hafakathamerav.co.il`** (owner "Merav Verner", Yatom as
+  technical and DNS contact, renews 22 November 2027). Added to her Cloudflare (Free), nameservers
+  at mynames switched to `aida.ns.cloudflare.com` and `greg.ns.cloudflare.com`. Left: wait for
+  **Active**, then Search Console steps 1-4. The original plan, for reference: buy a `.co.il` at mynames.co.il, in Merav's name (spelling as on her ID) and with
+  her email (Meravi2340@gmail.com), with auto-renew on and the owner's details hidden if
+  offered. Skip the add-ons. Then:
+  1. Merav's Cloudflare → Add a domain → the domain → **Free** plan. Note the two nameservers.
+  2. At mynames.co.il, replace the nameservers with Cloudflare's (the Israeli registry checks
+     that they already know the domain, which is why step 1 comes first).
+  3. Wait until Cloudflare shows the domain as **Active** (minutes to a day for `.il`).
+  4. Then Search Console steps 1-4 (under "At launch") can be done right away.
+  Decide whether the site lives on the domain with or without www (the other redirects to it).
 
 ## Deploy (needs Merav's Cloudflare account)
 
-- Create her Cloudflare account and invite Yatom as Super Administrator.
+- ~~Create her Cloudflare account and invite Yatom as Super Administrator.~~ Done 2026-11-22:
+  both are Super Administrators. Her account requires two-factor authentication, so every
+  member needs 2FA on their own login (Yatom uses email codes and signs in with Google).
 - Admin storage on Cloudflare: D1 for content and the admins list, R2 for photos and the hero
   video (streamed with range requests). Upload checks: sign-in before reading the upload, size
   limits, file signature, fixed content type. Clean up uploads nothing refers to.
@@ -146,8 +196,24 @@ A dedicated page for "קליפים לבר ובת מצווה", designed separatel
   tags, the sitemap and robots.txt).
 - `public/_headers`: remove the two "keep images and video out of search" blocks.
 - Merge `admin` into `main` (this publishes the site).
-- Google Search Console: verify the domain and submit the sitemap. Google Business profile as
-  a service-area business with the address hidden.
+- Google Search Console. Yatom sets it up from **his own Google account** and adds Merav as
+  Owner, so nobody shares a password. Whoever proves control of the domain becomes a verified
+  owner, and Yatom has that control through her Cloudflare account. Can be done as soon as the
+  domain is active in Cloudflare (steps 1-4); the sitemap waits for launch.
+  1. search.google.com/search-console (Yatom's account) → Add property → **Domain** (the bare
+     domain, no www or https; it covers every version).
+  2. Verify: add the TXT record Google shows (`google-site-verification=...`) in Merav's
+     Cloudflare account → the domain → DNS → Add record → type TXT, name `@`. Or use Google's
+     one-click "verify with Cloudflare". Then click **Verify**.
+  3. Settings → Users and permissions → Add user → `Meravi2340@gmail.com` → **Owner**. Access
+     works right away: she gets a notification email (tell her it's coming) but doesn't need to
+     accept anything; the site appears when she opens Search Console with her Gmail.
+  4. Optional: Merav can also verify herself later (a TXT record of her own), so her ownership
+     never depends on Yatom's.
+  5. **At launch:** Sitemaps → submit `sitemap.xml`. URL inspection → homepage → Request
+     indexing.
+  6. Optional: Bing Webmaster Tools, imported from Search Console in one click.
+  After a few weeks, Performance shows the real searches (feeds the second keyword round).
 
 ## Small cleanups, any time
 
