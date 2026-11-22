@@ -164,8 +164,8 @@ services in `src/content/seo-pages.ts`) come from a first keyword plan, not from
 - A lawyer reviews the privacy policy and the accessibility statement.
 - **Domain: bought 2026-11-22: `hafakathamerav.co.il`** (owner "Merav Verner", Yatom as
   technical and DNS contact, renews 22 November 2027). Added to her Cloudflare (Free), nameservers
-  at mynames switched to `aida.ns.cloudflare.com` and `greg.ns.cloudflare.com`. Left: wait for
-  **Active**, then Search Console steps 1-4. The original plan, for reference: buy a `.co.il` at mynames.co.il, in Merav's name (spelling as on her ID) and with
+  at mynames switched to `aida.ns.cloudflare.com` and `greg.ns.cloudflare.com`. Active in Cloudflare and verified in Search Console (Yatom's account, TXT record added by Google; never delete it) 2026-11-22. Left:
+  nothing; Merav added as Owner 2026-11-22. At launch: submit the sitemap (step 5). The original plan, for reference: buy a `.co.il` at mynames.co.il, in Merav's name (spelling as on her ID) and with
   her email (Meravi2340@gmail.com), with auto-renew on and the owner's details hidden if
   offered. Skip the add-ons. Then:
   1. Merav's Cloudflare → Add a domain → the domain → **Free** plan. Note the two nameservers.
