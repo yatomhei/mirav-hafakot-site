@@ -19,6 +19,7 @@ import {
 import { photoFile } from "@/lib/asset";
 import { useContent } from "@/content/context";
 import { ServiceSearchFields } from "./SearchFields";
+import { BarMitzvahLandingFields } from "./LandingTab";
 import {
   AddPhotoButton,
   Card,
@@ -974,6 +975,12 @@ export const TABS: TabDef[] = [
         ),
       },
     ],
+  },
+  {
+    key: "landing-bar-mitzvah",
+    label: "דף נחיתה: בר/בת מצווה",
+    group: "pages",
+    docs: [{ key: "barMitzvahLanding", render: () => <BarMitzvahLandingFields /> }],
   },
   {
     key: "settings",

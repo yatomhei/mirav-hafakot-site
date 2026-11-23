@@ -27,6 +27,14 @@ for (const file of files) {
       .webp({ quality: 90 })
       .toFile(join(OUT, `${name}.webp`));
     console.log(`${name}: logo`);
+    if (name === "logo-color") {
+      // The landing page shows it large at the top (up to 128px tall): a sharper copy.
+      await sharp(input)
+        .resize({ height: 384, withoutEnlargement: true })
+        .webp({ quality: 90 })
+        .toFile(join(OUT, "logo-color-lg.webp"));
+      console.log("logo-color-lg: logo");
+    }
     continue;
   }
 

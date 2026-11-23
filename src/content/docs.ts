@@ -12,6 +12,7 @@ import {
   works,
 } from "./home";
 import { servicePage, services } from "./services";
+import { barMitzvahLanding } from "./landing";
 import { seo, site } from "./site";
 import { docSchemas, type DocKey } from "./schema";
 import type { Service } from "./types";
@@ -37,6 +38,7 @@ export const defaultContent = {
   },
   services,
   servicePage,
+  barMitzvahLanding,
 };
 
 export type SiteContent = typeof defaultContent;
@@ -83,15 +85,39 @@ function pinServices(saved: Service[]): Service[] {
   });
 }
 
+const isPlainObject = (v: unknown): v is Record<string, unknown> =>
+  typeof v === "object" && v !== null && !Array.isArray(v);
+
+/**
+ * A saved record with any field it lacks taken from the launch content, nested objects
+ * included (lists are kept as saved). So a field added to the code after the record was
+ * saved doesn't cost the record its edits.
+ */
+export function fillMissing(launch: unknown, saved: unknown): unknown {
+  if (!isPlainObject(launch) || !isPlainObject(saved)) return saved;
+  const out: Record<string, unknown> = { ...saved };
+  for (const [key, value] of Object.entries(launch)) {
+    out[key] = key in saved ? fillMissing(value, saved[key]) : value;
+  }
+  return out;
+}
+
 /**
  * Builds what the site shows: each saved record that passes its schema replaces the launch
- * content for that section. A bad record costs one section its edits, never the page.
+ * content for that section. A record that fails only because the code has since gained a
+ * field is completed from the launch content (a record that passes is used exactly as saved,
+ * so something deliberately removed stays removed). A bad record costs one section its
+ * edits, never the page.
  */
 export function assembleContent(stored: StoredDocs): SiteContent {
   let content = defaultContent;
   for (const key of DOC_KEYS) {
     if (!(key in stored)) continue;
-    const result = validateDoc(key, stored[key]);
+    let result = validateDoc(key, stored[key]);
+    if (!result.success) {
+      const filled = validateDoc(key, fillMissing(getDoc(defaultContent, key), stored[key]));
+      if (filled.success) result = filled;
+    }
     if (!result.success) {
       console.warn(`[content] saved "${key}" ignored:`, result.error.issues[0]?.message);
       continue;

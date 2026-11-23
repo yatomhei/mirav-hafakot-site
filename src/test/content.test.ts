@@ -258,3 +258,59 @@ describe("testimonials can be hidden", () => {
     expect(assembleContent({}).home.testimonials.hidden).toBe(false);
   });
 });
+
+describe("bar/bat mitzvah landing page", () => {
+  it("its launch content passes its schema, and a hidden testimonials switch is kept", async () => {
+    const { assembleContent, defaultContent, validateDoc } = await import("@/content/docs");
+    const launch = defaultContent.barMitzvahLanding;
+    expect(validateDoc("barMitzvahLanding", launch).success).toBe(true);
+    const saved = { ...launch, testimonials: { ...launch.testimonials, hidden: true } };
+    expect(
+      assembleContent({ barMitzvahLanding: saved }).barMitzvahLanding.testimonials.hidden,
+    ).toBe(true);
+  });
+
+  it("refuses a clip with a bad YouTube link or more than 5 strip photos", async () => {
+    const { defaultContent, validateDoc } = await import("@/content/docs");
+    const launch = defaultContent.barMitzvahLanding;
+    const badClip = {
+      ...launch,
+      clips: { ...launch.clips, items: [{ title: "x", youtubeId: "not-an-id" }] },
+    };
+    expect(validateDoc("barMitzvahLanding", badClip).success).toBe(false);
+    const sixPhotos = {
+      ...launch,
+      story: { ...launch.story, photos: [...launch.story.photos, launch.story.photos[0]] },
+    };
+    expect(validateDoc("barMitzvahLanding", sixPhotos).success).toBe(false);
+  });
+});
+
+describe("a record saved before the code gained a field", () => {
+  it("keeps its edits and takes the new field from the launch content", async () => {
+    const { assembleContent, defaultContent } = await import("@/content/docs");
+    const launch = defaultContent.barMitzvahLanding;
+    // Saved before "finale" and "experience.cta" existed, with an edited title.
+    const { finale: _f, ...oldProcess } = launch.process;
+    const { cta: _c, ...oldExperience } = launch.experience;
+    const saved = {
+      ...launch,
+      hero: { ...launch.hero, cta: "כפתור ערוך" },
+      process: oldProcess,
+      experience: oldExperience,
+    };
+    const page = assembleContent({ barMitzvahLanding: saved }).barMitzvahLanding;
+    expect(page.hero.cta).toBe("כפתור ערוך");
+    expect(page.process.finale.title).toBe(launch.process.finale.title);
+    expect(page.experience.cta).toBe(launch.experience.cta);
+  });
+
+  it("leaves a valid record exactly as saved (a removed cover stays removed)", async () => {
+    const { assembleContent, defaultContent } = await import("@/content/docs");
+    const launch = defaultContent.barMitzvahLanding;
+    const { thumb: _t, ...video } = launch.hero.video;
+    const saved = { ...launch, hero: { ...launch.hero, video } };
+    const page = assembleContent({ barMitzvahLanding: saved }).barMitzvahLanding;
+    expect(page.hero.video.thumb).toBeUndefined();
+  });
+});

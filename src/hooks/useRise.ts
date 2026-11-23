@@ -3,13 +3,17 @@ import { useEffect, useRef } from "react";
 /**
  * Quick rise-up for a list of items as each one scrolls in. Each matching item is measured
  * (it never moves) and its first child is what rises, so the measurement never includes
- * the movement. An item rises once its top passes `at` (fraction of the screen height).
+ * the movement. An item rises once its top passes `at` (fraction of the screen height; or a
+ * function giving each item its own).
  * `delay(k)` staggers items that arrive together. Plays once; nothing is hidden until this
  * has run, and never under reduced motion. Styles: .rise / .rise-card / .is-up in styles.css.
  */
 export function useRise<T extends HTMLElement>(
   selector: string,
-  { at = 0.9, delay = () => 0 }: { at?: number; delay?: (k: number) => number } = {},
+  {
+    at = 0.9,
+    delay = () => 0,
+  }: { at?: number | ((k: number) => number); delay?: (k: number) => number } = {},
 ) {
   const root = useRef<T>(null);
 
@@ -21,15 +25,14 @@ export function useRise<T extends HTMLElement>(
       const mover = (item.firstElementChild as HTMLElement | null) ?? item;
       mover.style.transitionDelay = `${delay(k)}ms`;
       mover.classList.add("rise", "rise-card");
-      return [item, mover] as const;
+      return [item, mover, typeof at === "function" ? at(k) : at] as const;
     });
 
     let frame = 0;
     const update = () => {
       frame = 0;
-      const line = window.innerHeight * at;
-      pending = pending.filter(([item, mover]) => {
-        if (item.getBoundingClientRect().top > line) return true;
+      pending = pending.filter(([item, mover, point]) => {
+        if (item.getBoundingClientRect().top > window.innerHeight * point) return true;
         mover.classList.add("is-up");
         return false;
       });

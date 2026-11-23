@@ -17,23 +17,31 @@ Version 2 is designed on its own canvas (https://claude.ai/artifact/Face9DiaM57e
 design source for the build. Ortal's comments (2026-11-23): add motion effects to some elements,
 no other changes.
 
-- **Build it into the site's code:** a real page (React + Tailwind, the site's colours, fonts and
-  components) from version 2, plus Ortal's motion effects.
-  - **Standalone:** without the site's header and footer (decided 2026-11-23).
-  - **A link to Merav's site** from the landing page (requested 2026-11-23): with no site header
-    or footer, visitors need a way to the rest of the site (for example the logo, or a "לאתר
-    הפקת המרב" link). Keep it modest, so it doesn't pull visitors away from contacting her.
-  - **Its own admin tab** so Merav edits its texts, photos and clips (decided 2026-11-23).
-  - **Address:** for example `/bar-mitzvah`. Once it's live, choose "דף אחר" in the admin
-    (שירותים > the service's card) and type its address: the homepage card, footer and "more
-    services" lead there, and `/services/bar-bat-mitzvah` forwards to it (301). Until then
-    leave the field empty.
-  - **Google:** once the service leads to it, the sitemap lists it automatically. Give it its
-    own title, description, canonical and the service's structured data (moved from the service
-    page), indexed. (A landing page no service leads to isn't listed automatically: add it to
-    `STANDALONE_PAGES` in `src/lib/sitemap.ts` if Google should find it, otherwise `noindex`.)
-  - **Contact:** the site's WhatsApp form, or a version tuned for this page (interest preset to
-    bar/bat mitzvah).
+- ~~**Build it into the site's code**~~ Built 2026-11-23, reviewed and adjusted by Heidi the same
+  day (committed on `admin`, not yet deployed): `/bar-mitzvah-clips`
+  (`src/routes/bar-mitzvah-clips.tsx`, `src/components/landing/`), standalone with its own footer
+  (a WhatsApp call to action, the logo linking to the home page, email and phone). The clips play
+  in the site's in-page player; the form opens a WhatsApp message like the site's (subject
+  "קליפ לבר/בת מצווה"). Admin tab "דף נחיתה: בר/בת מצווה" edits every text, clip and photo,
+  hides the testimonials, takes up to 15 testimonial screenshots (masonry), and has the page's
+  Google title and description.
+  - **Motion:** the opening rises in; the questions pop in one by one and the answers follow
+    (pinned where it fits); "אזהרת ספוילר!" zooms down and shakes, then the rest appears (pinned);
+    the process is a zigzag timeline of square cards with icons, ending in a "הקליפ שלכם מוכן!"
+    card that pops in with confetti (canvas-confetti); the contact section turns brown as its
+    title reaches mid-screen; Gefen's photos lift on hover. All off under reduced motion.
+  - **Saved records and new fields:** a saved section missing a field the code later gained is
+    completed from the launch content (`fillMissing` in `src/content/docs.ts`), so Merav's edits
+    survive code changes.
+  - **Open in the content:** the 6th clip's title is still "[שם הקליפ]", and the testimonial's
+    name "[שם המשפחה]" (or hide the testimonials until real ones exist).
+  - **Address `/bar-mitzvah-clips`** (decided 2026-11-23). After Ortal's review: in the admin
+    (שירותים > the bar/bat mitzvah card) choose "דף אחר" and type `/bar-mitzvah-clips`: the
+    homepage card, footer and "more services" lead there, and `/services/bar-bat-mitzvah`
+    forwards to it (301).
+  - **Google:** its own title and description are done (admin tab). Once the service leads to
+    it, the sitemap lists it automatically. Still to do: move the service's structured data
+    (JSON-LD) from the service page to this page.
   - **Ads and tracking:** build the consent banner in, ready for ads (decided 2026-11-22).
     **Merav will advertise this page** (confirmed 2026-11-23). Ask her on which platforms
     (Facebook / Instagram, Google, both); she'll get the pixel IDs from her ad accounts once they

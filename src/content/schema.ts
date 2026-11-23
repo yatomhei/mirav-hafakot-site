@@ -269,6 +269,81 @@ export const docSchemas = {
     moreCaption: text,
     moreTitle: text,
   }),
+  // The bar/bat mitzvah landing page (/bar-mitzvah-clips), one record for the whole page.
+  barMitzvahLanding: z.object({
+    seo: z.object({ title: text, description: text }),
+    hero: z.object({
+      title: lines(),
+      lead: longText,
+      leadAccent: text,
+      cta: text.min(1, "חסר טקסט לכפתור"),
+      clipsLink: text.min(1, "חסר טקסט לקישור"),
+      video: videoSchema,
+    }),
+    idea: z.object({ title: text, question: text, text: z.array(longText).max(6) }),
+    clips: z.object({
+      title: text,
+      lead: longText,
+      items: z.array(videoSchema).max(12),
+      cta: text.min(1, "חסר טקסט לכפתור"),
+    }),
+    worries: z.object({
+      title: lines(),
+      items: z
+        .array(z.object({ q: text.min(1, "חסרה שאלה"), a: longText.min(1, "חסרה תשובה") }))
+        .max(8),
+    }),
+    story: z.object({
+      caption: text,
+      title: text,
+      body: z.array(longText.min(1)).max(6),
+      photos: z.array(photoSchema).max(5, "עד 5 תמונות"),
+      cta: text,
+      video: z.object({ title: text, youtubeId: z.string().regex(YOUTUBE_ID).or(z.literal("")) }),
+    }),
+    experience: z.object({
+      kicker: text,
+      title: text,
+      lead: text,
+      text: longText,
+      closing: text,
+      cta: text.min(1, "חסר טקסט לכפתור"),
+    }),
+    testimonials: z.object({
+      hidden: z.boolean().optional(),
+      title: text,
+      quote: longText,
+      author: text,
+      shots: z.array(photoSchema.extend({ ratio: ratio.optional() })).max(15, "עד 15 צילומי מסך"),
+    }),
+    process: z.object({
+      title: text,
+      lead: text,
+      steps: z
+        .array(z.object({ title: text.min(1, "חסר שם לשלב"), text: longText }))
+        .min(1)
+        .max(6),
+      finale: z.object({ title: text, text: longText }),
+    }),
+    about: z.object({
+      photo: photoSchema,
+      title: text,
+      subtitle: text,
+      body: z.array(longText.min(1)).max(6),
+      link: text.min(1, "חסר טקסט לקישור"),
+    }),
+    contact: z.object({
+      title: text,
+      text: z.array(longText.min(1)).max(4),
+      submit: text.min(1, "חסר טקסט לכפתור"),
+      interest: text,
+    }),
+    footer: z.object({
+      title: text,
+      button: text.min(1, "חסר טקסט לכפתור"),
+      call: text,
+    }),
+  }),
 };
 
 export type DocKey = keyof typeof docSchemas;

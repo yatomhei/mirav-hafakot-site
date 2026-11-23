@@ -9,7 +9,7 @@ export const site: SiteSettings = {
   tagline: "הכי טבעי שלכם",
   phone: "058-770-2937",
   whatsapp: "972587702937",
-  email: "Meravi2340@gmail.com",
+  email: "meravi2340@gmail.com",
   serviceArea: "יד בנימין, גדרה והסביבה,\nקריית מלאכי, חבל לכיש ואשדוד",
   youtubeUrl: "",
   facebookUrl: "",

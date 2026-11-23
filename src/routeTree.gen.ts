@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AccessibilityRouteImport } from './routes/accessibility'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as BarMitzvahClipsRouteImport } from './routes/bar-mitzvah-clips'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -33,6 +34,11 @@ const AccessibilityRoute = AccessibilityRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BarMitzvahClipsRoute = BarMitzvahClipsRouteImport.update({
+  id: '/bar-mitzvah-clips',
+  path: '/bar-mitzvah-clips',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/accessibility': typeof AccessibilityRoute
   '/admin': typeof AdminRoute
+  '/bar-mitzvah-clips': typeof BarMitzvahClipsRoute
   '/privacy': typeof PrivacyRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/accessibility': typeof AccessibilityRoute
   '/admin': typeof AdminRoute
+  '/bar-mitzvah-clips': typeof BarMitzvahClipsRoute
   '/privacy': typeof PrivacyRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -100,6 +108,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/accessibility': typeof AccessibilityRoute
   '/admin': typeof AdminRoute
+  '/bar-mitzvah-clips': typeof BarMitzvahClipsRoute
   '/privacy': typeof PrivacyRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/'
     | '/accessibility'
     | '/admin'
+    | '/bar-mitzvah-clips'
     | '/privacy'
     | '/robots.txt'
     | '/sitemap.xml'
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/'
     | '/accessibility'
     | '/admin'
+    | '/bar-mitzvah-clips'
     | '/privacy'
     | '/robots.txt'
     | '/sitemap.xml'
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/'
     | '/accessibility'
     | '/admin'
+    | '/bar-mitzvah-clips'
     | '/privacy'
     | '/robots.txt'
     | '/sitemap.xml'
@@ -151,6 +163,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccessibilityRoute: typeof AccessibilityRoute
   AdminRoute: typeof AdminRoute
+  BarMitzvahClipsRoute: typeof BarMitzvahClipsRoute
   PrivacyRoute: typeof PrivacyRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -181,6 +194,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bar-mitzvah-clips': {
+      id: '/bar-mitzvah-clips'
+      path: '/bar-mitzvah-clips'
+      fullPath: '/bar-mitzvah-clips'
+      preLoaderRoute: typeof BarMitzvahClipsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -239,6 +259,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccessibilityRoute: AccessibilityRoute,
   AdminRoute: AdminRoute,
+  BarMitzvahClipsRoute: BarMitzvahClipsRoute,
   PrivacyRoute: PrivacyRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
