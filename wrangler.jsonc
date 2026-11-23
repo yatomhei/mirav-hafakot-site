@@ -5,16 +5,18 @@
 // (git-ignored).
 {
   "name": "mirav-hafakot-site",
+  // Merav's Cloudflare account (not a secret).
+  "account_id": "c87a3721d95567fea83b73bd7a9abd02",
   // Fixed, so a build on another day runs on the same Workers behaviour; raise it deliberately.
   "compatibility_date": "2026-11-01",
   "compatibility_flags": ["nodejs_compat"],
   "observability": { "enabled": true },
-  // Saved content and added admins. database_id is filled in once the database is created.
+  // Saved content and added admins (created 2026-11-23 in Merav's account, region EEUR).
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "mirav-content",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "2f938919-6662-43e9-bf15-e1cb2dd50d65",
       "migrations_dir": "migrations",
     },
   ],

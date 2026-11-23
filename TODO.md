@@ -35,11 +35,16 @@ through the screens.
    is parsed before the sign-in check (Cloudflare caps requests at 100MB); hidden services'
    drafts are in the public content data (the pages don't show them). Recheck on the live site
    in step 6 (a real sign-in, a refused save, the headers).
-4. **One-time copy:** `node scripts/copy-content-to-cloudflare.mjs --remote` fills D1 and R2
+4. ~~**One-time copy:**~~ Done 2026-11-23: 10 sections copied to the live D1, checked identical
+   to the local content (no uploads were in use, no added admins). From now on, edit content on
+   the live admin once it's up, not locally (a second copy is refused). `node scripts/copy-content-to-cloudflare.mjs --remote` fills D1 and R2
    from the content saved on this computer (written and tested on the local copy 2026-11-23;
    it refuses if the live database already has content). First apply the tables:
    `npx wrangler d1 migrations apply mirav-content --config wrangler.jsonc --remote`.
-5. **Cloudflare (Merav's account), each with Yatom's OK:** the D1 database, the R2 bucket, the
+5. **Cloudflare (Merav's account), each with Yatom's OK:** ~~the D1 database~~ (created
+   2026-11-23, `mirav-content`, region EEUR, tables applied; its ID is in `wrangler.jsonc`;
+   Wrangler is signed in with access to Merav's account only), ~~the R2 bucket~~ (created
+   2026-11-23, `mirav-uploads`, region EEUR, after R2 was switched on with Yatom's card), the
    Worker with its bindings and secrets, the GitHub connection (builds from `main`),
    `hafakathamerav.co.il`, and the `www.` → bare domain redirect. Turn off the Worker's `workers.dev`
    address and preview URLs (Settings → Domains & Routes), so the site lives only on the domain
@@ -279,6 +284,9 @@ to reach it:
   sound, calm framing with the key part in the middle), and where to upload it in the admin.
 - **Cloudflare** (dash.cloudflare.com): hosting, DNS, storage. Her login, and a reminder that
   two-factor authentication is on and Yatom is a Super Administrator there.
+  **The card on file is Yatom's** (added 2026-11-23 to switch on R2 storage, free tier):
+  ask her to replace it with her own card under Manage Account → Billing → Payment info.
+  The site and stored files aren't affected.
 - **mynames.co.il:** the domain registrar. Her login, the renewal date (22 November 2027,
   auto-renew on, about 74₪ a year), and that the card on file must stay valid.
 - **Google Search Console** (search.google.com/search-console): with her Google account, no
