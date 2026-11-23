@@ -2,7 +2,7 @@
 
 What's left before and after launch, grouped by what each item waits on. Updated 2026-11-23.
 
-## Next: the full deployment, with the live admin (started 2026-11-23)
+## The full deployment, with the live admin (live 2026-11-23)
 
 Changed 2026-11-23: Ortal's landing page comments are small (motion effects only), and she
 reviews it after deployment, so the snapshot step is dropped. The site goes up once, with the
@@ -48,7 +48,10 @@ through the screens.
    custom domain `hafakathamerav.co.il`. `www` is a proxied AAAA `100::` record plus the
    "Redirect from WWW to root" rule (301, keeps path and query); "Always Use HTTPS" is on.
    `workers_dev` and `preview_urls` are off in `wrangler.jsonc`.
-6. **Merge `admin` into `main`** (first merged 2026-11-23), deploy, check the live site (pages, sign-in, a save, an upload,
+6. ~~**Live**~~ 2026-11-23: deployed from `main` (`0a6f82d`); checked: pages, real Google
+   sign-in, a save and its undo, headers, noindex on pages, images and video, robots.txt and an
+   empty sitemap, `workers.dev` off. Not yet tried on the live site: a photo upload (tested
+   locally). Then send Ortal the link. Original step: **Merge `admin` into `main`**, deploy, check the live site (pages, sign-in, a save, an upload,
    phone sizes, headers, nothing indexable), then send Ortal the link. From here `main` is what
    the live site publishes; everyday work stays on `admin` and is merged when ready.
 7. **After it:** content is edited only on the live admin (instant, no push); only code goes
