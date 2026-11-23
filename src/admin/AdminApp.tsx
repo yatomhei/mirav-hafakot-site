@@ -26,7 +26,7 @@ import { SIGNED_OUT } from "./auth/session";
  * save and upload.
  */
 export function AdminApp() {
-  const [backend, setBackend] = useState<AdminBackend | null | undefined>(undefined);
+  const [backend, setBackend] = useState<AdminBackend | undefined>(undefined);
   const [auth, setAuth] = useState<AdminState | "error" | undefined>(undefined);
   // Why the last Google sign-in came back without signing in (see google.server.ts).
   const [reason, setReason] = useState<string>();
@@ -44,20 +44,13 @@ export function AdminApp() {
     }
     const found = getBackend();
     setBackend(found);
-    if (found) void checkAuth();
+    void checkAuth();
   }, []);
 
-  if (backend === undefined || (backend && auth === undefined)) {
+  if (backend === undefined || auth === undefined) {
     return (
       <Screen>
         <p className="text-ink/65">טוען…</p>
-      </Screen>
-    );
-  }
-  if (backend === null) {
-    return (
-      <Screen>
-        <p className="max-w-sm text-center text-ink">ממשק הניהול עדיין לא מחובר לאחסון באתר.</p>
       </Screen>
     );
   }

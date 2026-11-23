@@ -98,9 +98,14 @@ async function localEmailStore(): Promise<EmailStore> {
   };
 }
 
-/** Null until the live site has somewhere to keep the list (the D1 table, at deploy). */
+/** The added emails: a local file in development, D1 on the live site (null if not connected). */
 export async function emailStore(): Promise<EmailStore | null> {
-  return localStoreEnabled() ? localEmailStore() : null;
+  if (localStoreEnabled()) return localEmailStore();
+  const { database } = await import("@/content/cloudflare.server");
+  const db = database();
+  if (!db) return null;
+  const { d1EmailStore } = await import("@/content/d1-store.server");
+  return d1EmailStore(db);
 }
 
 /** This site's sign-in cookie name (__Host- on the live site, see session.ts). */

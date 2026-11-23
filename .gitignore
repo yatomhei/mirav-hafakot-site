@@ -40,4 +40,5 @@ dist-preview
 
 # Admin data saved during local development (src/content/dev-store.server.ts)
 .local-content
+# (uploads used to live here; now in .local-content/uploads)
 public/local-uploads

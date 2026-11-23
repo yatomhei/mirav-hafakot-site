@@ -16,6 +16,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
+import { Route as UploadsNameRouteImport } from './routes/uploads.$name'
 import { Route as AdminAuthCallbackRouteImport } from './routes/admin_.auth.callback'
 import { Route as AdminAuthGoogleRouteImport } from './routes/admin_.auth.google'
 
@@ -54,6 +55,11 @@ const ServicesSlugRoute = ServicesSlugRouteImport.update({
   path: '/services/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UploadsNameRoute = UploadsNameRouteImport.update({
+  id: '/uploads/$name',
+  path: '/uploads/$name',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminAuthCallbackRoute = AdminAuthCallbackRouteImport.update({
   id: '/admin_/auth/callback',
   path: '/admin/auth/callback',
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/uploads/$name': typeof UploadsNameRoute
   '/admin/auth/callback': typeof AdminAuthCallbackRoute
   '/admin/auth/google': typeof AdminAuthGoogleRoute
 }
@@ -84,6 +91,7 @@ export interface FileRoutesByTo {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/uploads/$name': typeof UploadsNameRoute
   '/admin/auth/callback': typeof AdminAuthCallbackRoute
   '/admin/auth/google': typeof AdminAuthGoogleRoute
 }
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/uploads/$name': typeof UploadsNameRoute
   '/admin_/auth/callback': typeof AdminAuthCallbackRoute
   '/admin_/auth/google': typeof AdminAuthGoogleRoute
 }
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
     | '/robots.txt'
     | '/sitemap.xml'
     | '/services/$slug'
+    | '/uploads/$name'
     | '/admin/auth/callback'
     | '/admin/auth/google'
   fileRoutesByTo: FileRoutesByTo
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/robots.txt'
     | '/sitemap.xml'
     | '/services/$slug'
+    | '/uploads/$name'
     | '/admin/auth/callback'
     | '/admin/auth/google'
   id:
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/robots.txt'
     | '/sitemap.xml'
     | '/services/$slug'
+    | '/uploads/$name'
     | '/admin_/auth/callback'
     | '/admin_/auth/google'
   fileRoutesById: FileRoutesById
@@ -143,6 +155,7 @@ export interface RootRouteChildren {
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
+  UploadsNameRoute: typeof UploadsNameRoute
   AdminAuthCallbackRoute: typeof AdminAuthCallbackRoute
   AdminAuthGoogleRoute: typeof AdminAuthGoogleRoute
 }
@@ -198,6 +211,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/uploads/$name': {
+      id: '/uploads/$name'
+      path: '/uploads/$name'
+      fullPath: '/uploads/$name'
+      preLoaderRoute: typeof UploadsNameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin_/auth/callback': {
       id: '/admin_/auth/callback'
       path: '/admin/auth/callback'
@@ -223,6 +243,7 @@ const rootRouteChildren: RootRouteChildren = {
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ServicesSlugRoute: ServicesSlugRoute,
+  UploadsNameRoute: UploadsNameRoute,
   AdminAuthCallbackRoute: AdminAuthCallbackRoute,
   AdminAuthGoogleRoute: AdminAuthGoogleRoute,
 }

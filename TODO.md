@@ -1,44 +1,39 @@
 # To-do
 
-What's left before and after launch, grouped by what each item waits on. Updated 2026-11-22.
+What's left before and after launch, grouped by what each item waits on. Updated 2026-11-23.
 
-## Next: put the site on Cloudflare for Ortal's review (start 2026-11-23)
+## Next: the full deployment, with the live admin (started 2026-11-23)
 
-Ortal reviews the site and the landing page on the real domain, not the preview link. The site
-goes up early, kept out of Google until launch (`indexable: false`, the image-blocking rules
-stay). Nothing is created in Cloudflare without Yatom's OK; Yatom clicks through the screens.
+Changed 2026-11-23: Ortal's landing page comments are small (motion effects only), and she
+reviews it after deployment, so the snapshot step is dropped. The site goes up once, with the
+database, storage and the live admin. It stays out of Google until launch (`indexable: false`,
+the image-blocking rules stay). Nothing is created in Cloudflare without Yatom's OK; Yatom clicks
+through the screens.
 
-**Phase 1: Ortal's link (a few hours)**
-1. **Content snapshot:** a script copies the content saved on this computer
-   (`.local-content/site-content.json`) and the uploaded photos (`public/local-uploads`) into the
-   code, and the live site reads them from there. The live admin shows "editing isn't available
-   yet". The testimonials stay visible.
-2. **Landing page:** version 2 as one standalone static page at `/bar-mitzvah` (noindex, no
-   links to it). Ortal's changes, including added, removed or reordered sections, are made
-   directly in that file from now on: the canvas is no longer the source.
-3. **Merge `admin` into `main`.** `main` is what the live site publishes; everyday work stays on
-   `admin` and is merged when ready. (This replaces "merge only at launch".)
-4. **Cloudflare (Merav's account):** create the Worker, connect the GitHub repository (builds
-   from `main`), connect `hafakathamerav.co.il`, decide www or not.
-5. **Check the live site** (pages, landing page, phone sizes, headers, nothing indexable), then
-   send Ortal the link.
-6. **During the review:** content: local admin → snapshot script → commit and push. Code and
-   landing page: commit and push. The live site updates about two minutes after a push.
-
-**Phase 2: the live admin (in parallel, about 1-2 days)**
-1. **Cloudflare:** a D1 database (content, admins) and an R2 bucket (photos, hero video), each
-   with Yatom's OK.
-2. **Code, on its own branch**, tested on that branch's Cloudflare test address, not the live
-   site: read and save content in D1, uploads to R2 with their checks, Google sign-in on the
-   live site (details under "Deploy" below).
-3. **Security check** of the live admin before it's switched on.
-4. **The switch:** pause content edits, fill D1 from the latest snapshot, merge into `main`. The
-   content is identical, so Ortal sees no change.
-5. **After the switch:** content is edited only on the live admin (instant, no push); only code
-   goes through GitHub. Remove the snapshot script. The local copy is for testing only.
-- The admin can keep changing after the switch. Adding a field or section is safe (saved
-  content gets the code's defaults); renaming or removing one needs a step that carries saved
-  content over.
+1. ~~**Code: content in D1, uploads in R2.**~~ Done 2026-11-23, tested on the built site in
+   Cloudflare's local runtime (`wrangler dev`, local D1/R2): saved content shows, saves and
+   photo uploads work, uploads are served at `/uploads/<name>` (cached, 304, range requests for
+   video), and a save or upload without sign-in, a disguised file, a bad name or an oversized
+   file is refused. Settings in `wrangler.jsonc` (`database_id` filled in once D1 is created),
+   tables in `migrations/`. Local uploads moved from `public/local-uploads` to
+   `.local-content/uploads`, so a build never ships them.
+2. **Google sign-in on the live site** (details under "Deploy" below).
+3. **Security check** of the admin, sign-in and uploads.
+4. **One-time copy:** `node scripts/copy-content-to-cloudflare.mjs --remote` fills D1 and R2
+   from the content saved on this computer (written and tested on the local copy 2026-11-23;
+   it refuses if the live database already has content). First apply the tables:
+   `npx wrangler d1 migrations apply mirav-content --config wrangler.jsonc --remote`.
+5. **Cloudflare (Merav's account), each with Yatom's OK:** the D1 database, the R2 bucket, the
+   Worker with its bindings and secrets, the GitHub connection (builds from `main`),
+   `hafakathamerav.co.il`, www or not.
+6. **Merge `admin` into `main`**, deploy, check the live site (pages, sign-in, a save, an upload,
+   phone sizes, headers, nothing indexable), then send Ortal the link. From here `main` is what
+   the live site publishes; everyday work stays on `admin` and is merged when ready.
+7. **After it:** content is edited only on the live admin (instant, no push); only code goes
+   through GitHub. The local store is for testing only. Adding a field or section is safe (saved
+   content gets the code's defaults); renaming or removing one needs a step that carries saved
+   content over.
+8. **Then the landing page** (see its section below).
 
 ## Done 2026-11-22: Merav can add, delete and edit services
 
@@ -59,8 +54,9 @@ A dedicated page for "קליפים לבר ובת מצווה", designed separatel
   truth; the preview is rebuilt from it.
 - **1. Finish the design:** review version 2 with Merav, settle the remaining copy, photos and
   clips, and get her approval on the canvas.
-- **Meanwhile (from 2026-11-23):** the static version is on the live site at `/bar-mitzvah` for
-  Ortal's review (see "Next" above), and her changes are made in that file.
+- **Decided 2026-11-23:** Ortal's comments are in: add motion effects to some elements, no other
+  changes. It becomes a standalone page **without the site's header and footer**, with **its own
+  admin tab**. Built after the deployment, then Ortal reviews it on the live site.
 - **2. Build it into the site's code, once Ortal approves and its sections are settled:** a real
   page in this project (React + Tailwind, the site's own colours, fonts and components), built
   from the approved static version. Most likely with its own admin tab so Merav can edit its

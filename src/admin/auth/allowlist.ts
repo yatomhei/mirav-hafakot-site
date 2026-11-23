@@ -4,7 +4,7 @@ import { z } from "zod";
 // (ADMIN_EMAILS) and can't be removed in the admin, so the list never ends up empty; anyone
 // signed in can add or remove the other emails.
 
-/** Where the added emails are kept: a file on this computer now, Cloudflare D1 at deploy. */
+/** Where the added emails are kept: a file on this computer in development, D1 on the live site. */
 export interface EmailStore {
   all(): Promise<string[]>;
   add(email: string): Promise<void>;

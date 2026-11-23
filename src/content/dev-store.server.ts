@@ -3,11 +3,12 @@ import { join } from "node:path";
 import type { StoredDocs } from "./docs";
 
 // Local development only (see localStoreEnabled): saved records go to a JSON file and
-// uploaded photos and videos to public/local-uploads/, both git-ignored.
+// uploaded photos and videos to .local-content/uploads, both git-ignored and never part of a
+// build. vite.config.ts serves the uploads at /local-uploads/<name>.
 
 const DOCS_DIR = join(process.cwd(), ".local-content");
 const DOCS_FILE = join(DOCS_DIR, "site-content.json");
-const UPLOAD_DIR = join(process.cwd(), "public", "local-uploads");
+export const UPLOAD_DIR = join(DOCS_DIR, "uploads");
 
 export async function readLocalDocs(): Promise<StoredDocs> {
   try {
@@ -23,12 +24,9 @@ export async function writeLocalDocs(docs: StoredDocs) {
   await writeFile(DOCS_FILE, JSON.stringify({ ...current, ...docs }, null, 2));
 }
 
-/** Saves one uploaded file (base64 text or raw bytes) and returns its address on the site. */
-export async function writeLocalUpload(name: string, data: string | Uint8Array) {
+/** Saves one uploaded file (checked by storeUpload) and returns its address on the site. */
+export async function writeLocalUpload(name: string, data: Uint8Array) {
   await mkdir(UPLOAD_DIR, { recursive: true });
-  await writeFile(
-    join(UPLOAD_DIR, name),
-    typeof data === "string" ? Buffer.from(data, "base64") : data,
-  );
+  await writeFile(join(UPLOAD_DIR, name), data);
   return `/local-uploads/${name}`;
 }

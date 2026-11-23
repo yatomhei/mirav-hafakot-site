@@ -1,0 +1,23 @@
+// Cloudflare settings for the live site. The build (nitro) merges this into
+// .output/server/wrangler.json, adding the entry file and the static files itself.
+// Secrets (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, ADMIN_EMAILS, ADMIN_SESSION_SECRET) are set
+// in the Cloudflare dashboard, never here; for a local test run they go in .dev.vars
+// (git-ignored).
+{
+  "name": "mirav-hafakot-site",
+  // Fixed, so a build on another day runs on the same Workers behaviour; raise it deliberately.
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  // Saved content and added admins. database_id is filled in once the database is created.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "mirav-content",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations",
+    },
+  ],
+  // Photos and videos uploaded in the admin, served at /uploads/<name>.
+  "r2_buckets": [{ "binding": "UPLOADS", "bucket_name": "mirav-uploads" }],
+}

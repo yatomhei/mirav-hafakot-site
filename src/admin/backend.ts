@@ -1,7 +1,7 @@
 import { localStoreEnabled } from "@/content/backend-config";
 import type { StoredDocs } from "@/content/docs";
 import { PHOTO_WIDTHS, preparePhotoSet } from "./image";
-import { saveLocalDocs, uploadLocalImage, uploadLocalVideo } from "./local-store";
+import { saveDocs, uploadFile } from "./store-fns";
 
 /** What the admin needs from wherever content is stored. */
 export interface AdminBackend {
@@ -17,48 +17,35 @@ export interface AdminBackend {
   uploadVideo(file: File, extension: string): Promise<string>;
 }
 
-async function toBase64(blob: Blob) {
-  const bytes = new Uint8Array(await blob.arrayBuffer());
-  let binary = "";
-  for (let i = 0; i < bytes.length; i += 0x8000) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
-  }
-  return btoa(binary);
+function send(name: string, file: Blob) {
+  const form = new FormData();
+  form.set("name", name);
+  form.set("file", file);
+  return uploadFile({ data: form });
 }
 
-/** Local development: saves go to files on this computer. */
-function localBackend(): AdminBackend {
+/**
+ * Saves go to D1 and R2 on the live site, to files on this computer in development (the
+ * server decides; see store-fns.ts).
+ */
+export function getBackend(): AdminBackend {
   return {
-    local: true,
+    local: localStoreEnabled(),
     async save(docs) {
-      await saveLocalDocs({ data: docs });
+      await saveDocs({ data: docs });
     },
     async uploadPhoto(file) {
       const { files, ratio } = await preparePhotoSet(file);
       const id = `u-${crypto.randomUUID()}`;
       let address = "";
       for (const width of PHOTO_WIDTHS) {
-        const saved = await uploadLocalImage({
-          data: { name: `${id}-${width}.webp`, base64: await toBase64(files[width]) },
-        });
+        const saved = await send(`${id}-${width}.webp`, files[width]);
         address = saved.replace(/-\d+\.webp$/, "");
       }
       return { name: address, ratio };
     },
     async uploadVideo(file, extension) {
-      const form = new FormData();
-      form.set("name", `u-${crypto.randomUUID()}.${extension}`);
-      form.set("file", file);
-      return uploadLocalVideo({ data: form });
+      return send(`u-${crypto.randomUUID()}.${extension}`, file);
     },
   };
-}
-
-/**
- * Null when there is nowhere to save yet. Deploy phase: a Cloudflare backend (D1 for the
- * records, R2 for photos and the hero video) goes here. Its server functions call
- * requireAdmin first, like the local ones, so only a signed-in admin can save.
- */
-export function getBackend(): AdminBackend | null {
-  return localStoreEnabled() ? localBackend() : null;
 }

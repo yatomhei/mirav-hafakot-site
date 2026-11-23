@@ -10,24 +10,35 @@ import type { Plugin } from "vite";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 /**
- * Local development only: serves photos uploaded in the admin straight from disk. Vite learns
- * about new files in public/ a moment after they are written, so a preview requested right
- * after an upload got a 404 and stayed broken until the page was reloaded. The live site keeps
- * uploads in Cloudflare storage instead.
+ * Local development only: serves photos and videos uploaded in the admin from
+ * .local-content/uploads (outside public/, so a build never ships them). The live site keeps
+ * uploads in Cloudflare R2 and serves them at /uploads/<name> instead.
  */
-function freshLocalUploads(): Plugin {
-  const PHOTO = /^\/local-uploads\/(u-[\w-]{8,64}-(?:480|960|1600)\.webp)$/;
+function localUploads(): Plugin {
+  const UPLOAD = /^\/local-uploads\/(u-[\w-]{8,64}(?:-(?:480|960|1600)\.webp|\.(mp4|webm)))$/;
   return {
-    name: "fresh-local-uploads",
+    name: "local-uploads",
     apply: "serve",
     configureServer(server) {
       server.middlewares.use(async (req, res, next) => {
-        const name = PHOTO.exec((req.url ?? "").split("?")[0] ?? "")?.[1];
-        if (!name) return next();
+        const match = UPLOAD.exec((req.url ?? "").split("?")[0] ?? "");
+        if (!match) return next();
         try {
-          const file = await readFile(join(process.cwd(), "public", "local-uploads", name));
-          res.setHeader("Content-Type", "image/webp");
+          const file = await readFile(join(process.cwd(), ".local-content", "uploads", match[1]!));
+          res.setHeader("Content-Type", match[2] ? `video/${match[2]}` : "image/webp");
           res.setHeader("Cache-Control", "no-cache");
+          res.setHeader("Accept-Ranges", "bytes");
+          // Video players ask for parts of the file.
+          const range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range ?? "");
+          if (range && (range[1] || range[2])) {
+            const size = file.length;
+            const start = range[1] ? Number(range[1]) : Math.max(0, size - Number(range[2]));
+            const end = range[1] && range[2] ? Math.min(Number(range[2]), size - 1) : size - 1;
+            res.statusCode = 206;
+            res.setHeader("Content-Range", `bytes ${start}-${end}/${size}`);
+            res.end(file.subarray(start, end + 1));
+            return;
+          }
           res.end(file);
         } catch {
           next();
@@ -44,7 +55,7 @@ export default defineConfig({
     server: { entry: "server" },
   },
   vite: {
-    plugins: [freshLocalUploads()],
+    plugins: [localUploads()],
     server: {
       // This computer only: other devices on the network can't reach the dev server.
       host: "localhost",
