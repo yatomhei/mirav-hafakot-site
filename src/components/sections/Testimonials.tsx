@@ -12,6 +12,12 @@ import { ArrowLeft, ArrowRight } from "@/components/ui/icons";
  */
 export function Testimonials() {
   const { testimonials } = useHome();
+  // Hidden in the admin until there are real testimonials.
+  return testimonials.hidden ? null : <TestimonialsSection />;
+}
+
+function TestimonialsSection() {
+  const { testimonials } = useHome();
   const items = testimonials.items;
   const [i, setI] = useState(0);
   const index = useRef(0);

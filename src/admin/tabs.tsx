@@ -758,6 +758,13 @@ export const TABS: TabDef[] = [
         key: "home.testimonials",
         render: () => (
           <>
+            <Card title="הצגה באתר">
+              <Toggle
+                path="hidden"
+                label="הסתרת אזור ההמלצות"
+                hint="האזור והקישור אליו בתפריט לא יוצגו באתר. ההמלצות נשמרות כאן, ומופיעות שוב כשמבטלים את הסימון ושומרים. כדאי לעדכן גם את המספר בתווית של לשונית 'שאלות' (למשל 06 ל־05)"
+              />
+            </Card>
             <Card title="טקסט">
               <Caption />
               <Text path="title" label="כותרת" />

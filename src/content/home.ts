@@ -184,6 +184,7 @@ export const process = {
 };
 
 export const testimonials = {
+  hidden: false as boolean,
   caption: "05 / המלצות של לקוחות",
   title: "לקוחות משתפים בחוויה",
   background: { name: "testimonials-bg", alt: "", pos: "center 60%" } as Photo,

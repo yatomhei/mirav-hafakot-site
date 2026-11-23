@@ -1,142 +1,52 @@
 # To-do
 
-What's left before and after launch, grouped by what each item waits on. Updated 2026-11-23.
+What's still open, grouped by what each item waits on. Updated 2026-11-23.
 
-## The full deployment, with the live admin (live 2026-11-23)
+The site is live on https://hafakathamerav.co.il (kept out of Google until launch). Content is
+edited only on the live admin; code goes through GitHub (work on `admin`, merging into `main`
+publishes in about 2 minutes, so merge only with Yatom's go-ahead). How it's set up is at the
+end of this file.
 
-Changed 2026-11-23: Ortal's landing page comments are small (motion effects only), and she
-reviews it after deployment, so the snapshot step is dropped. The site goes up once, with the
-database, storage and the live admin. It stays out of Google until launch (`indexable: false`,
-the image-blocking rules stay). Nothing is created in Cloudflare without Yatom's OK; Yatom clicks
-through the screens.
+## Now
 
-1. ~~**Code: content in D1, uploads in R2.**~~ Done 2026-11-23, tested on the built site in
-   Cloudflare's local runtime (`wrangler dev`, local D1/R2): saved content shows, saves and
-   photo uploads work, uploads are served at `/uploads/<name>` (cached, 304, range requests for
-   video), and a save or upload without sign-in, a disguised file, a bad name or an oversized
-   file is refused. Settings in `wrangler.jsonc` (`database_id` filled in once D1 is created),
-   tables in `migrations/`. Local uploads moved from `public/local-uploads` to
-   `.local-content/uploads`, so a build never ships them.
-2. ~~**Google sign-in on the live site**~~ Done 2026-11-23: redirect URI added, Branding filled
-   in (no logo, so no brand review), app published ("In production"). Decided 2026-11-23: the
-   main address is `hafakathamerav.co.il` (no www); `www.` redirects to it (a Cloudflare
-   redirect rule, step 5). The code needs no change: it builds the return address from the
-   visitor's domain. In Google Cloud: add the redirect URI
-   `https://hafakathamerav.co.il/admin/auth/callback` to the OAuth client, and make sure the
-   app is published ("In production"), not "Testing". The live `ADMIN_SESSION_SECRET` is made
-   and kept in `.local-content/live-admin-session-secret.txt` (git-ignored), pasted into the
-   Worker's secrets in step 5.
-3. ~~**Security check**~~ Done 2026-11-23 (code review of the admin, sign-in and uploads): saves
-   and uploads need a valid sign-in and are checked on the server; cookies are `__Host-`,
-   HttpOnly, SameSite=Strict; server functions have the cross-site check; uploads are served
-   only by name with a fixed type and their own strict content policy. Fixed: an unservable
-   video range now answers 416 (not the error page); the live admin no longer tells visitors
-   which settings are missing; server function answers are never cached. Accepted: an upload
-   is parsed before the sign-in check (Cloudflare caps requests at 100MB); hidden services'
-   drafts are in the public content data (the pages don't show them). Recheck on the live site
-   in step 6 (a real sign-in, a refused save, the headers).
-4. ~~**One-time copy:**~~ Done 2026-11-23: 10 sections copied to the live D1, checked identical
-   to the local content (no uploads were in use, no added admins). From now on, edit content on
-   the live admin once it's up, not locally (a second copy is refused). `node scripts/copy-content-to-cloudflare.mjs --remote` fills D1 and R2
-   from the content saved on this computer (written and tested on the local copy 2026-11-23;
-   it refuses if the live database already has content). First apply the tables:
-   `npx wrangler d1 migrations apply mirav-content --config wrangler.jsonc --remote`.
-5. ~~**Cloudflare (Merav's account)**~~ Done 2026-11-23: D1 `mirav-content` and R2
-   `mirav-uploads` (region EEUR; R2 switched on with Yatom's card), Wrangler signed in with
-   access to Merav's account only. Worker `mirav-hafakot-site` imported from GitHub (builds
-   `main`: `npm run build`, `npx wrangler deploy`; preview builds off), the four secrets set,
-   custom domain `hafakathamerav.co.il`. `www` is a proxied AAAA `100::` record plus the
-   "Redirect from WWW to root" rule (301, keeps path and query); "Always Use HTTPS" is on.
-   `workers_dev` and `preview_urls` are off in `wrangler.jsonc`.
-6. ~~**Live**~~ 2026-11-23: deployed from `main` (`0a6f82d`); checked: pages, real Google
-   sign-in, a save and its undo, headers, noindex on pages, images and video, robots.txt and an
-   empty sitemap, `workers.dev` off. Not yet tried on the live site: a photo upload (tested
-   locally). Then send Ortal the link. Original step: **Merge `admin` into `main`**, deploy, check the live site (pages, sign-in, a save, an upload,
-   phone sizes, headers, nothing indexable), then send Ortal the link. From here `main` is what
-   the live site publishes; everyday work stays on `admin` and is merged when ready.
-7. **After it:** content is edited only on the live admin (instant, no push); only code goes
-   through GitHub. The local store is for testing only. Adding a field or section is safe (saved
-   content gets the code's defaults); renaming or removing one needs a step that carries saved
-   content over.
-8. **Then the landing page** (see its section below).
+- **Send Ortal the link** to the live site.
+- **Try a photo upload on the live site** (worked in the local test, not yet tried live). Use a
+  photo that's meant to stay: uploads aren't deleted.
 
-## Done 2026-11-22: Merav can add, delete and edit services
+## Bar/bat mitzvah landing page
 
-In the admin's "שירותים" tab: add (up to 12, a new one starts hidden), a page address in English
-that locks once the service is first shown, delete any service (at least one visible remains),
-reorder, and edit as before. Pages, homepage cards, footer links and the sitemap follow the saved
-list. Left open: a deleted service's old address answers "not found"; a permanent redirect to the
-homepage could be added later if old links matter.
+Version 2 is designed on its own canvas (https://claude.ai/artifact/Face9DiaM57eD626U2YpEU), the
+design source for the build. Ortal's comments (2026-11-23): add motion effects to some elements,
+no other changes.
 
-## Bar/bat mitzvah landing page: finish it, then build it into the site
-
-A dedicated page for "קליפים לבר ובת מצווה", designed separately from the site.
-
-- **Where it stands:** version 2 is designed on its own canvas
-  (https://claude.ai/artifact/Face9DiaM57eD626U2YpEU), with a shareable static preview
-  (https://claude.ai/artifact/LSZyrYKDazftJi6to4cde3, 15 November 2026). Version 1 has an older
-  preview (https://claude.ai/artifact/Jcsu8kSwvJDobw9Mvcqdc7). The canvas is the source of
-  truth; the preview is rebuilt from it.
-- **1. Finish the design:** review version 2 with Merav, settle the remaining copy, photos and
-  clips, and get her approval on the canvas.
-- **Decided 2026-11-23:** Ortal's comments are in: add motion effects to some elements, no other
-  changes. It becomes a standalone page **without the site's header and footer**, with **its own
-  admin tab**. Built after the deployment, then Ortal reviews it on the live site.
-- **2. Build it into the site's code, once Ortal approves and its sections are settled:** a real
-  page in this project (React + Tailwind, the site's own colours, fonts and components), built
-  from the approved static version. Most likely with its own admin tab so Merav can edit its
-  texts, photos and clips (Yatom confirms with Ortal). Decisions to make first:
-  - **Address:** for example `/bar-mitzvah`. It replaces the service page: once it's live,
-    choose "דף אחר" in the admin (שירותים > the service's card) and type its address. The
-    homepage card, the footer and "more services" then lead there, and
-    `/services/bar-bat-mitzvah` forwards to it permanently (301). The option is built and
-    works for any service (done 2026-11-22). Until the page exists, leave the field empty. The
-    admin warns if the address isn't a page of the site.
-  - **Header and footer:** the site's own (visitors can reach the rest of the site), or a
-    stripped-down version focused on one action (typical for ad campaigns).
-  - **Google:** once the service leads to it, the sitemap lists the landing page in place of
-    the service page automatically (done 2026-11-22). Give it its own title, description,
-    canonical and service structured data (moved from the service page). Indexed, not
-    `noindex`, since it now is the service's page in search.
-  - **A landing page no service leads to** (the site only hosts it, and visitors arrive from
-    outside links such as ads, WhatsApp or Instagram): nothing lists it automatically. If Google
-    should find it, add its address by hand to `STANDALONE_PAGES` in `src/lib/sitemap.ts`. If
-    it's only for ads or shared links, leave it out of the sitemap and give it `noindex`.
-  - **Editing:** whether Merav edits its texts, photos and clips in the admin (a new tab, like
-    the homepage sections) or it stays fixed in code.
-  - **Contact:** the same WhatsApp form as the rest of the site, or a version tuned for this
-    page (for example, the interest preset to bar/bat mitzvah).
-  - **Ads and tracking (ask Merav: "Will you advertise this page with paid ads on Facebook,
-    Instagram or Google?"):**
-    - **No ads** (she shares the link herself, on WhatsApp or her Instagram bio): no pixel, no
-      consent banner, no privacy policy change. The page can have the full header and footer
-      and be indexed like any other page.
-    - **Ads:** she'll probably want a Facebook or Google pixel to see which ads brought
-      inquiries. Suggested setup: the pixel and its consent banner **on the landing page only**,
-      so the rest of the site stays without tracking and without a banner. The form is on the
-      page, so it still measures what matters. The pixel loads only after the visitor
-      approves. The choice is remembered so the banner doesn't come back, and declining
-      leaves the page fully working. Add a section to the privacy policy (one policy for the
-      whole site) about the landing page's pixel and consent. Ad pages usually keep visitors
-      focused on contacting her, with fewer links away.
-    - **Decided 2026-11-22: build the consent banner in, ready for ads.** It stays switched off
-      while there is no pixel (a banner with nothing to approve only bothers visitors, and no
-      cookies means no consent is needed). It turns on by itself once a pixel ID is set (Facebook
-      / Meta, Google Ads, or both), and the pixel loads only after the visitor approves. Write the
-      privacy policy section for the landing page's pixel at the same time, published together
-      with the pixel.
-      **Ready in advance, so advertising after launch needs no code change or deploy:**
-      - A pixel ID field (Meta, Google Ads ID and label) in the admin settings. Saving an ID
-        turns on the banner and the pixel; clearing it turns both off.
-      - The privacy policy's pixel section is written now, reviewed by the lawyer with the
-        rest of the policy, and shown automatically only while a pixel ID is set.
-      - The content policy (security headers) on the landing page allows Meta's and Google's
-        addresses from the start; nothing loads from them without an ID and the visitor's
-        approval.
-      - Only a new platform (for example TikTok) or a different kind of tracking needs code.
-- **3. Check it like the rest of the site:** the four checkers (QA, security, legal and
-  accessibility, SEO) on the new page, plus the sitemap and the structured data if it's
-  indexed.
+- **Build it into the site's code:** a real page (React + Tailwind, the site's colours, fonts and
+  components) from version 2, plus Ortal's motion effects.
+  - **Standalone:** without the site's header and footer (decided 2026-11-23).
+  - **Its own admin tab** so Merav edits its texts, photos and clips (decided 2026-11-23).
+  - **Address:** for example `/bar-mitzvah`. Once it's live, choose "דף אחר" in the admin
+    (שירותים > the service's card) and type its address: the homepage card, footer and "more
+    services" lead there, and `/services/bar-bat-mitzvah` forwards to it (301). Until then
+    leave the field empty.
+  - **Google:** once the service leads to it, the sitemap lists it automatically. Give it its
+    own title, description, canonical and the service's structured data (moved from the service
+    page), indexed. (A landing page no service leads to isn't listed automatically: add it to
+    `STANDALONE_PAGES` in `src/lib/sitemap.ts` if Google should find it, otherwise `noindex`.)
+  - **Contact:** the site's WhatsApp form, or a version tuned for this page (interest preset to
+    bar/bat mitzvah).
+  - **Ads and tracking:** build the consent banner in, ready for ads (decided 2026-11-22). Ask
+    Merav: "Will you advertise this page with paid ads on Facebook, Instagram or Google?"
+    - Off while no pixel ID is set (no banner, no cookies). Saving a pixel ID (Meta, Google Ads
+      ID and label) in the admin settings turns on the banner and the pixel; the pixel loads
+      only after the visitor approves, declining leaves the page working, the choice is
+      remembered. Clearing the ID turns both off.
+    - Pixel and banner on the landing page only; the rest of the site stays without tracking.
+    - The privacy policy's pixel section is written now, reviewed by the lawyer with the rest,
+      and shown only while a pixel ID is set.
+    - The landing page's content policy allows Meta's and Google's addresses from the start.
+    - Only a new platform (for example TikTok) needs code.
+- **Check it like the rest of the site:** the four checkers (QA, security, legal and
+  accessibility, SEO), plus the sitemap and structured data.
+- **Then Ortal reviews it** on the live site.
 
 ## Search phrases: a research pass before launch
 
@@ -156,28 +66,29 @@ services in `src/content/seo-pages.ts`) come from a first keyword plan, not from
 - **Result:** suggested adjustments to the homepage and all the service titles and
   descriptions, one main phrase per page, written for people, plus FAQ ideas. Apply after the
   user approves.
-- **Then optimize the site's copy** with the phrases the research settles on: headings, service
-  pages' opening paragraphs, the homepage and the FAQ, so they use the words her clients search
-  for, naturally and written for people. Suggest the changes first; apply after approval. Copy
-  Merav edits in the admin goes in as new defaults or as suggestions for her.
-- **After launch:** Google Search Console shows the real searches that bring visitors. Revisit
-  the titles after a month or two of data.
+- **Then optimize the site's copy** with those phrases: headings, service pages' opening
+  paragraphs, the homepage and the FAQ. Suggest first, apply after approval. Copy Merav edits in
+  the admin goes in as suggestions for her.
+- **After launch:** Search Console shows the real searches. Revisit the titles after a month or
+  two of data.
 
 ## Waiting on Merav
 
+- **Now that the site is live:** she reads the privacy policy (/privacy) and the accessibility
+  statement (/accessibility), so she knows what she commits to in her own name: she is the
+  contact for privacy and accessibility requests and has to answer them, what happens to
+  inquiries sent through the form and WhatsApp, and keeping what she adds in the admin
+  accessible (for example alt text for photos). Her questions or corrections go into
+  `src/content/legal.ts` and the two pages before the lawyer's review.
 - Real testimonials to replace the four sample ones (two still contain `[שם התיאטרון]` and
-  `[שם העסק]`), or remove them.
+  `[שם העסק]`). Until she has them, she hides the section: admin → "המלצות" → "הסתרת אזור
+  ההמלצות" (added 2026-11-23; hides the section and its menu link, keeps the testimonials).
+  Then update the FAQ caption number (06 to 05).
 - Whether the music in her clips is licensed.
 - Accepting the Google Cloud owner invitation; switching the support email to hers.
 - At launch, her own task: a Google Business profile, from her Google account, as a
   service-area business with the address hidden (areas only), linking to the site. Yatom can
   send her a short how-to; she does the sign-up and Google's verification herself.
-- As soon as the site is deployed: Merav reads the privacy policy (/privacy) and the
-  accessibility statement (/accessibility) on the live site, so she knows what she commits to
-  in her own name: she is the contact for privacy and accessibility requests and has to answer
-  them, what happens to inquiries sent through the form and WhatsApp, and keeping what she adds
-  in the admin accessible (for example alt text for photos). Her questions or corrections go
-  back into `src/content/legal.ts` and the two pages before the lawyer's review.
 
 ## Before launch
 
@@ -185,77 +96,34 @@ services in `src/content/seo-pages.ts`) come from a first keyword plan, not from
   publish testimonials as screenshots of clients' WhatsApp messages with the name removed, or
   does she need each client's consent (the plan meanwhile: ask on WhatsApp and keep the reply,
   blur the profile photo, number and identifying details; many messages concern minors)?
-- **Domain: bought 2026-11-22: `hafakathamerav.co.il`** (owner "Merav Verner", Yatom as
-  technical and DNS contact, renews 22 November 2027). Added to her Cloudflare (Free), nameservers
-  at mynames switched to `aida.ns.cloudflare.com` and `greg.ns.cloudflare.com`. Active in Cloudflare and verified in Search Console (Yatom's account, TXT record added by Google; never delete it) 2026-11-22. Left:
-  nothing; Merav added as Owner 2026-11-22. At launch: submit the sitemap (step 5). The original plan, for reference: buy a `.co.il` at mynames.co.il, in Merav's name (spelling as on her ID) and with
-  her email (Meravi2340@gmail.com), with auto-renew on and the owner's details hidden if
-  offered. Skip the add-ons. Then:
-  1. Merav's Cloudflare → Add a domain → the domain → **Free** plan. Note the two nameservers.
-  2. At mynames.co.il, replace the nameservers with Cloudflare's (the Israeli registry checks
-     that they already know the domain, which is why step 1 comes first).
-  3. Wait until Cloudflare shows the domain as **Active** (minutes to a day for `.il`).
-  4. Then Search Console steps 1-4 (under "At launch") can be done right away.
-  Decided 2026-11-23: no www (`www.` redirects to the bare domain).
-
-## Deploy (needs Merav's Cloudflare account)
-
-- ~~Create her Cloudflare account and invite Yatom as Super Administrator.~~ Done 2026-11-22:
-  both are Super Administrators. Her account requires two-factor authentication, so every
-  member needs 2FA on their own login (Yatom uses email codes and signs in with Google).
-- Admin storage on Cloudflare: D1 for content and the admins list, R2 for photos and the hero
-  video (streamed with range requests). Upload checks: sign-in before reading the upload, size
-  limits, file signature, fixed content type. (Done 2026-11-23; the cleanup is under "Small cleanups".)
-- Google sign-in on the live site: Worker secrets `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`,
-  `ADMIN_EMAILS`, `ADMIN_SESSION_SECRET`; add `https://<domain>/admin/auth/callback` to the
-  Google OAuth client.
-- Connect the GitHub repository in Cloudflare; test on a preview address: a real sign-in, a
-  refused save, the security headers, trailing-slash redirects (308).
-- Switch the content policy from report-only to enforced once the live site shows no reports.
+- Switch the content policy from report-only to enforced once the live site shows no reports
+  (`src/config/security-headers.ts` and `public/_headers`).
 
 ## At launch
 
-- `src/config/site.ts`: `indexable: true` and the domain in `url` (this turns on canonical
-  tags, the sitemap and robots.txt).
-- `public/_headers`: remove the two "keep images and video out of search" blocks.
-- Merge `admin` into `main` (the site is already live from Phase 1; this publishes the launch
-  changes).
-- **Test that the sitemap follows the admin, before submitting it to Google (step 5 below).**
-  Locally it stays empty until launch, so this is its first real check, and on the live site
-  it reads the saved content from the database, not from this computer.
-  1. Open `https://hafakathamerav.co.il/sitemap.xml`: the homepage, every visible service,
-     `/privacy` and `/accessibility`, each with the full domain (no localhost, no `/admin`).
-  2. In the admin, hide one service and save: reload the sitemap, it's gone. Show it again and
-     save: it's back.
-  3. Choose "דף אחר" for a service with a page of the site (for example `/privacy`) and save:
-     the sitemap lists that page and not `/services/<slug>`, and the old address forwards to it
-     (301). With an `https://` address, the service is left out. Switch back to "עמוד השירות"
-     and save.
-  4. If the sitemap didn't change, look for caching (Cloudflare, or the Worker serving an old
-     copy) before anything else.
-- Google Search Console. Yatom sets it up from **his own Google account** and adds Merav as
-  Owner, so nobody shares a password. Whoever proves control of the domain becomes a verified
-  owner, and Yatom has that control through her Cloudflare account. Can be done as soon as the
-  domain is active in Cloudflare (steps 1-4); the sitemap waits for launch.
-  1. search.google.com/search-console (Yatom's account) → Add property → **Domain** (the bare
-     domain, no www or https; it covers every version).
-  2. Verify: add the TXT record Google shows (`google-site-verification=...`) in Merav's
-     Cloudflare account → the domain → DNS → Add record → type TXT, name `@`. Or use Google's
-     one-click "verify with Cloudflare". Then click **Verify**.
-  3. Settings → Users and permissions → Add user → `Meravi2340@gmail.com` → **Owner**. Access
-     works right away: she gets a notification email (tell her it's coming) but doesn't need to
-     accept anything; the site appears when she opens Search Console with her Gmail.
-  4. Optional: Merav can also verify herself later (a TXT record of her own), so her ownership
-     never depends on Yatom's.
-  5. **At launch:** Sitemaps → submit `sitemap.xml`. URL inspection → homepage → Request
-     indexing.
-  6. Optional: Bing Webmaster Tools, imported from Search Console in one click.
-  After a few weeks, Performance shows the real searches (feeds the second keyword round).
+1. `src/config/site.ts`: `indexable: true` and `url: "https://hafakathamerav.co.il"` (turns on
+   canonical tags, the sitemap and robots.txt).
+2. `public/_headers`: remove the two "keep images and video out of search" blocks.
+3. Merge `admin` into `main`.
+4. **Test that the sitemap follows the admin** (its first real check):
+   1. Open `https://hafakathamerav.co.il/sitemap.xml`: the homepage, every visible service,
+      `/privacy` and `/accessibility`, each with the full domain (no `/admin`).
+   2. In the admin, hide one service and save: reload the sitemap, it's gone. Show it again and
+      save: it's back.
+   3. Choose "דף אחר" for a service with a page of the site (for example `/privacy`) and save:
+      the sitemap lists that page and not `/services/<slug>`, and the old address forwards to it
+      (301). With an `https://` address, the service is left out. Switch back to "עמוד השירות"
+      and save.
+   4. If the sitemap didn't change, look for caching (Cloudflare, or the Worker) first.
+5. **Search Console** (already verified, Yatom's account, Merav is Owner): Sitemaps → submit
+   `sitemap.xml`; URL inspection → homepage → Request indexing. Optional: Bing Webmaster Tools,
+   imported from Search Console in one click. After a few weeks, Performance shows the real
+   searches (feeds the second keyword round).
 
 ## Handover to Merav
 
-When the site is live, Yatom sends Merav one email (keep a copy) with everything she owns and how
-to reach it:
+When the site is launched, Yatom sends Merav one email (keep a copy) with everything she owns
+and how to reach it:
 
 - **The site:** https://hafakathamerav.co.il
 - **The admin:** https://hafakathamerav.co.il/admin. She signs in with her Google account
@@ -282,13 +150,17 @@ to reach it:
   - **Photos and videos of people:** only with their consent, and the parents' for children.
   - **One admin tab at a time:** saving from an old tab can overwrite newer changes. Reload
     before editing if a tab was left open.
+  - **Testimonials:** the section can be hidden (and shown again) in the "המלצות" tab, for
+    example until she has real ones. Only real testimonials, with the client's permission.
+  - **A photo removed and saved** can't be brought back in the admin: upload it again, or ask
+    Yatom to restore it from storage.
 - **Her hero video:** the requirements (MP4, up to 8MB, a 6-15 second loop, 1080p landscape, no
   sound, calm framing with the key part in the middle), and where to upload it in the admin.
 - **Cloudflare** (dash.cloudflare.com): hosting, DNS, storage. Her login, and a reminder that
-  two-factor authentication is on and Yatom is a Super Administrator there.
-  **The card on file is Yatom's** (added 2026-11-23 to switch on R2 storage, free tier):
-  ask her to replace it with her own card under Manage Account → Billing → Payment info.
-  The site and stored files aren't affected.
+  two-factor authentication is on and Yatom is a Super Administrator there. **The card on file
+  is Yatom's** (added 2026-11-23 to switch on R2 storage, free tier): ask her to replace it with
+  her own under Manage Account → Billing → Payment info. The site and stored files aren't
+  affected.
 - **mynames.co.il:** the domain registrar. Her login, the renewal date (22 November 2027,
   auto-renew on, about 74₪ a year), and that the card on file must stay valid.
 - **Google Search Console** (search.google.com/search-console): with her Google account, no
@@ -313,9 +185,32 @@ offered (Google, mynames).
   with every `/uploads/...` address the saved content uses, and deletes the unused files after
   a grace period (for example 30 days since upload), so a file removed by mistake can still be
   found and put back by hand. Not urgent: the free tier is 10GB and a photo set is under 1MB.
-  (Decided 2026-11-23: no "uploaded photos" library in the admin; Yatom restores a mistakenly
-  removed photo by hand, or Merav uploads it again.)
-
+  (Decided 2026-11-23: no "uploaded photos" library in the admin.)
+- A deleted service's old address answers "not found"; a permanent redirect to the homepage
+  could be added if old links matter.
 - Hydration warnings from the scroll-in animations (console noise only).
 - Remaining `npm audit` items are in build and test tools only; they clear with TanStack and
   vitest updates.
+
+## How the live site is set up (reference)
+
+- **Cloudflare, Merav's account** (both Merav and Yatom are Super Administrators, 2FA required):
+  Worker `mirav-hafakot-site` builds `main` from GitHub (`npm run build`, `npx wrangler deploy`,
+  preview builds off). D1 `mirav-content` (saved sections, added admins) and R2 `mirav-uploads`
+  (photos and videos, served at `/uploads/<name>`), both region EEUR. Settings in
+  `wrangler.jsonc`, tables in `migrations/`. The custom domain is listed there too; `workers.dev`
+  and preview addresses are off.
+- **Secrets** (Worker → Settings → Variables and Secrets): `GOOGLE_CLIENT_ID`,
+  `GOOGLE_CLIENT_SECRET`, `ADMIN_EMAILS`, `ADMIN_SESSION_SECRET` (its value is kept in
+  `.local-content/live-admin-session-secret.txt`, git-ignored).
+- **Domain:** `hafakathamerav.co.il` (owner Merav Verner, Yatom as technical contact, renews 22
+  November 2027), nameservers at mynames point to Cloudflare. `www` is a proxied AAAA `100::`
+  record plus the "Redirect from WWW to root" rule (301); "Always Use HTTPS" is on. The Google
+  verification TXT record must never be deleted.
+- **Google sign-in:** OAuth client in the "Merav hafakot admin" project, redirect URIs for
+  localhost and `https://hafakathamerav.co.il/admin/auth/callback`; the app is published.
+- **Wrangler** on Yatom's computer is signed in with access to Merav's account only.
+- **Changing the admin later:** adding a field or section is safe (saved content gets the code's
+  defaults); renaming or removing one needs a step that carries saved content over.
+- `scripts/copy-content-to-cloudflare.mjs` did the one-time copy of local content into D1
+  (2026-11-23); it refuses to run again on a database that has content.

@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { nav } from "@/content/site";
+import { nav as allNav } from "@/content/site";
+import { useHome } from "@/content/context";
 import { image } from "@/lib/asset";
 import { useContactLinks } from "@/lib/contact";
 import { HomeLink } from "@/components/ui/HomeLink";
@@ -15,6 +16,9 @@ export function SiteHeader() {
   const { site } = links;
   const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
+  // No menu link to a section the admin has hidden.
+  const home = useHome();
+  const nav = allNav.filter((item) => item.hash !== "testimonials" || !home.testimonials.hidden);
 
   useEffect(() => {
     let lastY = window.scrollY;

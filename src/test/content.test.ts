@@ -249,3 +249,12 @@ describe("sitemap", () => {
     expect(paths.filter((p) => p === "/privacy")).toHaveLength(1);
   });
 });
+
+describe("testimonials can be hidden", () => {
+  it("accepts and applies the hidden switch", async () => {
+    const { assembleContent, defaultContent } = await import("@/content/docs");
+    const saved = { ...defaultContent.home.testimonials, hidden: true };
+    expect(assembleContent({ "home.testimonials": saved }).home.testimonials.hidden).toBe(true);
+    expect(assembleContent({}).home.testimonials.hidden).toBe(false);
+  });
+});

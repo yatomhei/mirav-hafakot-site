@@ -151,6 +151,8 @@ export const docSchemas = {
     items: z.array(z.object({ num: text, title: text, meta: text, desc: longText })).length(4),
   }),
   "home.testimonials": z.object({
+    /** Merav hides the whole section (and its menu link) until she has real testimonials. */
+    hidden: z.boolean().optional(),
     caption: text,
     title: text,
     background: photoSchema,
