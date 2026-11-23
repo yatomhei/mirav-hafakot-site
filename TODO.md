@@ -41,15 +41,14 @@ through the screens.
    from the content saved on this computer (written and tested on the local copy 2026-11-23;
    it refuses if the live database already has content). First apply the tables:
    `npx wrangler d1 migrations apply mirav-content --config wrangler.jsonc --remote`.
-5. **Cloudflare (Merav's account), each with Yatom's OK:** ~~the D1 database~~ (created
-   2026-11-23, `mirav-content`, region EEUR, tables applied; its ID is in `wrangler.jsonc`;
-   Wrangler is signed in with access to Merav's account only), ~~the R2 bucket~~ (created
-   2026-11-23, `mirav-uploads`, region EEUR, after R2 was switched on with Yatom's card), the
-   Worker with its bindings and secrets, the GitHub connection (builds from `main`),
-   `hafakathamerav.co.il`, and the `www.` → bare domain redirect. Turn off the Worker's `workers.dev`
-   address and preview URLs (Settings → Domains & Routes), so the site lives only on the domain
-   (Google sign-in is registered only there).
-6. **Merge `admin` into `main`**, deploy, check the live site (pages, sign-in, a save, an upload,
+5. ~~**Cloudflare (Merav's account)**~~ Done 2026-11-23: D1 `mirav-content` and R2
+   `mirav-uploads` (region EEUR; R2 switched on with Yatom's card), Wrangler signed in with
+   access to Merav's account only. Worker `mirav-hafakot-site` imported from GitHub (builds
+   `main`: `npm run build`, `npx wrangler deploy`; preview builds off), the four secrets set,
+   custom domain `hafakathamerav.co.il`. `www` is a proxied AAAA `100::` record plus the
+   "Redirect from WWW to root" rule (301, keeps path and query); "Always Use HTTPS" is on.
+   `workers_dev` and `preview_urls` are off in `wrangler.jsonc`.
+6. **Merge `admin` into `main`** (first merged 2026-11-23), deploy, check the live site (pages, sign-in, a save, an upload,
    phone sizes, headers, nothing indexable), then send Ortal the link. From here `main` is what
    the live site publishes; everyday work stays on `admin` and is merged when ready.
 7. **After it:** content is edited only on the live admin (instant, no push); only code goes

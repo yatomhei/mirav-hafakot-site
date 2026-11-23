@@ -11,6 +11,12 @@
   "compatibility_date": "2026-11-01",
   "compatibility_flags": ["nodejs_compat"],
   "observability": { "enabled": true },
+  // The site lives only on hafakathamerav.co.il (the custom domain, also listed here so a deploy keeps it; www
+  // redirects there by a Cloudflare rule). No extra workers.dev or preview addresses: Google
+  // sign-in is registered only on the domain, and previews would share the live storage.
+  "routes": [{ "pattern": "hafakathamerav.co.il", "custom_domain": true }],
+  "workers_dev": false,
+  "preview_urls": false,
   // Saved content and added admins (created 2026-11-23 in Merav's account, region EEUR).
   "d1_databases": [
     {
