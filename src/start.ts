@@ -30,14 +30,18 @@ const robotsHeaderMiddleware = createMiddleware().server(async ({ next }) => {
 });
 
 // Security headers on every server response (pages, server functions, robots.txt and so on).
-// The admin is never cached: it shows who is signed in and unsaved work.
+// The admin and server functions (the admins list, sign-in state) are never cached: they show
+// who is signed in and unsaved work.
 const securityHeaderMiddleware = createMiddleware().server(async ({ next, request }) => {
   const result = await next();
   const headers = result.response.headers;
   for (const [name, value] of Object.entries(securityHeaders)) {
     if (!headers.has(name)) headers.set(name, value);
   }
-  if (new URL(request.url).pathname.startsWith("/admin")) headers.set("Cache-Control", "no-store");
+  const path = new URL(request.url).pathname;
+  if (path.startsWith("/admin") || path.startsWith("/_serverFn")) {
+    headers.set("Cache-Control", "no-store");
+  }
   return result;
 });
 

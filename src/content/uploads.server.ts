@@ -68,10 +68,21 @@ export async function serveUpload(request: Request, name: string) {
     return new Response("Not found", { status: 404 });
 
   const range = request.headers.get("range");
-  const object = await bucket.get(name, {
-    ...(range ? { range: request.headers } : {}),
-    onlyIf: request.headers,
-  });
+  let object;
+  try {
+    object = await bucket.get(name, {
+      ...(range ? { range: request.headers } : {}),
+      onlyIf: request.headers,
+    });
+  } catch {
+    // A range R2 can't serve (past the end, malformed): answer it, not the error page.
+    const head = await bucket.head(name);
+    if (!head) return new Response("Not found", { status: 404 });
+    return new Response(null, {
+      status: 416,
+      headers: { "Content-Range": `bytes */${head.size}` },
+    });
+  }
   if (!object) return new Response("Not found", { status: 404 });
 
   const headers = new Headers({
@@ -86,6 +97,14 @@ export async function serveUpload(request: Request, name: string) {
   if (!("body" in object)) return new Response(null, { status: 304, headers });
 
   const part = object.range;
+  // A start past the end: R2 hands back the whole file, which isn't what was asked for.
+  const from = /^bytes=(\d+)-/.exec(range ?? "")?.[1];
+  if (from !== undefined && Number(from) >= object.size) {
+    return new Response(null, {
+      status: 416,
+      headers: { "Content-Range": `bytes */${object.size}` },
+    });
+  }
   if (range && part) {
     const start = part.offset ?? (part.suffix ? object.size - part.suffix : 0);
     const length = part.length ?? part.suffix ?? object.size - start;

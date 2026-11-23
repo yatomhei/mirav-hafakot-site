@@ -17,15 +17,33 @@ through the screens.
    file is refused. Settings in `wrangler.jsonc` (`database_id` filled in once D1 is created),
    tables in `migrations/`. Local uploads moved from `public/local-uploads` to
    `.local-content/uploads`, so a build never ships them.
-2. **Google sign-in on the live site** (details under "Deploy" below).
-3. **Security check** of the admin, sign-in and uploads.
+2. ~~**Google sign-in on the live site**~~ Done 2026-11-23: redirect URI added, Branding filled
+   in (no logo, so no brand review), app published ("In production"). Decided 2026-11-23: the
+   main address is `hafakathamerav.co.il` (no www); `www.` redirects to it (a Cloudflare
+   redirect rule, step 5). The code needs no change: it builds the return address from the
+   visitor's domain. In Google Cloud: add the redirect URI
+   `https://hafakathamerav.co.il/admin/auth/callback` to the OAuth client, and make sure the
+   app is published ("In production"), not "Testing". The live `ADMIN_SESSION_SECRET` is made
+   and kept in `.local-content/live-admin-session-secret.txt` (git-ignored), pasted into the
+   Worker's secrets in step 5.
+3. ~~**Security check**~~ Done 2026-11-23 (code review of the admin, sign-in and uploads): saves
+   and uploads need a valid sign-in and are checked on the server; cookies are `__Host-`,
+   HttpOnly, SameSite=Strict; server functions have the cross-site check; uploads are served
+   only by name with a fixed type and their own strict content policy. Fixed: an unservable
+   video range now answers 416 (not the error page); the live admin no longer tells visitors
+   which settings are missing; server function answers are never cached. Accepted: an upload
+   is parsed before the sign-in check (Cloudflare caps requests at 100MB); hidden services'
+   drafts are in the public content data (the pages don't show them). Recheck on the live site
+   in step 6 (a real sign-in, a refused save, the headers).
 4. **One-time copy:** `node scripts/copy-content-to-cloudflare.mjs --remote` fills D1 and R2
    from the content saved on this computer (written and tested on the local copy 2026-11-23;
    it refuses if the live database already has content). First apply the tables:
    `npx wrangler d1 migrations apply mirav-content --config wrangler.jsonc --remote`.
 5. **Cloudflare (Merav's account), each with Yatom's OK:** the D1 database, the R2 bucket, the
    Worker with its bindings and secrets, the GitHub connection (builds from `main`),
-   `hafakathamerav.co.il`, www or not.
+   `hafakathamerav.co.il`, and the `www.` → bare domain redirect. Turn off the Worker's `workers.dev`
+   address and preview URLs (Settings → Domains & Routes), so the site lives only on the domain
+   (Google sign-in is registered only there).
 6. **Merge `admin` into `main`**, deploy, check the live site (pages, sign-in, a save, an upload,
    phone sizes, headers, nothing indexable), then send Ortal the link. From here `main` is what
    the live site publishes; everyday work stays on `admin` and is merged when ready.
@@ -171,7 +189,7 @@ services in `src/content/seo-pages.ts`) come from a first keyword plan, not from
      that they already know the domain, which is why step 1 comes first).
   3. Wait until Cloudflare shows the domain as **Active** (minutes to a day for `.il`).
   4. Then Search Console steps 1-4 (under "At launch") can be done right away.
-  Decide whether the site lives on the domain with or without www (the other redirects to it).
+  Decided 2026-11-23: no www (`www.` redirects to the bare domain).
 
 ## Deploy (needs Merav's Cloudflare account)
 
@@ -232,7 +250,7 @@ services in `src/content/seo-pages.ts`) come from a first keyword plan, not from
 When the site is live, Yatom sends Merav one email (keep a copy) with everything she owns and how
 to reach it:
 
-- **The site:** https://hafakathamerav.co.il (or the www version, whichever is chosen).
+- **The site:** https://hafakathamerav.co.il
 - **The admin:** https://hafakathamerav.co.il/admin. She signs in with her Google account
   (Meravi2340@gmail.com), no password of its own. A short guide: editing texts, photos, videos
   and services, hiding a service, adding another admin, and the reminders the admin shows.

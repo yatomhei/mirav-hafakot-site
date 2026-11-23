@@ -28,7 +28,11 @@ export const getAdminState = createServerFn({ method: "GET" }).handler(
       ...(secret ? [] : ["ADMIN_SESSION_SECRET"]),
       ...(store ? [] : ["D1"]),
     ];
-    if (missing.length) return { state: "unavailable", missing };
+    if (missing.length) {
+      // Which settings are missing is for the developer on this computer, not for visitors.
+      const { localStoreEnabled } = await import("@/content/backend-config");
+      return { state: "unavailable", missing: localStoreEnabled() ? missing : [] };
+    }
     const email = await currentAdmin();
     return email ? { state: "signed-in", email } : { state: "signed-out" };
   },
