@@ -129,6 +129,15 @@ and how to reach it:
 - **The admin:** https://hafakathamerav.co.il/admin. She signs in with her Google account
   (Meravi2340@gmail.com), no password of its own. A short guide: editing texts, photos, videos
   and services, hiding a service, adding another admin, and the reminders the admin shows.
+- **Accessibility texts are mandatory** (state it clearly in the guide): the accessibility
+  statement promises alternative text for every photo that carries information, so whenever she
+  adds or replaces one she must fill in **"תיאור התמונה"** (what the photo shows; the stills,
+  service pages, photo strip and her portrait), **"סוג הצילום"** (stills and service page
+  photos: it names the "enlarge photo" button), and **"שם הסרטון"** for every video (it names the
+  play button). The admin doesn't block a save without them, so an empty one is a gap against
+  the statement. Not needed: the service card photos, video covers and backgrounds are
+  decorative (the card's name or the video's title says what they are). Checked 2026-11-23:
+  all filled in on the live site.
 - **Services: best practices** (part of the guide, in plain words):
   - **Adding:** a new service starts hidden. Fill in everything (name, card photo, opening
     paragraph, videos and/or photos), check it, then untick "hidden" and save.
