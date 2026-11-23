@@ -205,7 +205,7 @@ services in `src/content/seo-pages.ts`) come from a first keyword plan, not from
   member needs 2FA on their own login (Yatom uses email codes and signs in with Google).
 - Admin storage on Cloudflare: D1 for content and the admins list, R2 for photos and the hero
   video (streamed with range requests). Upload checks: sign-in before reading the upload, size
-  limits, file signature, fixed content type. Clean up uploads nothing refers to.
+  limits, file signature, fixed content type. (Done 2026-11-23; the cleanup is under "Small cleanups".)
 - Google sign-in on the live site: Worker secrets `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`,
   `ADMIN_EMAILS`, `ADMIN_SESSION_SECRET`; add `https://<domain>/admin/auth/callback` to the
   Google OAuth client.
@@ -307,6 +307,14 @@ each login is kept. After handover, ask her to turn on two-factor authentication
 offered (Google, mynames).
 
 ## Small cleanups, any time
+
+- **Unused uploads in R2:** nothing deletes a photo or video from storage when it's removed,
+  replaced, or uploaded and never saved. A small script (or admin button) lists R2, compares it
+  with every `/uploads/...` address the saved content uses, and deletes the unused files after
+  a grace period (for example 30 days since upload), so a file removed by mistake can still be
+  found and put back by hand. Not urgent: the free tier is 10GB and a photo set is under 1MB.
+  (Decided 2026-11-23: no "uploaded photos" library in the admin; Yatom restores a mistakenly
+  removed photo by hand, or Merav uploads it again.)
 
 - Hydration warnings from the scroll-in animations (console noise only).
 - Remaining `npm audit` items are in build and test tools only; they clear with TanStack and
