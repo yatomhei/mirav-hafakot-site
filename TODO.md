@@ -20,6 +20,9 @@ no other changes.
 - **Build it into the site's code:** a real page (React + Tailwind, the site's colours, fonts and
   components) from version 2, plus Ortal's motion effects.
   - **Standalone:** without the site's header and footer (decided 2026-11-23).
+  - **A link to Merav's site** from the landing page (requested 2026-11-23): with no site header
+    or footer, visitors need a way to the rest of the site (for example the logo, or a "לאתר
+    הפקת המרב" link). Keep it modest, so it doesn't pull visitors away from contacting her.
   - **Its own admin tab** so Merav edits its texts, photos and clips (decided 2026-11-23).
   - **Address:** for example `/bar-mitzvah`. Once it's live, choose "דף אחר" in the admin
     (שירותים > the service's card) and type its address: the homepage card, footer and "more
@@ -31,8 +34,10 @@ no other changes.
     `STANDALONE_PAGES` in `src/lib/sitemap.ts` if Google should find it, otherwise `noindex`.)
   - **Contact:** the site's WhatsApp form, or a version tuned for this page (interest preset to
     bar/bat mitzvah).
-  - **Ads and tracking:** build the consent banner in, ready for ads (decided 2026-11-22). Ask
-    Merav: "Will you advertise this page with paid ads on Facebook, Instagram or Google?"
+  - **Ads and tracking:** build the consent banner in, ready for ads (decided 2026-11-22).
+    **Merav will advertise this page** (confirmed 2026-11-23). Ask her on which platforms
+    (Facebook / Instagram, Google, both); she'll get the pixel IDs from her ad accounts once they
+    exist and enter them in the admin herself.
     - Off while no pixel ID is set (no banner, no cookies). Saving a pixel ID (Meta, Google Ads
       ID and label) in the admin settings turns on the banner and the pixel; the pixel loads
       only after the visitor approves, declining leaves the page working, the choice is
