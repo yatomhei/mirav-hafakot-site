@@ -10,8 +10,6 @@ end of this file.
 ## Now
 
 - **Send Ortal the link** to the live site.
-- **Try a photo upload on the live site** (worked in the local test, not yet tried live). Use a
-  photo that's meant to stay: uploads aren't deleted.
 
 ## Bar/bat mitzvah landing page
 
