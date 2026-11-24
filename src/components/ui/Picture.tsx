@@ -39,15 +39,26 @@ export function Picture({ photo, sizes, className = "", style, priority, decorat
  * A video's cover: its own photo, or (for a video added in the admin without one) the
  * cover YouTube made for it.
  */
-export function VideoThumb({ video, sizes }: { video: Video; sizes: string }) {
-  if (video.thumb) return <Picture photo={video.thumb} decorative sizes={sizes} />;
+export function VideoThumb({
+  video,
+  sizes,
+  priority,
+}: {
+  video: Video;
+  sizes: string;
+  /** In the first screen: loaded at once, before other images. */
+  priority?: boolean;
+}) {
+  if (video.thumb)
+    return <Picture photo={video.thumb} decorative sizes={sizes} priority={Boolean(priority)} />;
   if (!video.youtubeId) return null;
   return (
     <img
       src={`https://i.ytimg.com/vi/${video.youtubeId}/hqdefault.jpg`}
       alt=""
       aria-hidden
-      loading="lazy"
+      loading={priority ? "eager" : "lazy"}
+      fetchPriority={priority ? "high" : undefined}
       decoding="async"
       className="absolute inset-0 h-full w-full object-cover"
     />

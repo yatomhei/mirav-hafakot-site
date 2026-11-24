@@ -120,7 +120,9 @@ export async function deleteStoredPhoto(name: string) {
     const { results } = await db.prepare("SELECT value FROM docs").all<{ value: string }>();
     saved = results.map((row) => row.value);
   }
-  if (contentUses(saved, name)) throw new Error("התמונה בשימוש באתר");
+  // Also any other form of its address (a full https address, say): the bare id anywhere.
+  if (contentUses(saved, name) || JSON.stringify(saved).includes(match[1]!))
+    throw new Error("התמונה בשימוש באתר");
   const files = [480, 960, 1600].map((width) => `${match[1]}-${width}.webp`);
   if (localStoreEnabled()) {
     const { deleteLocalUploads } = await import("./dev-store.server");

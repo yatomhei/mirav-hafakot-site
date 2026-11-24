@@ -17,7 +17,12 @@ export const Route = createFileRoute("/")({
     const content = matches[0]?.loaderData as SiteContent | undefined;
     const address = pageAddress("/");
     return {
-      meta: address.meta,
+      meta: [
+        ...address.meta,
+        // The shared-link image is the hero poster (set for every page in __root.tsx).
+        { property: "og:image:width", content: "1600" },
+        { property: "og:image:height", content: "900" },
+      ],
       links: [
         ...address.links,
         // The hero's poster is the first thing on screen: fetch it before the CSS asks for it.

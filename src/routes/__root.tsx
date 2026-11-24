@@ -89,9 +89,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         { property: "og:site_name", content: site.name },
         { property: "og:locale", content: siteConfig.locale },
         // Full address once the domain is set (WhatsApp and Facebook ignore relative ones).
+        // Its size is stated on the homepage only: a page with its own image (a service, the
+        // landing page) would otherwise inherit the poster's size for a different photo.
         { property: "og:image", content: absImage("/images/hero-poster-1600.webp") },
-        { property: "og:image:width", content: "1600" },
-        { property: "og:image:height", content: "900" },
         { property: "og:image:alt", content: `${site.name} - ${site.tagline}` },
         { name: "twitter:card", content: "summary_large_image" },
       ],

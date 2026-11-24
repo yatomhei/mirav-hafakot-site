@@ -32,6 +32,15 @@ export function jsonLd(data: unknown) {
   };
 }
 
+/** A phone number in international form for structured data: 050-1234567 -> +972-50-1234567. */
+export const internationalPhone = (phone: string) => {
+  const p = phone.trim();
+  if (p.startsWith("+")) return p;
+  if (p.startsWith("972")) return `+${p}`;
+  if (p.startsWith("0")) return `+972-${p.slice(1).replace(/^-/, "")}`;
+  return p;
+};
+
 const BUSINESS_ID = "#business";
 /** Where Merav is based. City level only: never a street address. */
 const BASE_TOWN = "יד בנימין";
@@ -57,7 +66,7 @@ export function businessGraph(content: SiteContent) {
     ...(absUrl("/") ? { url: absUrl("/") } : {}),
     logo: absImage("/images/logo-color.webp"),
     image: absImage("/images/hero-poster-1600.webp"),
-    ...(phone ? { telephone: phone.startsWith("972") ? `+${phone}` : phone } : {}),
+    ...(phone ? { telephone: internationalPhone(phone) } : {}),
     ...(isPlaceholder(site.email) ? {} : { email: site.email }),
     // Her town only (city level): the street address stays private, so no street here.
     address: { "@type": "PostalAddress", addressLocality: BASE_TOWN, addressCountry: "IL" },

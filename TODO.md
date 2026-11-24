@@ -7,10 +7,6 @@ edited only on the live admin; code goes through GitHub (work on `admin`, mergin
 publishes in about 2 minutes, so merge only with Heidi's go-ahead). How it's set up is at the
 end of this file.
 
-## Now
-
-- **Send Ortal the link** to the live site.
-
 ## Bar/bat mitzvah landing page
 
 Version 2 is designed on its own canvas (https://claude.ai/artifact/Face9DiaM57eD626U2YpEU), the
@@ -33,8 +29,6 @@ no other changes.
   - **Saved records and new fields:** a saved section missing a field the code later gained is
     completed from the launch content (`fillMissing` in `src/content/docs.ts`), so Merav's edits
     survive code changes.
-  - **Open in the content:** the 6th clip's title is still "[שם הקליפ]", and the testimonial's
-    name "[שם המשפחה]" (or hide the testimonials until real ones exist).
   - ~~**Address `/bar-mitzvah-clips`**~~ Done: the bar/bat mitzvah card is set to "דף אחר"
     `/bar-mitzvah-clips`, so the homepage card, footer and "more services" lead there, and
     `/services/bar-bat-mitzvah` forwards to it (301).
@@ -43,10 +37,9 @@ no other changes.
     structured data (JSON-LD: the service, offered by the business, and the breadcrumb), moved
     from the service page on 2026-11-24.
   - **Ads and tracking:** built (2026-11-24), switched off until a pixel ID is entered.
-    **Merav will advertise this page** (confirmed 2026-11-23). Ask her on which platforms
-    (Facebook / Instagram, Google, both); she gets the IDs from her ad accounts and enters them
-    in the landing page tab, card "הודעת העוגיות ופיקסלי הפרסום" (Meta pixel ID, Google Ads ID and
-    conversion label).
+    **Merav will advertise this page** (confirmed 2026-11-23). Choosing platforms, opening the ad
+    accounts and entering the IDs are hers (explained in the handover email): the landing page
+    tab, card "הודעת העוגיות ופיקסלי הפרסום" (Meta pixel ID, Google Ads ID and conversion label).
     - With an ID saved, the landing page shows a consent banner; the pixel loads only after
       "מאשרים", "לא, תודה" leaves the page working, the choice is kept in the browser, and
       "הגדרות עוגיות" in the page's footer changes it (taking it back clears the pixel's
@@ -58,13 +51,32 @@ no other changes.
       Google's addresses on every page (a visitor arriving through a link keeps the first
       page's policy).
     - The privacy policy's section 4 and service list change by themselves while an ID is set.
-      For the lawyer: review that text with the rest.
+      Included in what the handover email says about a lawyer's review being her decision.
     - Once IDs are in: check on the live site that the banner shows, and that Meta's Events
       Manager and Google Ads see the page view and a test lead.
     - Only a new platform (for example TikTok) needs code.
-- **Check it like the rest of the site:** the four checkers (QA, security, legal and
-  accessibility, SEO), plus the sitemap and structured data.
-- **Then Ortal reviews it** on the live site.
+- ~~**Check it like the rest of the site**~~ The four checkers ran on 2026-11-24 (QA, security
+  and SEO 84, legal and accessibility 56 before fixes). Fixed the same day: focus ring on the
+  olive buttons, visible form labels, the accessibility statement's exemption wording, Meta's
+  automatic form reading off, contrast and field edges, errors tied to their field, the pinned
+  "spoiler" section only where it fits, privacy policy (countries, legal basis, cookie lifetimes,
+  testimonial screenshots, a date that follows the pixels), hero thumbnail first, smaller logo,
+  double-submit guard and a stricter phone check, bigger tap areas, international phone in the
+  structured data, og:image size, the old service address forwarding even when hidden, and
+  stricter admin input (photo addresses, email, deleting, save order). Still open from them:
+  - ~~**Content**~~ Done 2026-11-24: the heading's "בר.בת" stays (the period is on purpose); the
+    screenshot "הוא היה קשוח..." is removed from the live page (13 left; the image is still in
+    the uploads tab); the quote comes from one of the screenshots, without a name; the note under
+    the form is the homepage form's note (the same admin field), plus "מעדיפים לדבר? חייגו:" and
+    the phone.
+  - ~~**"נעים להכיר" on the landing page:** remove the studio~~ Done 2026-11-24 (she has no
+    studio): now "בטבע או בבית", live and in the built-in text.
+  - **Not needed:** an accessibility widget (no law requires one, and the business is exempt).
+  - **Decided 2026-11-24:** no long caching for `/images` (left as is), and no CSP report address
+    (see "Before launch").
+  - **At launch:** a Cloudflare 301 rule for addresses ending in "/", and check that Cloudflare
+    doesn't block ChatGPT, Claude and Perplexity.
+- ~~**Ortal**~~ Sent the link and reviewed it on the live site (2026-11-24).
 
 ## Search phrases: a research pass before launch
 
@@ -92,30 +104,17 @@ services in `src/content/seo-pages.ts`) come from a first keyword plan, not from
 
 ## Waiting on Merav
 
-- **Now that the site is live:** she reads the privacy policy (/privacy) and the accessibility
-  statement (/accessibility), so she knows what she commits to in her own name: she is the
-  contact for privacy and accessibility requests and has to answer them, what happens to
-  inquiries sent through the form and WhatsApp, and keeping what she adds in the admin
-  accessible (for example alt text for photos). Her questions or corrections go into
-  `src/content/legal.ts` and the two pages before the lawyer's review.
-- Real testimonials to replace the four sample ones (two still contain `[שם התיאטרון]` and
-  `[שם העסק]`). Until she has them, she hides the section: admin → "המלצות" → "הסתרת אזור
-  ההמלצות" (added 2026-11-23; hides the section and its menu link, keeps the testimonials).
-  Then update the FAQ caption number (06 to 05).
-- Whether the music in her clips is licensed.
+- **Read the privacy policy and the accessibility statement, and the consents:** Heidi sent her a
+  WhatsApp on 2026-11-24 (her responsibility from here; reminded in the handover email). Her
+  questions or corrections go into `src/content/legal.ts` and the two pages.
 - Accepting the Google Cloud owner invitation; switching the support email to hers.
-- At launch, her own task: a Google Business profile, from her Google account, as a
-  service-area business with the address hidden (areas only), linking to the site. Heidi can
-  send her a short how-to; she does the sign-up and Google's verification herself.
 
 ## Before launch
 
-- A lawyer reviews the privacy policy and the accessibility statement. Also ask: may Merav
-  publish testimonials as screenshots of clients' WhatsApp messages with the name removed, or
-  does she need each client's consent (the plan meanwhile: ask on WhatsApp and keep the reply,
-  blur the profile photo, number and identifying details; many messages concern minors)?
-- Switch the content policy from report-only to enforced once the live site shows no reports
-  (`src/config/security-headers.ts` and `public/_headers`).
+- Switch the content policy from report-only to enforced (`src/config/security-headers.ts` and
+  `public/_headers`). No report address (decided 2026-11-24): first open the main pages on the
+  live site (home, a service page, the landing page with a clip playing, privacy, the admin) and
+  check the browser console shows no policy errors, then enforce and check them again.
 
 ## At launch
 
@@ -184,6 +183,27 @@ and how to reach it:
     מתמונות שהועלו" next to every upload button. A photo removed from the site stays there, so
     it can be brought back the same way, until it's deleted in the "תמונות שהועלו" tab
     (deleting is for good).
+- **Content that's hers to replace or keep up** (Heidi provided the starting content):
+  - The landing page's 6th clip title, "[שם הקליפ]".
+  - The homepage testimonials: four samples, two still with `[שם התיאטרון]` and `[שם העסק]`.
+    Until she has real ones she can hide the section (admin → "המלצות" → "הסתרת אזור ההמלצות",
+    it keeps them and hides the menu link too). If she hides it, the FAQ's caption number should
+    change from 06 to 05.
+  - Her social links (none for now), the landing page's quote, and anything else written as a
+    starting point.
+- **Her responsibility for what she publishes** (a reminder of Heidi's WhatsApp, 2026-11-24):
+  - The privacy policy and the accessibility statement are in her name: she reads them, she is
+    the contact for privacy and accessibility requests and answers them, and she fills in the
+    descriptions when she adds photos.
+  - Written consent from clients whose WhatsApp messages appear as testimonials (on the site
+    and in ads), kept as their reply; parents' consent for children's photos, clips and names
+    in paid ads.
+  - The legal texts were written from how the site works, not reviewed by a lawyer: having a
+    lawyer review them (and the testimonial screenshots question) is her decision.
+- **Advertising:** choosing the platforms, opening Meta Business / Google Ads accounts, and
+  entering the pixel IDs in the admin (landing page tab, "הודעת העוגיות ופיקסלי הפרסום"): the
+  cookie banner and the privacy policy's text switch on by themselves. After she enters them,
+  Heidi checks once on the live site that the banner shows and a test lead is recorded.
 - **Her hero video:** the requirements (MP4, up to 8MB, a 6-15 second loop, 1080p landscape, no
   sound, calm framing with the key part in the middle), and where to upload it in the admin.
 - **Cloudflare** (dash.cloudflare.com): hosting, DNS, storage. Her login, and a reminder that
@@ -198,8 +218,6 @@ and how to reach it:
 - **Google Cloud** (console.cloud.google.com): the project behind the admin's Google sign-in,
   once she has accepted the owner invitation.
 - **GitHub:** where the site's code lives, and who owns the repository.
-- **Google Business profile** (if she made it) and **Meta Business / Google Ads** (if she
-  advertises): where the pixel IDs go in the admin.
 - **Who to call:** Heidi's contact details for changes and problems, and what's included.
 
 **Logins, not in the email body:** don't put passwords in plain email (anyone who gets into her

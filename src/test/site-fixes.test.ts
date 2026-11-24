@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { waNumber } from "@/lib/contact";
-import { absUrl, jsonLd, pageAddress, serviceJsonLd } from "@/lib/seo";
+import { absUrl, internationalPhone, jsonLd, pageAddress, serviceJsonLd } from "@/lib/seo";
+import { hebrewDate, lastUpdated, legal } from "@/content/legal";
 import { validateDoc, defaultContent } from "@/content/docs";
 import { SEO_AREA, serviceSeoFor } from "@/content/seo-pages";
 
@@ -113,5 +114,37 @@ describe("service page titles for search", () => {
     for (const s of defaultContent.services) {
       expect(serviceSeoFor(s, "x").description).not.toBe(s.lead);
     }
+  });
+});
+
+describe("checker fixes (2026-11-24)", () => {
+  it("accept only site photos and uploaded sets as photo addresses", () => {
+    const about = defaultContent.home.about;
+    const withPhoto = (name: string) => ({ ...about, portrait: { ...about.portrait, name } });
+    for (const ok of ["about-portrait", "/uploads/u-0000000a-aaaa-bbbb-cccc-dddddddddddd"])
+      expect(validateDoc("home.about", withPhoto(ok)).success, ok).toBe(true);
+    for (const bad of ["https://other.example/x", "/images/../x", "//evil.example/x", ""])
+      expect(validateDoc("home.about", withPhoto(bad)).success, bad).toBe(false);
+  });
+
+  it("accept only a real email address (or empty, or a placeholder)", () => {
+    const site = defaultContent.site;
+    for (const ok of ["Meravi2340@gmail.com", "", "[מייל]"])
+      expect(validateDoc("site", { ...site, email: ok }).success, ok).toBe(true);
+    for (const bad of ["x@y.com?bcc=z@w.com", "not an email", "a@b"])
+      expect(validateDoc("site", { ...site, email: bad }).success, bad).toBe(false);
+  });
+
+  it("write the phone in international form for structured data", () => {
+    expect(internationalPhone("058-770-2937")).toBe("+972-58-770-2937");
+    expect(internationalPhone("972587702937")).toBe("+972587702937");
+    expect(internationalPhone("+972-58-770-2937")).toBe("+972-58-770-2937");
+  });
+
+  it("date the legal pages by their review, or by the day the pixels went on if later", () => {
+    expect(lastUpdated()).toBe(hebrewDate(legal.updatedOn));
+    expect(lastUpdated("2020-01-01")).toBe(hebrewDate(legal.updatedOn));
+    expect(lastUpdated("2099-03-05")).toBe(hebrewDate("2099-03-05"));
+    expect(hebrewDate("2026-11-24")).toContain("2026");
   });
 });

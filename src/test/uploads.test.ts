@@ -119,6 +119,18 @@ describe("deleting an uploaded photo (live storage)", () => {
     }
   });
 
+  it("refuses a photo the saved content names in another form (a full address)", async () => {
+    try {
+      const { deleteStoredPhoto, deleted } = await setup([
+        JSON.stringify({ photo: { name: `https://hafakathamerav.co.il/uploads/${id}`, alt: "" } }),
+      ]);
+      await expect(deleteStoredPhoto(`/uploads/${id}`)).rejects.toThrow("בשימוש");
+      expect(deleted).toEqual([]);
+    } finally {
+      cleanup();
+    }
+  });
+
   it("refuses anything but an uploaded photo's address", async () => {
     try {
       const { deleteStoredPhoto, deleted } = await setup([]);

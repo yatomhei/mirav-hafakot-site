@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { LegalList, LegalPage, LegalSection } from "@/components/legal/LegalPage";
 import { useSite } from "@/content/context";
 import type { SiteContent } from "@/content/docs";
-import { legal } from "@/content/legal";
+import { lastUpdated, legal } from "@/content/legal";
 import { mailHref, telHref, whatsappHref } from "@/lib/contact";
 import { pageAddress } from "@/lib/seo";
 
@@ -34,7 +34,7 @@ function AccessibilityPage() {
   const link = "underline underline-offset-4";
 
   return (
-    <LegalPage title="הצהרת נגישות" updated={legal.updated}>
+    <LegalPage title="הצהרת נגישות" updated={lastUpdated()}>
       <LegalSection title="1. מי נותנת את השירות">
         <p>
           {site.name}, של {legal.ownerName} ({legal.businessType}, מספר עוסק {legal.businessNumber}
@@ -104,7 +104,11 @@ function AccessibilityPage() {
       </LegalSection>
 
       <LegalSection title="7. פטורים">
-        <p>האתר הונגש במלואו, ולא נעשה שימוש בפטור או בהקלה מחובות הנגישות.</p>
+        <p>
+          {site.name} הוא עסק של {legal.businessType}, ולכן האתר פטור מחובת ההנגשה לפי תקנה 35ו(ז)
+          לתקנות שוויון זכויות לאנשים עם מוגבלות (התאמות נגישות לשירות), התשע״ג-2013. למרות הפטור,
+          הנגשנו את האתר כמתואר בהצהרה הזו.
+        </p>
       </LegalSection>
 
       <LegalSection title="8. פנייה בנושא נגישות">
@@ -144,7 +148,7 @@ function AccessibilityPage() {
       </LegalSection>
 
       <LegalSection title="9. עדכון">
-        <p>ההצהרה עודכנה לאחרונה ביום {legal.updated}, ומתעדכנת עם כל שינוי באתר.</p>
+        <p>ההצהרה עודכנה לאחרונה ביום {lastUpdated()}, ומתעדכנת עם כל שינוי באתר.</p>
       </LegalSection>
     </LegalPage>
   );

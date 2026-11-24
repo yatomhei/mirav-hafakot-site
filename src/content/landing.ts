@@ -152,7 +152,7 @@ export const barMitzvahLanding = {
     subtitle: "צלמת, עורכת וידאו ומפיקה.",
     body: [
       "בהפקת המרב אני יוצרת קליפים אישיים, סרטי תדמית ופרסומת, ומצלמת משפחות ורגעים מיוחדים.",
-      "אני מלווה פרויקטים משלב הרעיון ועד לתוצאה המוגמרת, ואוהבת במיוחד לצלם אנשים בסביבה שבה הם מרגישים בנוח, בטבע, בבית או בסטודיו. עם אהבה לאור טבעי ולאווירה נינוחה.",
+      "אני מלווה פרויקטים משלב הרעיון ועד לתוצאה המוגמרת, ואוהבת במיוחד לצלם אנשים בסביבה שבה הם מרגישים בנוח, בטבע או בבית. עם אהבה לאור טבעי ולאווירה נינוחה.",
     ],
     /** The link to the rest of Merav's site. */
     link: "עוד עליי ועל העבודות שלי",
@@ -178,6 +178,11 @@ export const barMitzvahLanding = {
     googleAdsId: "",
     /** The Google Ads conversion label for a contact (the part after the slash). */
     googleAdsLabel: "",
+    /**
+     * The day an ID was first entered (YYYY-MM-DD), set by the admin by itself: the privacy
+     * policy's date follows it, since its text changes while the pixels are on.
+     */
+    enabledOn: "",
   },
   /** The page's footer: a last invitation, then the logo and contact details. */
   footer: {

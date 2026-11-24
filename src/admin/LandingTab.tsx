@@ -1,4 +1,7 @@
+import { useEffect } from "react";
 import { FINALE_ICON, MaskIcon, stepIcon } from "@/components/landing/step-icons";
+import { hebrewDate } from "@/content/legal";
+import { adsEnabled, type AdsIds } from "@/lib/ads";
 import type { LandingQuestion, LandingStep } from "@/content/landing";
 import type { Photo, Video } from "@/content/types";
 import {
@@ -50,7 +53,9 @@ function StepIconPreview({ name }: { name: string }) {
   return (
     <div className="flex items-center gap-3">
       <MaskIcon name={name} size="h-14 w-14" className="text-olive-deep" />
-      <span className="text-[13px] leading-snug text-ink/65">האייקון נקבע לפי מקום השלב ברשימה</span>
+      <span className="text-[13px] leading-snug text-ink/65">
+        האייקון נקבע לפי מקום השלב ברשימה
+      </span>
     </div>
   );
 }
@@ -70,6 +75,26 @@ function ShotInput({ path }: { path: string }) {
       aspect={`${(ratio ?? 0.6).toFixed(3)} / 1`}
       withRatio
     />
+  );
+}
+
+/**
+ * Keeps the day the pixels were switched on (the first ID entered), which the privacy policy's
+ * date follows, and shows it. Clearing every ID clears it.
+ */
+function AdsActivation() {
+  const { value: ads, set } = useField<AdsIds>("ads");
+  const on = adsEnabled(ads);
+  useEffect(() => {
+    if (on && !ads.enabledOn) set({ ...ads, enabledOn: new Date().toISOString().slice(0, 10) });
+    else if (!on && ads.enabledOn) set({ ...ads, enabledOn: "" });
+  }, [on, ads, set]);
+  if (!on || !ads.enabledOn) return null;
+  return (
+    <p className="admin-note">
+      הפיקסלים פועלים מאז {hebrewDate(ads.enabledOn)}, ומדיניות הפרטיות מציגה את התאריך הזה כתאריך
+      העדכון שלה.
+    </p>
   );
 }
 
@@ -125,6 +150,7 @@ export function BarMitzvahLandingFields() {
           פנייה נספרת כשגולש שולח את הטופס או לוחץ על כפתור הוואטסאפ, ואצל Meta גם כשלוחצים על מספר
           הטלפון. הפיקסלים פועלים רק בדף הזה, לא בשאר האתר. מדיניות הפרטיות מתעדכנת לבד כשיש מזהה.
         </p>
+        <AdsActivation />
       </Card>
 
       <Card title="1. פתיח">

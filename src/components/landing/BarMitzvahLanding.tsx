@@ -112,7 +112,17 @@ function HomeLogo({ className }: { className: string }) {
   const { site } = useContent();
   return (
     <Link to="/" className="lp-logo inline-block rounded-lg" aria-label={`${site.name}: לאתר`}>
-      <img src={image("logo-color-lg.webp")} alt="" className={`block w-auto ${className}`} />
+      {/* Shown up to 256px wide: the small file on ordinary screens, the large one on sharp
+          ones. */}
+      <img
+        src={image("logo-color.webp")}
+        srcSet={`${image("logo-color.webp")} 288w, ${image("logo-color-lg.webp")} 768w`}
+        sizes="(max-width: 900px) 180px, 256px"
+        width={768}
+        height={384}
+        alt=""
+        className={`block w-auto ${className}`}
+      />
     </Link>
   );
 }
@@ -199,7 +209,7 @@ function Hero() {
             className="relative block aspect-video overflow-hidden rounded-[clamp(16px,2vw,28px)] bg-beige"
           >
             <span className="lp-settle absolute inset-0 block">
-              <VideoThumb video={hero.video} sizes="(max-width: 1200px) 92vw, 1120px" />
+              <VideoThumb video={hero.video} sizes="(max-width: 1200px) 92vw, 1120px" priority />
             </span>
             <span aria-hidden="true" className="absolute inset-0 bg-[rgb(46_49_40/0.15)]" />
             <span
@@ -422,7 +432,7 @@ function Story() {
         className="mx-auto flex max-w-[760px] flex-col items-center gap-[22px] text-center"
       >
         {story.caption && (
-          <p className="m-0 text-[clamp(18px,1.8vw,24px)] font-medium tracking-[0.04em] text-olive-soft">
+          <p className="m-0 text-[clamp(18px,1.8vw,24px)] font-medium tracking-[0.04em] text-cream">
             {story.caption}
           </p>
         )}
@@ -491,7 +501,9 @@ function StoryVideoButton({ video, children }: { video: Video; children: ReactNo
  * section reaches the middle of the screen and ends when its pinned stretch is scrolled
  * through, so the visitor can't scroll past before everything has appeared, and scrolling
  * is never blocked. The "spoiler alert" line shakes each time it finishes zooming in.
- * Nothing happens under reduced motion (the section then isn't pinned, see styles.css).
+ * Pinned only where the whole content fits on the screen (not on a short screen or at a high
+ * zoom): elsewhere it's a plain section with everything shown. Nothing happens under reduced
+ * motion (the section then isn't pinned, see styles.css).
  */
 function usePinnedSteps<T extends HTMLElement>() {
   const root = useRef<T>(null);
@@ -503,9 +515,24 @@ function usePinnedSteps<T extends HTMLElement>() {
       return { node, from, to };
     });
     const kicker = el.querySelector<HTMLElement>(".lp-kicker");
+    const stick = el.firstElementChild as HTMLElement | null;
+    /** The content's own height (transforms aside) plus the sticky padding fits the screen. */
+    const fits = () => {
+      const content = stick?.firstElementChild as HTMLElement | null;
+      if (!stick || !content) return false;
+      const pad = parseFloat(getComputedStyle(stick).paddingTop) * 2;
+      return content.offsetHeight + pad <= window.innerHeight;
+    };
     let frame = 0;
     const update = () => {
       frame = 0;
+      const pin = fits();
+      el.classList.toggle("lp-nopin", !pin);
+      if (!pin) {
+        for (const { node } of steps) node.style.setProperty("--t", "1");
+        kicker?.classList.remove("is-shaking");
+        return;
+      }
       const rect = el.getBoundingClientRect();
       const start = window.innerHeight * 0.5;
       const span = start + rect.height - window.innerHeight;
@@ -529,6 +556,7 @@ function usePinnedSteps<T extends HTMLElement>() {
       cancelAnimationFrame(frame);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
+      el.classList.remove("lp-nopin");
     };
   }, []);
   return root;
@@ -551,6 +579,7 @@ function Experience() {
                 </span>
               </span>
             )}
+            {/* Keeps the two lines apart for screen readers and text extraction. */}{" "}
             <span data-step="0.32 0.46" className="block">
               {experience.title}
             </span>
@@ -814,9 +843,7 @@ function Process() {
 }
 
 function StepIcon({ index }: { index: number }) {
-  return (
-    <MaskIcon name={stepIcon(index)} className="text-olive-deep" />
-  );
+  return <MaskIcon name={stepIcon(index)} className="text-olive-deep" />;
 }
 
 // ---------- 09 About ----------
@@ -916,31 +943,44 @@ function useContactTint<T extends HTMLElement>() {
 }
 
 function Contact() {
-  const { contact } = useLanding();
+  const { contact, footer } = useLanding();
   const tint = useContactTint<HTMLElement>();
   const home = useHome();
   const links = useContactLinks();
   const [error, setError] = useState("");
+  /** The field the error is about, marked invalid and described by the error. */
+  const [badField, setBadField] = useState<"name" | "phone" | null>(null);
   const [sent, setSent] = useState(false);
   const [fallback, setFallback] = useState("");
+  /** Set for a moment after WhatsApp opens, so a double click doesn't open it twice. */
+  const justSent = useRef(false);
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (justSent.current) return;
     const data = new FormData(e.currentTarget);
     const name = String(data.get("name") ?? "").trim();
     const phone = String(data.get("phone") ?? "").trim();
+    const fail = (field: "name" | "phone", message: string) => {
+      setError(message);
+      setBadField(field);
+      (e.currentTarget.elements.namedItem(field) as HTMLInputElement)?.focus();
+    };
     if (!name || !phone) {
-      setError("נא למלא שם וטלפון כדי שאוכל לחזור אליכם.");
-      (e.currentTarget.elements.namedItem(name ? "phone" : "name") as HTMLInputElement)?.focus();
+      fail(name ? "phone" : "name", "נא למלא שם וטלפון כדי שאוכל לחזור אליכם.");
       return;
     }
-    // At least 9 digits: a landline or a mobile, with or without +972.
-    if (phone.replace(/\D/g, "").length < 9) {
-      setError("נא להזין מספר טלפון תקין, למשל 050-1234567.");
-      (e.currentTarget.elements.namedItem("phone") as HTMLInputElement)?.focus();
+    // Digits with the usual separators only, 9 to 12 digits: a landline or a mobile, with or
+    // without +972.
+    const digits = phone.replace(/\D/g, "").length;
+    if (!/^[\d\s()+-]+$/.test(phone) || digits < 9 || digits > 12) {
+      fail("phone", "נא להזין מספר טלפון תקין, למשל 050-1234567.");
       return;
     }
     setError("");
+    setBadField(null);
+    justSent.current = true;
+    window.setTimeout(() => (justSent.current = false), 2000);
     const text = fillMessage(home.contact.message ?? DEFAULT_MESSAGE_TEMPLATE, {
       name,
       phone,
@@ -985,29 +1025,32 @@ function Contact() {
           aria-describedby="lp-contact-note"
           className="grid w-full max-w-[640px] grid-cols-2 gap-3 max-[640px]:grid-cols-1"
         >
-          <label>
-            <span className="sr-only-he">שם מלא (חובה)</span>
+          <label className="text-start">
+            <span className="field-label">שם מלא (חובה)</span>
             <input
               className="field"
               type="text"
               name="name"
               autoComplete="name"
-              placeholder="שם מלא *"
               required
               aria-required="true"
+              aria-invalid={badField === "name" || undefined}
+              aria-describedby={badField === "name" ? "lp-contact-error" : undefined}
             />
           </label>
-          <label>
-            <span className="sr-only-he">טלפון (חובה)</span>
+          <label className="text-start">
+            <span className="field-label">טלפון (חובה)</span>
             <input
               className="field"
               type="tel"
               name="phone"
               autoComplete="tel"
               inputMode="tel"
-              placeholder="טלפון *"
+              placeholder="050-1234567"
               required
               aria-required="true"
+              aria-invalid={badField === "phone" || undefined}
+              aria-describedby={badField === "phone" ? "lp-contact-error" : undefined}
             />
           </label>
           <button
@@ -1018,7 +1061,11 @@ function Contact() {
             <Arrow />
           </button>
           {error && (
-            <p role="alert" className="col-span-full m-0 text-[15px] font-medium">
+            <p
+              id="lp-contact-error"
+              role="alert"
+              className="col-span-full m-0 text-[15px] font-medium"
+            >
               {error}
             </p>
           )}
@@ -1039,13 +1086,31 @@ function Contact() {
             )}
           </p>
         </form>
-        <p id="lp-contact-note" className="-mt-4 mb-0 text-[15px] leading-[1.6]">
-          מסירת הפרטים מרצון, לצורך חזרה אליכם בלבד. עוד ב
-          <Link to="/privacy" className="text-ink-deep underline underline-offset-4">
-            מדיניות הפרטיות
-          </Link>
-          .
-        </p>
+        <div id="lp-contact-note" className="-mt-4 flex flex-col items-center gap-2 text-[15px]">
+          {/* The homepage form's note (edited in the admin's "צור קשר" tab), word for word. */}
+          <p className="m-0 leading-[1.6]">
+            {home.contact.privacy ?? launchContact.privacy}
+            <Link
+              to="/privacy"
+              className="inline-block py-3 -my-3 text-ink-deep underline underline-offset-4"
+            >
+              מדיניות הפרטיות
+            </Link>
+            .
+          </p>
+          {!isPlaceholder(links.site.phone) && footer.call && (
+            <p className="m-0 leading-[1.6]">
+              {footer.call}{" "}
+              <a
+                href={links.tel}
+                onClick={trackCall}
+                className="inline-block py-3 -my-3 font-medium text-ink-deep underline underline-offset-4"
+              >
+                <span dir="ltr">{links.site.phone}</span>
+              </a>
+            </p>
+          )}
+        </div>
       </div>
     </section>
   );
@@ -1113,7 +1178,7 @@ export function LandingFooter() {
                 <a
                   href={tel}
                   onClick={trackCall}
-                  className="lp-link font-medium text-ink no-underline max-[640px]:mt-1 max-[640px]:block"
+                  className="lp-link inline-block py-3 -my-3 font-medium text-ink no-underline max-[640px]:mt-1 max-[640px]:block max-[640px]:my-0"
                 >
                   <span dir="ltr">{site.phone}</span>
                 </a>
@@ -1171,11 +1236,17 @@ export function LandingFooter() {
       <p className="mx-auto mt-10 mb-0 max-w-[var(--content-max)] border-t border-[rgb(46_49_40/0.18)] pt-7 text-center text-[13px] text-[rgb(46_49_40/0.78)]">
         © {new Date().getFullYear()} {site.name} · {site.tagline}
         {" · "}
-        <Link to="/privacy" className="text-inherit underline-offset-4 hover:underline">
+        <Link
+          to="/privacy"
+          className="inline-block py-3 -my-3 whitespace-nowrap text-inherit underline-offset-4 hover:underline"
+        >
           מדיניות פרטיות
         </Link>
         {" · "}
-        <Link to="/accessibility" className="text-inherit underline-offset-4 hover:underline">
+        <Link
+          to="/accessibility"
+          className="inline-block py-3 -my-3 whitespace-nowrap text-inherit underline-offset-4 hover:underline"
+        >
           הצהרת נגישות
         </Link>
         {adsEnabled(ads) && (
@@ -1184,7 +1255,7 @@ export function LandingFooter() {
             <button
               type="button"
               onClick={reopenConsent}
-              className="cursor-pointer border-0 bg-transparent p-0 text-inherit underline-offset-4 hover:underline"
+              className="inline-block cursor-pointer border-0 bg-transparent px-0 py-3 -my-3 whitespace-nowrap text-inherit underline-offset-4 hover:underline"
             >
               הגדרות עוגיות
             </button>

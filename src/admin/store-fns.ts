@@ -12,17 +12,21 @@ async function signedInAdmin() {
 }
 
 export const saveDocs = createServerFn({ method: "POST" })
+  // Only the shape here: the full check runs after the sign-in check, so an anonymous caller
+  // can't make the server work through every schema.
   .inputValidator((docs: StoredDocs) => {
     if (!docs || typeof docs !== "object" || Array.isArray(docs))
       throw new Error("Expected sections");
-    for (const [key, value] of Object.entries(docs)) {
+    for (const key of Object.keys(docs)) {
       if (!(key in docSchemas)) throw new Error(`Unknown section: ${key}`);
-      if (!validateDoc(key as DocKey, value).success) throw new Error(`Invalid section: ${key}`);
     }
     return docs;
   })
   .handler(async ({ data }) => {
     const email = await signedInAdmin();
+    for (const [key, value] of Object.entries(data)) {
+      if (!validateDoc(key as DocKey, value).success) throw new Error(`Invalid section: ${key}`);
+    }
     const { localStoreEnabled } = await import("@/content/backend-config");
     if (localStoreEnabled()) {
       const { writeLocalDocs } = await import("@/content/dev-store.server");

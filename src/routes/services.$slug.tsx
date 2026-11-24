@@ -15,11 +15,13 @@ export const Route = createFileRoute("/services/$slug")({
     const service = (content?.services ?? defaultContent.services).find(
       (s) => s.slug === params.slug,
     );
-    if (!service || service.hidden) throw notFound();
+    if (!service) throw notFound();
     // A service that leads to its own page (a landing page) forwards its old address there
-    // for good, so shared links and Google's results move with it.
+    // for good, so shared links and Google's results move with it, even while its card is
+    // hidden (the landing page is still there).
     const link = service.link?.trim();
     if (link) throw redirect({ href: link, statusCode: 301 });
+    if (service.hidden) throw notFound();
     return { slug: service.slug };
   },
   head: ({ loaderData, matches }) => {

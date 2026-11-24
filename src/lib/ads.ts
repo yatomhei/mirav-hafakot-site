@@ -7,13 +7,19 @@ import { useSyncExternalStore } from "react";
  * changed from the page's footer.
  */
 
-export type AdsIds = { metaPixelId: string; googleAdsId: string; googleAdsLabel: string };
+export type AdsIds = {
+  metaPixelId: string;
+  googleAdsId: string;
+  googleAdsLabel: string;
+  enabledOn?: string;
+};
 export type Consent = "granted" | "denied";
 
 const KEY = "mirav-ads-consent";
 
 /** Whether any platform is switched on in the admin. */
-export const adsEnabled = (ids: AdsIds) => Boolean(ids.metaPixelId.trim() || ids.googleAdsId.trim());
+export const adsEnabled = (ids: AdsIds) =>
+  Boolean(ids.metaPixelId.trim() || ids.googleAdsId.trim());
 
 // ---------- The visitor's choice ----------
 
@@ -97,7 +103,12 @@ type Fbq = ((...args: unknown[]) => void) & {
   version: string;
   disablePushState?: boolean;
 };
-type AdsWindow = Window & { fbq?: Fbq; _fbq?: Fbq; dataLayer?: unknown[]; gtag?: (...a: unknown[]) => void };
+type AdsWindow = Window & {
+  fbq?: Fbq;
+  _fbq?: Fbq;
+  dataLayer?: unknown[];
+  gtag?: (...a: unknown[]) => void;
+};
 
 let loaded: AdsIds | null = null;
 
@@ -126,6 +137,9 @@ function loadMeta(id: string) {
     w._fbq = fbq;
     addScript("https://connect.facebook.net/en_US/fbevents.js");
   }
+  // No automatic reading of the page (form fields, button texts) for "advanced matching" or
+  // automatic events: the form's name and phone must never reach Meta.
+  w.fbq("set", "autoConfig", false, id);
   w.fbq("init", id);
   w.fbq("track", "PageView");
 }

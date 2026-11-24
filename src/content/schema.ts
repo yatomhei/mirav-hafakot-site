@@ -12,9 +12,14 @@ const longText = z.string().max(8000);
 /** A heading typed as separate lines (Enter in the admin): 1 to `max` non-empty lines. */
 const lines = (max = 3) => z.array(text.min(1)).min(1, "חסרה כותרת").max(max, `עד ${max} שורות`);
 
-/** A site image: a name in public/images, or the address of an uploaded set. */
+/**
+ * A site image: a name in public/images ("still-brit"), or the address of a set uploaded in
+ * the admin ("/uploads/u-…", "/local-uploads/u-…" on this computer). Never an outside address,
+ * which would load from another site and tell it about every visitor.
+ */
+export const SITE_PHOTO = /^(?:[a-z0-9-]{1,80}|\/(?:uploads|local-uploads)\/u-[\w-]{8,64})$/;
 export const photoSchema = z.object({
-  name: z.string().min(1).max(500),
+  name: z.string().regex(SITE_PHOTO, "כתובת תמונה לא תקינה"),
   alt: text,
   pos: z.string().max(40).optional(),
 });
@@ -66,6 +71,7 @@ export function serviceLinkProblem(link: string): string | null {
 }
 
 export const YOUTUBE_ID = /^[\w-]{11}$/;
+export const EMAIL = /^[\w.+-]+@[\w-]+(?:\.[\w-]+)+$/;
 /** Ad platform IDs (the landing page's pixels). */
 export const META_PIXEL_ID = /^\d{8,20}$/;
 export const GOOGLE_ADS_ID = /^AW-\d{6,15}$/;
@@ -94,7 +100,12 @@ export const docSchemas = {
     // An Israeli number in wa.me form: 972, then the number without its leading 0
     // (972501234567). Empty is allowed.
     whatsapp: z.string().regex(/^(972[1-9]\d{7,8})?$/),
-    email: text,
+    // An email address (or empty, or a [placeholder]): it goes into a mailto: link, so nothing
+    // that could add other recipients or fields.
+    email: text.refine(
+      (v) => !v.trim() || /^\[.*\]$/.test(v.trim()) || EMAIL.test(v.trim()),
+      "כתובת המייל לא תקינה",
+    ),
     serviceArea: text,
     youtubeUrl: link,
     facebookUrl: link,
@@ -340,6 +351,10 @@ export const docSchemas = {
         .string()
         .trim()
         .regex(GOOGLE_ADS_LABEL, "תווית ההמרה היא אותיות, ספרות, מקף וקו תחתון בלבד")
+        .or(z.literal("")),
+      enabledOn: z
+        .string()
+        .regex(/^\d{4}-\d{2}-\d{2}$/)
         .or(z.literal("")),
     }),
     footer: z.object({
