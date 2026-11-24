@@ -45,3 +45,41 @@ export function ServiceSearchFields({ path }: { path: string }) {
     </details>
   );
 }
+
+/**
+ * The landing page's search wording (title and description), styled like a service page's,
+ * with a preview of the Google result. Here the title is written in full, business name
+ * included, and both fields are required.
+ */
+export function LandingSearchFields() {
+  const { value: title } = useField<string>("seo.title");
+  const { value: description } = useField<string>("seo.description");
+
+  return (
+    <details className="rounded-lg border border-ink/12 bg-cream/40 px-4 py-3">
+      <summary className="cursor-pointer text-[14px] font-medium">איך העמוד מופיע בגוגל</summary>
+      <div className="mt-3 flex flex-col gap-4">
+        <p className="admin-note">
+          לא מופיע בעמוד עצמו, רק בתוצאות החיפוש, בלשונית הדפדפן ובתצוגה של קישור ששולחים.
+        </p>
+        <Text
+          path="seo.title"
+          label="כותרת בגוגל"
+          hint="עד כ־60 תווים נראים בגוגל. כותבים גם את שם העסק, בסוף"
+        />
+        <Text
+          path="seo.description"
+          label="תיאור בגוגל"
+          hint="עד כ־155 תווים: משפט או שניים, עם סוג השירות והאזור"
+          multiline
+          rows={2}
+        />
+        <div aria-label="תצוגה מקדימה בגוגל" className="rounded-lg bg-white p-4">
+          <p className="text-[12px] text-ink/60">תצוגה מקדימה</p>
+          <p className="mt-1 text-[18px] leading-snug text-[#1a0dab]">{title}</p>
+          <p className="mt-1 text-[14px] leading-relaxed text-ink/75">{description}</p>
+        </div>
+      </div>
+    </details>
+  );
+}

@@ -893,7 +893,18 @@ export function FeatureToggle({
 }
 
 /** A plain on/off setting. */
-export function Toggle({ path, label, hint }: { path: Path; label: string; hint?: string }) {
+export function Toggle({
+  path,
+  label,
+  hint,
+  inverted,
+}: {
+  path: Path;
+  label: string;
+  hint?: string;
+  /** Ticked means the saved value is off (for a setting that is on unless turned off). */
+  inverted?: boolean;
+}) {
   const id = useId();
   const { value, set } = useField<boolean | undefined>(path);
   return (
@@ -903,8 +914,11 @@ export function Toggle({ path, label, hint }: { path: Path; label: string; hint?
           id={id}
           type="checkbox"
           className="size-4 accent-[var(--color-olive-deep)]"
-          checked={Boolean(value)}
-          onChange={(event) => set(event.target.checked || undefined)}
+          checked={inverted ? !value : Boolean(value)}
+          onChange={(event) => {
+            const on = event.target.checked;
+            set((inverted ? !on : on) || undefined);
+          }}
         />
         {label}
       </label>

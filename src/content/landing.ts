@@ -138,6 +138,8 @@ export const barMitzvahLanding = {
     finale: {
       title: "הקליפ שלכם מוכן!",
       text: "קליפ אישי שמספר את הסיפור שלכם.",
+      /** Merav can turn off the confetti that bursts from the card. */
+      noConfetti: false as boolean,
     },
   },
   about: {

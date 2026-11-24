@@ -1,3 +1,4 @@
+import { FINALE_ICON, MaskIcon, stepIcon } from "@/components/landing/step-icons";
 import type { LandingQuestion, LandingStep } from "@/content/landing";
 import type { Photo, Video } from "@/content/types";
 import {
@@ -11,6 +12,7 @@ import {
   useField,
   YouTubeInput,
 } from "./fields";
+import { LandingSearchFields } from "./SearchFields";
 
 // The bar/bat mitzvah landing page's tab: one card per section, in the page's order. Field
 // paths are relative to the "barMitzvahLanding" record.
@@ -40,6 +42,16 @@ function ClipFields({ path }: { path: string }) {
       />
       <YouTubeInput path={`${path}.youtubeId`} />
     </>
+  );
+}
+
+/** The step's icon, as on the page (set in the code, by the step's place in the list). */
+function StepIconPreview({ name }: { name: string }) {
+  return (
+    <div className="flex items-center gap-3">
+      <MaskIcon name={name} size="h-14 w-14" className="text-olive-deep" />
+      <span className="text-[13px] leading-snug text-ink/65">האייקון נקבע לפי מקום השלב ברשימה</span>
+    </div>
   );
 }
 
@@ -80,16 +92,13 @@ export function BarMitzvahLandingFields() {
           כדי שכרטיס השירות בדף הבית יוביל לכאן: בלשונית 'שירותים', בכרטיס של קליפים לבר ובת מצווה,
           בוחרים 'דף אחר' וכותבים <span dir="ltr">{ADDRESS}</span>
         </p>
+        <LandingSearchFields />
       </Card>
 
       <Card title="1. פתיח">
         <Lines path="hero.title" label="כותרת" />
         <Text path="hero.lead" label="פסקה" multiline />
-        <Text
-          path="hero.leadAccent"
-          label="המשפט האחרון בפסקה"
-          hint="מוצג בהמשך הפסקה, בצבע ירוק"
-        />
+        <Text path="hero.leadAccent" label="משפט מודגש בסוף הפסקה" />
         <Text path="hero.cta" label="טקסט הכפתור" hint="מוביל לטופס בתחתית הדף" />
         <Text path="hero.clipsLink" label="הקישור לקליפים" hint="מוביל לקליפים לדוגמה" />
         <h3 className="text-[15px] font-medium text-ink">הקליפ הגדול מתחת לפתיח</h3>
@@ -98,7 +107,7 @@ export function BarMitzvahLandingFields() {
 
       <Card title="2. הרעיון">
         <Text path="idea.title" label="כותרת" />
-        <Text path="idea.question" label="משפט בצבע ירוק" />
+        <Text path="idea.question" label="משפט מודגש" />
         <Lines path="idea.text" label="פסקה" max={6} />
       </Card>
 
@@ -138,7 +147,7 @@ export function BarMitzvahLandingFields() {
         </List>
       </Card>
 
-      <Card title="5. הסיפור של גפן" hint={CONSENT}>
+      <Card title="5. סיפור של קליפ" hint={CONSENT}>
         <Text path="story.caption" label="תווית קטנה מעל הכותרת" />
         <Text path="story.title" label="כותרת" />
         <Lines path="story.body" label="טקסט" max={6} rows={10} hint={PARAGRAPHS(6)} />
@@ -165,7 +174,7 @@ export function BarMitzvahLandingFields() {
       <Card title="6. גם הדרך היא חלק מהחוויה">
         <Text path="experience.kicker" label="שורה מודגשת מעל הכותרת" />
         <Text path="experience.title" label="כותרת" />
-        <Text path="experience.lead" label="משפט בצבע ירוק" />
+        <Text path="experience.lead" label="משפט מודגש" />
         <Text path="experience.text" label="פסקה" multiline />
         <Text path="experience.closing" label="משפט הסיום" multiline rows={2} />
         <Text path="experience.cta" label="טקסט הכפתור" hint="מוביל לטופס בתחתית הדף" />
@@ -187,7 +196,7 @@ export function BarMitzvahLandingFields() {
           hint="בלי מירכאות: הן נוספות לבד באתר"
           multiline
         />
-        <Text path="testimonials.author" label="שם" />
+        <Text path="testimonials.author" label="שם" hint="בלי שם, השורה לא מוצגת" />
         <h3 className="text-[15px] font-medium text-ink">צילומי מסך של המלצות (עד 15)</h3>
         <List<Shot>
           path="testimonials.shots"
@@ -207,7 +216,7 @@ export function BarMitzvahLandingFields() {
 
       <Card title="8. התהליך" hint="המספרים (01, 02...) נוספים לבד, לפי הסדר">
         <Text path="process.title" label="כותרת" />
-        <Text path="process.lead" label="משפט בצבע ירוק" />
+        <Text path="process.lead" label="משפט מודגש" />
         <List<LandingStep>
           path="process.steps"
           itemTitle={(i, s) => `${i + 1}. ${s.title || "שלב"}`}
@@ -219,20 +228,28 @@ export function BarMitzvahLandingFields() {
             addLabel: "הוספת שלב",
           }}
         >
-          {(p) => (
+          {(p, i) => (
             <>
+              <StepIconPreview name={stepIcon(i)} />
               <Text path={`${p}.title`} label="שם השלב" />
               <Text path={`${p}.text`} label="תיאור" multiline />
             </>
           )}
         </List>
         <h3 className="text-[15px] font-medium text-ink">הכרטיס האחרון, בסוף הקו</h3>
+        <MaskIcon name={FINALE_ICON} size="h-14 w-14" className="text-olive-deep" />
         <Text
           path="process.finale.title"
           label="כותרת"
           hint="כרטיס בצבע שונה, בלי מספר. בלי כותרת, הכרטיס לא מוצג"
         />
         <Text path="process.finale.text" label="טקסט" multiline rows={2} />
+        <Toggle
+          path="process.finale.noConfetti"
+          label="קונפטי כשהכרטיס מופיע"
+          inverted
+          hint="מבטלים את הסימון ושומרים כדי להפסיק את הקונפטי"
+        />
       </Card>
 
       <Card
@@ -252,7 +269,7 @@ export function BarMitzvahLandingFields() {
       <Card title="10. נעים להכיר">
         <PhotoInput path="about.photo" label="התמונה של מרב" aspect="3 / 4" />
         <Text path="about.title" label="כותרת" />
-        <Text path="about.subtitle" label="משפט בצבע ירוק" />
+        <Text path="about.subtitle" label="משפט מודגש" />
         <Lines path="about.body" label="טקסט" max={6} rows={8} hint={PARAGRAPHS(6)} />
         <Text path="about.link" label="הקישור לאתר" hint="מוביל לדף הבית של האתר" />
       </Card>
@@ -268,11 +285,6 @@ export function BarMitzvahLandingFields() {
           label="לפני מספר הטלפון"
           hint="מספר הטלפון נוסף אחרי הטקסט, כקישור לחיוג"
         />
-      </Card>
-
-      <Card title="איך העמוד מופיע בגוגל ובשיתוף ברשתות">
-        <Text path="seo.title" label="כותרת" hint="עד כ־60 תווים" />
-        <Text path="seo.description" label="תיאור" hint="עד כ־155 תווים" multiline />
       </Card>
     </>
   );

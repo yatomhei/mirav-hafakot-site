@@ -323,7 +323,7 @@ export const docSchemas = {
         .array(z.object({ title: text.min(1, "חסר שם לשלב"), text: longText }))
         .min(1)
         .max(6),
-      finale: z.object({ title: text, text: longText }),
+      finale: z.object({ title: text, text: longText, noConfetti: z.boolean().optional() }),
     }),
     about: z.object({
       photo: photoSchema,

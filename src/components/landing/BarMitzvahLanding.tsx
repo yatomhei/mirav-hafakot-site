@@ -17,24 +17,8 @@ import { isPlaceholder, useContactLinks } from "@/lib/contact";
 import { BrokenLines } from "@/components/ui/BrokenLines";
 import { Picture, VideoThumb } from "@/components/ui/Picture";
 import { useVideoLink } from "@/components/ui/VideoPlayer";
+import { FINALE_ICON, MaskIcon, stepIcon } from "./step-icons";
 import { Facebook, Instagram, Phone, TikTok, WhatsApp, YouTube } from "@/components/ui/icons";
-
-/** One icon per process step, in order (public/images/icons); steps past the fourth reuse the last. */
-const STEP_ICONS = ["step-talk", "step-idea", "step-shoot", "step-edit"];
-
-/**
- * An icon drawn in the text colour (the image is used as a shape), so the same file works
- * olive on the white cards and cream on the olive one. Decorative: the title names the step.
- */
-function MaskIcon({ name, className = "" }: { name: string; className?: string }) {
-  return (
-    <span
-      aria-hidden="true"
-      className={`lp-icon h-[clamp(76px,7.8vw,116px)] w-[clamp(76px,7.8vw,116px)] ${className}`}
-      style={{ "--icon": `url(${image(`icons/${name}.webp`)})` } as CSSProperties}
-    />
-  );
-}
 
 /**
  * The bar/bat mitzvah landing page, standalone: no site header or footer, its own short
@@ -622,11 +606,14 @@ function Testimonials() {
           <span className="block">{testimonials.title}</span>
         </h2>
         {testimonials.quote && (
-          <figure data-reveal className="m-0 flex flex-col items-center gap-[22px]">
+          <figure
+            data-reveal
+            className="m-0 my-[clamp(16px,2.4vw,32px)] flex flex-col items-center gap-[22px]"
+          >
             <blockquote className="m-0 text-[clamp(26px,3vw,42px)] font-light leading-[1.4] text-olive-deep text-balance">
               {quoted(testimonials.quote)}
             </blockquote>
-            {testimonials.author && (
+            {testimonials.author.trim() && (
               <figcaption className="text-[15px] font-medium text-olive-deep">
                 {testimonials.author}
               </figcaption>
@@ -676,11 +663,11 @@ const CONFETTI_COLORS = ["#656C51", "#A2A58F", "#A98A78", "#D5C9BF", "#FAF0EB", 
  * visitor gets there. It draws on its own canvas over the page, without a worker (so the
  * content policy needs no exception).
  */
-function useFinaleConfetti<T extends HTMLElement>() {
+function useFinaleConfetti<T extends HTMLElement>(enabled: boolean) {
   const card = useRef<T>(null);
   useEffect(() => {
     const el = card.current;
-    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!enabled || !el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let timer = 0;
     let again = 0;
     const io = new IntersectionObserver(
@@ -752,7 +739,7 @@ function Process() {
     at: (k) => (k === 0 ? 0.7 : k === process.steps.length ? 0.97 : 0.9),
     delay: (k) => (k === 0 ? 300 : 0),
   });
-  const finale = useFinaleConfetti<HTMLDivElement>();
+  const finale = useFinaleConfetti<HTMLDivElement>(!process.finale.noConfetti);
   return (
     <section aria-labelledby="lp-process" className={SECTION}>
       <div className="mx-auto max-w-[var(--content-max)]">
@@ -806,7 +793,7 @@ function Process() {
                   ref={finale}
                   className="lp-tl-card lp-step-card flex flex-col items-center justify-center gap-[clamp(12px,1.4vw,18px)] rounded-[clamp(18px,1.8vw,26px)] bg-olive p-[clamp(28px,3.6vw,48px)] text-center text-cream"
                 >
-                  <MaskIcon name="step-ready" className="text-cream" />
+                  <MaskIcon name={FINALE_ICON} className="text-cream" />
                   <h3 className="m-0 text-[clamp(30px,3vw,42px)] font-light leading-[1.15] text-cream">
                     {process.finale.title}
                   </h3>
@@ -827,10 +814,7 @@ function Process() {
 
 function StepIcon({ index }: { index: number }) {
   return (
-    <MaskIcon
-      name={STEP_ICONS[Math.min(index, STEP_ICONS.length - 1)]!}
-      className="text-olive-deep"
-    />
+    <MaskIcon name={stepIcon(index)} className="text-olive-deep" />
   );
 }
 
