@@ -86,6 +86,53 @@ export async function listStoredPhotos(): Promise<StoredPhoto[]> {
   return found.sort((a, b) => b.uploaded - a.uploaded);
 }
 
+/** An uploaded photo set's address: "/uploads/u-…" (live) or "/local-uploads/u-…". */
+export const STORED_PHOTO = /^\/(?:uploads|local-uploads)\/(u-[\w-]{8,64})$/;
+
+/**
+ * Whether the saved content uses this address anywhere (as a whole value). Takes the records
+ * themselves, or their saved text (a list of strings).
+ */
+export const contentUses = (docs: unknown, name: string) => {
+  const quoted = JSON.stringify(name);
+  if (Array.isArray(docs) && docs.every((d) => typeof d === "string"))
+    return docs.some((text) => text.includes(quoted));
+  return JSON.stringify(docs).includes(quoted);
+};
+
+/**
+ * Deletes a photo set (all three sizes) from storage, for good. Refuses a photo the saved
+ * content still uses, whatever the admin page thinks.
+ */
+export async function deleteStoredPhoto(name: string) {
+  const match = STORED_PHOTO.exec(name);
+  if (!match) throw new Error("Bad photo address");
+  // Read strictly: if the saved content can't be read, nothing is deleted.
+  let saved: unknown;
+  if (localStoreEnabled()) {
+    const { readLocalDocs } = await import("./dev-store.server");
+    saved = await readLocalDocs();
+  } else {
+    const { database } = await import("./cloudflare.server");
+    const db = database();
+    if (!db) throw new Error("Content storage isn't connected");
+    // The raw saved text, so even a section that no longer parses counts.
+    const { results } = await db.prepare("SELECT value FROM docs").all<{ value: string }>();
+    saved = results.map((row) => row.value);
+  }
+  if (contentUses(saved, name)) throw new Error("התמונה בשימוש באתר");
+  const files = [480, 960, 1600].map((width) => `${match[1]}-${width}.webp`);
+  if (localStoreEnabled()) {
+    const { deleteLocalUploads } = await import("./dev-store.server");
+    await deleteLocalUploads(files);
+    return;
+  }
+  const { uploadsBucket } = await import("./cloudflare.server");
+  const bucket = uploadsBucket();
+  if (!bucket) throw new Error("Uploads storage isn't connected");
+  await bucket.delete(files);
+}
+
 /** Names never change content (a new upload gets a new name), so browsers may keep them. */
 const CACHE_FOREVER = "public, max-age=31536000, immutable";
 

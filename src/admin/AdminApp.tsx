@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "@tanstack/react-router";
-import { ExternalLink, LogOut, RotateCcw, Save, Users } from "lucide-react";
+import { ExternalLink, Images, LogOut, RotateCcw, Save, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useContent } from "@/content/context";
 import {
@@ -18,6 +18,7 @@ import { TABS } from "./tabs";
 import { getAdminState, signOut, type AdminState } from "./auth/auth-fns";
 import { LoginScreen, UnavailableScreen } from "./auth/SignIn";
 import { AdminsPanel } from "./auth/AdminsPanel";
+import { UploadsPanel } from "./UploadsPanel";
 import { SIGNED_OUT } from "./auth/session";
 
 /**
@@ -70,6 +71,7 @@ export function AdminApp() {
 
 /** The admins tab: not a content section, so it sits after the section tabs. */
 const ADMINS_TAB = "admins";
+const UPLOADS_TAB = "uploads";
 
 function Screen({ children }: { children: ReactNode }) {
   return (
@@ -185,7 +187,8 @@ function Dashboard({
   }
 
   const onAdmins = tabKey === ADMINS_TAB;
-  const tab = onAdmins ? undefined : (TABS.find((t) => t.key === tabKey) ?? TABS[0]);
+  const onUploads = tabKey === UPLOADS_TAB;
+  const tab = onAdmins || onUploads ? undefined : (TABS.find((t) => t.key === tabKey) ?? TABS[0]);
   const tabDirty = (key: string) =>
     TABS.find((t) => t.key === key)?.docs.some((d) => dirtyDocs.includes(d.key)) ?? false;
 
@@ -263,6 +266,18 @@ function Dashboard({
           <span aria-hidden="true" className="mx-1 h-5 w-px shrink-0 self-center bg-ink/15" />
           <button
             type="button"
+            aria-current={onUploads ? "page" : undefined}
+            onClick={() => setTabKey(UPLOADS_TAB)}
+            className={cn(
+              "flex shrink-0 cursor-pointer items-center gap-1.5 rounded-md px-3 py-2 text-[14.5px] whitespace-nowrap transition-colors",
+              onUploads ? "bg-olive-deep text-cream" : "hover:bg-ink/5",
+            )}
+          >
+            <Images size={15} aria-hidden="true" />
+            תמונות שהועלו
+          </button>
+          <button
+            type="button"
             aria-current={onAdmins ? "page" : undefined}
             onClick={() => setTabKey(ADMINS_TAB)}
             className={cn(
@@ -292,6 +307,7 @@ function Dashboard({
         )}
 
         {onAdmins && <AdminsPanel me={me} />}
+        {onUploads && <UploadsPanel backend={backend} saved={baseline} draft={draft} />}
 
         <DraftContext.Provider
           value={{

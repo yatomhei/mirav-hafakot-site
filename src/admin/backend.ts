@@ -1,7 +1,7 @@
 import { localStoreEnabled } from "@/content/backend-config";
 import type { StoredDocs } from "@/content/docs";
 import { PHOTO_WIDTHS, preparePhotoSet } from "./image";
-import { listPhotos, saveDocs, uploadFile } from "./store-fns";
+import { deletePhoto, listPhotos, saveDocs, uploadFile } from "./store-fns";
 
 /** What the admin needs from wherever content is stored. */
 export interface AdminBackend {
@@ -17,6 +17,8 @@ export interface AdminBackend {
   uploadVideo(file: File, extension: string): Promise<string>;
   /** Every photo in storage (the photo library), newest first. */
   listPhotos(): Promise<{ name: string; uploaded: number }[]>;
+  /** Deletes an uploaded photo for good (refused while the saved content uses it). */
+  deletePhoto(name: string): Promise<void>;
 }
 
 function send(name: string, file: Blob) {
@@ -51,6 +53,9 @@ export function getBackend(): AdminBackend {
     },
     listPhotos() {
       return listPhotos();
+    },
+    async deletePhoto(name) {
+      await deletePhoto({ data: name });
     },
   };
 }

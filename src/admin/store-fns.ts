@@ -42,6 +42,18 @@ export const listPhotos = createServerFn({ method: "GET" }).handler(async () => 
   return listStoredPhotos();
 });
 
+/** Deletes a photo from storage for good; refused while the saved content uses it. */
+export const deletePhoto = createServerFn({ method: "POST" })
+  .inputValidator((name: string) => {
+    if (typeof name !== "string") throw new Error("Bad photo address");
+    return name;
+  })
+  .handler(async ({ data }) => {
+    await signedInAdmin();
+    const { deleteStoredPhoto } = await import("@/content/uploads.server");
+    await deleteStoredPhoto(data);
+  });
+
 /** One photo size or the hero video, sent as the file itself. Returns its address. */
 export const uploadFile = createServerFn({ method: "POST" })
   .inputValidator((form: FormData) => {

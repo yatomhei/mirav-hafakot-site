@@ -43,6 +43,7 @@ export interface R2Bucket {
     value: ArrayBuffer | Uint8Array | ReadableStream | Blob,
     options?: { httpMetadata?: { contentType?: string; cacheControl?: string } },
   ): Promise<R2Object | null>;
+  delete(keys: string | string[]): Promise<void>;
   list(options?: { prefix?: string; cursor?: string; limit?: number }): Promise<{
     objects: { key: string; uploaded: Date }[];
     truncated: boolean;

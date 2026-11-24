@@ -39,6 +39,12 @@ export async function listLocalUploads() {
   );
 }
 
+/** Deletes files from the local uploads folder (any already gone are skipped). */
+export async function deleteLocalUploads(names: string[]) {
+  const { rm } = await import("node:fs/promises");
+  await Promise.all(names.map((name) => rm(join(UPLOAD_DIR, name), { force: true })));
+}
+
 export async function writeLocalUpload(name: string, data: Uint8Array) {
   await mkdir(UPLOAD_DIR, { recursive: true });
   await writeFile(join(UPLOAD_DIR, name), data);

@@ -13,7 +13,7 @@ export type PickedPhoto = { name: string; ratio: number; alt: string };
 type Entry = { name: string; alt: string; used: boolean; uploaded: number };
 
 /** Every photo the content names ({ name, alt } anywhere in it), with its description. */
-function photosIn(content: unknown, found = new Map<string, string>()) {
+export function photosIn(content: unknown, found = new Map<string, string>()) {
   if (Array.isArray(content)) {
     for (const item of content) photosIn(item, found);
   } else if (content && typeof content === "object") {

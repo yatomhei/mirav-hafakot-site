@@ -73,3 +73,61 @@ describe("photo library", () => {
     }
   });
 });
+
+describe("deleting an uploaded photo (live storage)", () => {
+  const id = "u-0000000a-aaaa-bbbb-cccc-dddddddddddd";
+  const other = "u-0000000b-aaaa-bbbb-cccc-dddddddddddd";
+
+  async function setup(savedValues: string[]) {
+    vi.resetModules();
+    vi.doMock("@/content/backend-config", () => ({ localStoreEnabled: () => false }));
+    const deleted: string[][] = [];
+    const db = {
+      prepare: () => ({ all: async () => ({ results: savedValues.map((value) => ({ value })) }) }),
+    };
+    const bucket = { delete: async (keys: string[]) => void deleted.push(keys) };
+    (globalThis as { __env__?: unknown }).__env__ = { DB: db, UPLOADS: bucket };
+    const { deleteStoredPhoto } = await import("@/content/uploads.server");
+    return { deleteStoredPhoto, deleted };
+  }
+
+  const cleanup = () => {
+    delete (globalThis as { __env__?: unknown }).__env__;
+    vi.doUnmock("@/content/backend-config");
+    vi.resetModules();
+  };
+
+  it("removes all three sizes of a photo nothing uses", async () => {
+    try {
+      const { deleteStoredPhoto, deleted } = await setup([
+        JSON.stringify({ photo: { name: `/uploads/${other}`, alt: "" } }),
+      ]);
+      await deleteStoredPhoto(`/uploads/${id}`);
+      expect(deleted).toEqual([[`${id}-480.webp`, `${id}-960.webp`, `${id}-1600.webp`]]);
+    } finally {
+      cleanup();
+    }
+  });
+
+  it("refuses a photo the saved content uses, even in a section that no longer parses", async () => {
+    try {
+      const { deleteStoredPhoto, deleted } = await setup([`{"broken": "/uploads/${id}", `]);
+      await expect(deleteStoredPhoto(`/uploads/${id}`)).rejects.toThrow("בשימוש");
+      expect(deleted).toEqual([]);
+    } finally {
+      cleanup();
+    }
+  });
+
+  it("refuses anything but an uploaded photo's address", async () => {
+    try {
+      const { deleteStoredPhoto, deleted } = await setup([]);
+      for (const bad of ["/images/still-brit", "/uploads/../secret", `/uploads/${id}.mp4`, id]) {
+        await expect(deleteStoredPhoto(bad), bad).rejects.toThrow();
+      }
+      expect(deleted).toEqual([]);
+    } finally {
+      cleanup();
+    }
+  });
+});

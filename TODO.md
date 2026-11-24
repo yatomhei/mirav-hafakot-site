@@ -181,7 +181,8 @@ and how to reach it:
     example until she has real ones. Only real testimonials, with the client's permission.
   - **Photos already uploaded** can be used again anywhere without uploading twice: "בחירה
     מתמונות שהועלו" next to every upload button. A photo removed from the site stays there, so
-    it can be brought back the same way.
+    it can be brought back the same way, until it's deleted in the "תמונות שהועלו" tab
+    (deleting is for good).
 - **Her hero video:** the requirements (MP4, up to 8MB, a 6-15 second loop, 1080p landscape, no
   sound, calm framing with the key part in the middle), and where to upload it in the admin.
 - **Cloudflare** (dash.cloudflare.com): hosting, DNS, storage. Her login, and a reminder that
@@ -208,11 +209,10 @@ offered (Google, mynames).
 
 ## Small cleanups, any time
 
-- **Unused uploads in R2:** nothing deletes a photo or video from storage when it's removed,
-  replaced, or uploaded and never saved. The admin's photo library (2026-11-24) already lists
-  storage and marks each photo "לא בשימוש"; a delete button there (for photos not in use, after
-  a grace period such as 30 days since upload) would clean up. Not urgent: the free tier is
-  10GB and a photo set is under 1MB.
+- **Unused uploads in R2:** photos are handled: the admin's "תמונות שהועלו" tab lists them,
+  shows where each is used, and deletes unused ones for good (the server refuses one still in
+  use). Uploaded hero videos aren't listed there yet; a replaced video stays in storage (a few
+  MB each, well inside the free 10GB).
 - A deleted service's old address answers "not found"; a permanent redirect to the homepage
   could be added if old links matter.
 - Hydration warnings from the scroll-in animations (console noise only).
