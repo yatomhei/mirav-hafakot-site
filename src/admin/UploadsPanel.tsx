@@ -105,31 +105,169 @@ export function UploadsPanel({
   }
 
   return (
-    <section className="rounded-xl border border-ink/12 bg-white p-4 sm:p-6">
-      <h2 className="text-[18px] font-medium">תמונות שהועלו</h2>
-      <p className="mt-1 text-[13.5px] leading-snug text-ink/65">
-        אותן תמונות שמופיעות ב'בחירה מתמונות שהועלו': קודם מה שהועלה בממשק הניהול (החדשות ראשונות),
-        ואחריהן התמונות המקוריות של האתר. תמונה שהוסרה מהאתר נשארת כאן, ואפשר להחזיר אותה בכפתור
-        'בחירה מתמונות שהועלו' שליד כל העלאה. תמונה שהועלתה ולא בשימוש אפשר למחוק לצמיתות. תמונות
-        מקוריות הן חלק מקוד האתר, ולכן אי אפשר למחוק אותן.
-      </p>
+    <>
+      <section className="rounded-xl border border-ink/12 bg-white p-4 sm:p-6">
+        <h2 className="text-[18px] font-medium">תמונות שהועלו</h2>
+        <p className="mt-1 text-[13.5px] leading-snug text-ink/65">
+          אותן תמונות שמופיעות ב'בחירה מתמונות שהועלו': קודם מה שהועלה בממשק הניהול (החדשות
+          ראשונות), ואחריהן התמונות המקוריות של האתר. תמונה שהוסרה מהאתר נשארת כאן, ואפשר להחזיר
+          אותה בכפתור 'בחירה מתמונות שהועלו' שליד כל העלאה. תמונה שהועלתה ולא בשימוש אפשר למחוק
+          לצמיתות. תמונות מקוריות הן חלק מקוד האתר, ולכן אי אפשר למחוק אותן.
+        </p>
 
-      <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
-        <label className="flex cursor-pointer items-center gap-2 text-[14px]">
-          <input
-            type="checkbox"
-            className="size-4 accent-[var(--color-olive-deep)]"
-            checked={onlyUnused}
-            onChange={(event) => setOnlyUnused(event.target.checked)}
-          />
-          רק תמונות שלא בשימוש
-        </label>
-        {stored && (
-          <span className="text-[13.5px] text-ink/65">
-            {all.length} תמונות: {uploadsCount} שהועלו ({unusedCount} מהן לא בשימוש), והשאר מקוריות
-          </span>
+        <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
+          <label className="flex cursor-pointer items-center gap-2 text-[14px]">
+            <input
+              type="checkbox"
+              className="size-4 accent-[var(--color-olive-deep)]"
+              checked={onlyUnused}
+              onChange={(event) => setOnlyUnused(event.target.checked)}
+            />
+            רק תמונות שלא בשימוש
+          </label>
+          {stored && (
+            <span className="text-[13.5px] text-ink/65">
+              {all.length} תמונות: {uploadsCount} שהועלו ({unusedCount} מהן לא בשימוש), והשאר
+              מקוריות
+            </span>
+          )}
+        </div>
+
+        {error && (
+          <p role="alert" className="mt-3 text-[13.5px] text-red-700">
+            {error}
+          </p>
         )}
-      </div>
+
+        {!stored ? (
+          <p className="py-10 text-center text-[14px] text-ink/60">טוען…</p>
+        ) : shown.length === 0 ? (
+          <p className="py-10 text-center text-[14px] text-ink/60">
+            {onlyUnused ? "כל התמונות שהועלו בשימוש באתר" : "עדיין לא הועלו תמונות"}
+          </p>
+        ) : (
+          <ul className="m-0 mt-4 grid list-none grid-cols-2 gap-3 p-0 sm:grid-cols-3 md:grid-cols-4">
+            {shown.map((photo) => {
+              const tabs = where.get(photo.name);
+              const alt = alts.get(photo.name);
+              return (
+                <li
+                  key={photo.name}
+                  className="flex flex-col gap-1.5 rounded-lg border border-ink/12 bg-cream/40 p-2"
+                >
+                  <img
+                    src={photoFile(photo.name, 480)}
+                    alt=""
+                    loading="lazy"
+                    className="aspect-[4/3] w-full rounded-md bg-beige/60 object-contain"
+                  />
+                  {alt && (
+                    <span className="line-clamp-2 text-[12.5px] leading-snug text-ink/80">
+                      {alt}
+                    </span>
+                  )}
+                  <span className="text-[12px] leading-snug text-ink/60">
+                    {tabs ? `בשימוש: ${[...tabs].join(", ")}` : "לא בשימוש"}
+                    {" · "}
+                    {photo.uploaded !== undefined
+                      ? `הועלתה ב־${dateOf(photo.uploaded)}`
+                      : photo.name.startsWith("/")
+                        ? "לא נמצאה באחסון"
+                        : "תמונה מקורית של האתר"}
+                  </span>
+                  {!tabs && photo.uploaded !== undefined && (
+                    <button
+                      type="button"
+                      className="admin-btn mt-auto self-start !text-red-700"
+                      disabled={deleting !== null}
+                      onClick={() => void remove(photo)}
+                    >
+                      <Trash2 size={15} aria-hidden="true" />
+                      {deleting === photo.name ? "מוחק…" : "מחיקה"}
+                    </button>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
+      <UploadedVideos backend={backend} saved={saved} draft={draft} />
+    </>
+  );
+}
+
+type StoredVideo = { name: string; uploaded: number; size: number };
+
+/** Where each video address is used: the tab names, from the saved content and the draft. */
+function videoUsage(name: string, saved: SiteContent, draft: SiteContent) {
+  const quoted = JSON.stringify(name);
+  const tabs = new Set<string>();
+  for (const content of [saved, draft]) {
+    for (const key of DOC_KEYS) {
+      if (JSON.stringify(getDoc(content, key)).includes(quoted)) tabs.add(tabOf(key));
+    }
+  }
+  return tabs;
+}
+
+const megabytes = (bytes: number) => `${(bytes / (1024 * 1024)).toFixed(1)}MB`;
+
+/**
+ * The videos uploaded in the admin (the homepage's background video): where each is used, and
+ * deleting the ones the site no longer uses. The site's original video is part of the code.
+ */
+function UploadedVideos({
+  backend,
+  saved,
+  draft,
+}: {
+  backend: AdminBackend;
+  saved: SiteContent;
+  draft: SiteContent;
+}) {
+  const [videos, setVideos] = useState<StoredVideo[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  useEffect(() => {
+    backend
+      .listVideos()
+      .then(setVideos)
+      .catch((caught: unknown) => {
+        setError(
+          `לא הצלחנו לטעון את הסרטונים (${caught instanceof Error ? caught.message : String(caught)})`,
+        );
+        setVideos([]);
+      });
+  }, [backend]);
+
+  async function remove(video: StoredVideo) {
+    if (
+      !window.confirm(
+        "למחוק את הסרטון מהאחסון לצמיתות? אי אפשר לשחזר אותו אחר כך, ואם תצטרכו אותו שוב צריך להעלות אותו מחדש.",
+      )
+    )
+      return;
+    setDeleting(video.name);
+    setError(null);
+    try {
+      await backend.deleteVideo(video.name);
+      setVideos((current) => (current ?? []).filter((v) => v.name !== video.name));
+    } catch (caught) {
+      setError(`המחיקה נכשלה: ${caught instanceof Error ? caught.message : String(caught)}`);
+    } finally {
+      setDeleting(null);
+    }
+  }
+
+  return (
+    <section className="rounded-xl border border-ink/12 bg-white p-4 sm:p-6">
+      <h2 className="text-[18px] font-medium">סרטונים שהועלו</h2>
+      <p className="mt-1 text-[13.5px] leading-snug text-ink/65">
+        סרטוני הרקע שהועלו בלשונית 'פתיח', החדשים ראשונים. סרטון שהוחלף נשאר כאן עד שמוחקים אותו.
+        סרטון שלא בשימוש אפשר למחוק לצמיתות. הסרטון המקורי של האתר הוא חלק מהקוד ולא מופיע כאן.
+      </p>
 
       {error && (
         <p role="alert" className="mt-3 text-[13.5px] text-red-700">
@@ -137,49 +275,42 @@ export function UploadsPanel({
         </p>
       )}
 
-      {!stored ? (
-        <p className="py-10 text-center text-[14px] text-ink/60">טוען…</p>
-      ) : shown.length === 0 ? (
-        <p className="py-10 text-center text-[14px] text-ink/60">
-          {onlyUnused ? "כל התמונות שהועלו בשימוש באתר" : "עדיין לא הועלו תמונות"}
-        </p>
+      {!videos ? (
+        <p className="py-8 text-center text-[14px] text-ink/60">טוען…</p>
+      ) : videos.length === 0 ? (
+        <p className="py-8 text-center text-[14px] text-ink/60">עדיין לא הועלו סרטונים</p>
       ) : (
-        <ul className="m-0 mt-4 grid list-none grid-cols-2 gap-3 p-0 sm:grid-cols-3 md:grid-cols-4">
-          {shown.map((photo) => {
-            const tabs = where.get(photo.name);
-            const alt = alts.get(photo.name);
+        <ul className="m-0 mt-4 grid list-none grid-cols-1 gap-3 p-0 sm:grid-cols-2 md:grid-cols-3">
+          {videos.map((video) => {
+            const tabs = videoUsage(video.name, saved, draft);
             return (
               <li
-                key={photo.name}
+                key={video.name}
                 className="flex flex-col gap-1.5 rounded-lg border border-ink/12 bg-cream/40 p-2"
               >
-                <img
-                  src={photoFile(photo.name, 480)}
-                  alt=""
-                  loading="lazy"
-                  className="aspect-[4/3] w-full rounded-md bg-beige/60 object-contain"
+                <video
+                  src={video.name}
+                  muted
+                  playsInline
+                  preload="metadata"
+                  controls
+                  className="aspect-video w-full rounded-md bg-ink/80 object-cover"
                 />
-                {alt && (
-                  <span className="line-clamp-2 text-[12.5px] leading-snug text-ink/80">{alt}</span>
-                )}
                 <span className="text-[12px] leading-snug text-ink/60">
-                  {tabs ? `בשימוש: ${[...tabs].join(", ")}` : "לא בשימוש"}
+                  {tabs.size ? `בשימוש: ${[...tabs].join(", ")}` : "לא בשימוש"}
                   {" · "}
-                  {photo.uploaded !== undefined
-                    ? `הועלתה ב־${dateOf(photo.uploaded)}`
-                    : photo.name.startsWith("/")
-                      ? "לא נמצאה באחסון"
-                      : "תמונה מקורית של האתר"}
+                  הועלה ב־{dateOf(video.uploaded)}
+                  {video.size ? ` · ${megabytes(video.size)}` : ""}
                 </span>
-                {!tabs && photo.uploaded !== undefined && (
+                {!tabs.size && (
                   <button
                     type="button"
                     className="admin-btn mt-auto self-start !text-red-700"
                     disabled={deleting !== null}
-                    onClick={() => void remove(photo)}
+                    onClick={() => void remove(video)}
                   >
                     <Trash2 size={15} aria-hidden="true" />
-                    {deleting === photo.name ? "מוחק…" : "מחיקה"}
+                    {deleting === video.name ? "מוחק…" : "מחיקה"}
                   </button>
                 )}
               </li>

@@ -35,7 +35,10 @@ export async function listLocalUploads() {
     return [];
   }
   return Promise.all(
-    names.map(async (name) => ({ name, modified: (await stat(join(UPLOAD_DIR, name))).mtimeMs })),
+    names.map(async (name) => {
+      const info = await stat(join(UPLOAD_DIR, name));
+      return { name, modified: info.mtimeMs, size: info.size };
+    }),
   );
 }
 

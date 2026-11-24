@@ -228,15 +228,17 @@ offered (Google, mynames).
 
 ## Small cleanups, any time
 
-- **Unused uploads in R2:** photos are handled: the admin's "תמונות שהועלו" tab lists them,
-  shows where each is used, and deletes unused ones for good (the server refuses one still in
-  use). Uploaded hero videos aren't listed there yet; a replaced video stays in storage (a few
-  MB each, well inside the free 10GB).
-- A deleted service's old address answers "not found"; a permanent redirect to the homepage
-  could be added if old links matter.
-- Hydration warnings from the scroll-in animations (console noise only).
-- Remaining `npm audit` items are in build and test tools only; they clear with TanStack and
-  vitest updates.
+- ~~**Uploads and storage**~~ Done 2026-11-24: the "תמונות שהועלו" tab lists uploaded photos
+  and, below them, uploaded hero videos, shows where each is used, and deletes unused ones for
+  good (the server refuses one still in use).
+- ~~**A deleted service's old address**~~ Done 2026-11-24: a service the site launched with,
+  if deleted, forwards to the homepage (301); an address that never existed stays "not found".
+  (A service Merav adds and later deletes isn't known to the code, so its address shows "not
+  found".)
+- ~~**Hydration warnings and `npm audit`**~~ Checked 2026-11-24: no hydration warnings on the
+  main pages, and `npm audit` reports no vulnerabilities.
+- **Image file names:** Hebrew or descriptive names for photos, decided later (renaming changes
+  addresses, so the old ones would need to forward).
 
 ## How the live site is set up (reference)
 

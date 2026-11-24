@@ -54,6 +54,35 @@ export async function storeUpload(name: string, bytes: Uint8Array) {
 }
 
 export type StoredPhoto = { name: string; uploaded: number };
+export type StoredVideo = { name: string; uploaded: number; size: number };
+
+/** Every file in storage: its name, when it was written and its size in bytes. */
+async function listStorage() {
+  if (localStoreEnabled()) {
+    const { listLocalUploads } = await import("./dev-store.server");
+    return {
+      prefix: "/local-uploads/",
+      files: (await listLocalUploads()).map(({ name, modified, size }) => ({
+        key: name,
+        uploaded: modified,
+        size,
+      })),
+    };
+  }
+  const { uploadsBucket } = await import("./cloudflare.server");
+  const bucket = uploadsBucket();
+  if (!bucket) throw new Error("Uploads storage isn't connected");
+  const files: { key: string; uploaded: number; size: number }[] = [];
+  let cursor: string | undefined;
+  do {
+    const page = await bucket.list({ prefix: "u-", ...(cursor ? { cursor } : {}) });
+    for (const object of page.objects) {
+      files.push({ key: object.key, uploaded: object.uploaded.getTime(), size: object.size ?? 0 });
+    }
+    cursor = page.truncated ? page.cursor : undefined;
+  } while (cursor);
+  return { prefix: "/uploads/", files };
+}
 
 /**
  * Every photo in storage (the admin's photo library), newest first: one entry per set, by the
@@ -61,33 +90,28 @@ export type StoredPhoto = { name: string; uploaded: number };
  */
 export async function listStoredPhotos(): Promise<StoredPhoto[]> {
   const small = /^(u-[\w-]{8,64})-480\.webp$/;
+  const { prefix, files } = await listStorage();
   const found: StoredPhoto[] = [];
-  if (localStoreEnabled()) {
-    const { listLocalUploads } = await import("./dev-store.server");
-    for (const { name, modified } of await listLocalUploads()) {
-      const match = small.exec(name);
-      if (match) found.push({ name: `/local-uploads/${match[1]}`, uploaded: modified });
-    }
-  } else {
-    const { uploadsBucket } = await import("./cloudflare.server");
-    const bucket = uploadsBucket();
-    if (!bucket) throw new Error("Uploads storage isn't connected");
-    let cursor: string | undefined;
-    do {
-      const page = await bucket.list({ prefix: "u-", ...(cursor ? { cursor } : {}) });
-      for (const object of page.objects) {
-        const match = small.exec(object.key);
-        if (match)
-          found.push({ name: `/uploads/${match[1]}`, uploaded: object.uploaded.getTime() });
-      }
-      cursor = page.truncated ? page.cursor : undefined;
-    } while (cursor);
+  for (const file of files) {
+    const match = small.exec(file.key);
+    if (match) found.push({ name: `${prefix}${match[1]}`, uploaded: file.uploaded });
   }
   return found.sort((a, b) => b.uploaded - a.uploaded);
 }
 
+/** Every video uploaded in the admin (the hero background), newest first. */
+export async function listStoredVideos(): Promise<StoredVideo[]> {
+  const { prefix, files } = await listStorage();
+  return files
+    .filter((file) => VIDEO_NAME.test(file.key))
+    .map((file) => ({ name: `${prefix}${file.key}`, uploaded: file.uploaded, size: file.size }))
+    .sort((a, b) => b.uploaded - a.uploaded);
+}
+
 /** An uploaded photo set's address: "/uploads/u-…" (live) or "/local-uploads/u-…". */
 export const STORED_PHOTO = /^\/(?:uploads|local-uploads)\/(u-[\w-]{8,64})$/;
+/** An uploaded video's address. */
+export const STORED_VIDEO = /^\/(?:uploads|local-uploads)\/((u-[\w-]{8,64})\.(?:mp4|webm))$/;
 
 /**
  * Whether the saved content uses this address anywhere (as a whole value). Takes the records
@@ -101,29 +125,28 @@ export const contentUses = (docs: unknown, name: string) => {
 };
 
 /**
- * Deletes a photo set (all three sizes) from storage, for good. Refuses a photo the saved
- * content still uses, whatever the admin page thinks.
+ * The saved content, read strictly (if it can't be read, nothing gets deleted). On the live
+ * site, the raw saved text, so even a section that no longer parses counts.
  */
-export async function deleteStoredPhoto(name: string) {
-  const match = STORED_PHOTO.exec(name);
-  if (!match) throw new Error("Bad photo address");
-  // Read strictly: if the saved content can't be read, nothing is deleted.
-  let saved: unknown;
+async function savedContentStrictly(): Promise<unknown> {
   if (localStoreEnabled()) {
     const { readLocalDocs } = await import("./dev-store.server");
-    saved = await readLocalDocs();
-  } else {
-    const { database } = await import("./cloudflare.server");
-    const db = database();
-    if (!db) throw new Error("Content storage isn't connected");
-    // The raw saved text, so even a section that no longer parses counts.
-    const { results } = await db.prepare("SELECT value FROM docs").all<{ value: string }>();
-    saved = results.map((row) => row.value);
+    return readLocalDocs();
   }
-  // Also any other form of its address (a full https address, say): the bare id anywhere.
-  if (contentUses(saved, name) || JSON.stringify(saved).includes(match[1]!))
-    throw new Error("התמונה בשימוש באתר");
-  const files = [480, 960, 1600].map((width) => `${match[1]}-${width}.webp`);
+  const { database } = await import("./cloudflare.server");
+  const db = database();
+  if (!db) throw new Error("Content storage isn't connected");
+  const { results } = await db.prepare("SELECT value FROM docs").all<{ value: string }>();
+  return results.map((row) => row.value);
+}
+
+/** Refuses when the saved content uses the address, in any form (the bare id anywhere). */
+async function refuseIfUsed(name: string, id: string, message: string) {
+  const saved = await savedContentStrictly();
+  if (contentUses(saved, name) || JSON.stringify(saved).includes(id)) throw new Error(message);
+}
+
+async function removeFiles(files: string[]) {
   if (localStoreEnabled()) {
     const { deleteLocalUploads } = await import("./dev-store.server");
     await deleteLocalUploads(files);
@@ -133,6 +156,25 @@ export async function deleteStoredPhoto(name: string) {
   const bucket = uploadsBucket();
   if (!bucket) throw new Error("Uploads storage isn't connected");
   await bucket.delete(files);
+}
+
+/**
+ * Deletes a photo set (all three sizes) from storage, for good. Refuses a photo the saved
+ * content still uses, whatever the admin page thinks.
+ */
+export async function deleteStoredPhoto(name: string) {
+  const match = STORED_PHOTO.exec(name);
+  if (!match) throw new Error("Bad photo address");
+  await refuseIfUsed(name, match[1]!, "התמונה בשימוש באתר");
+  await removeFiles([480, 960, 1600].map((width) => `${match[1]}-${width}.webp`));
+}
+
+/** Deletes an uploaded video from storage, for good; refused while the saved content uses it. */
+export async function deleteStoredVideo(name: string) {
+  const match = STORED_VIDEO.exec(name);
+  if (!match) throw new Error("Bad video address");
+  await refuseIfUsed(name, match[2]!, "הסרטון בשימוש באתר");
+  await removeFiles([match[1]!]);
 }
 
 /** Names never change content (a new upload gets a new name), so browsers may keep them. */

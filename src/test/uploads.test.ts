@@ -143,3 +143,65 @@ describe("deleting an uploaded photo (live storage)", () => {
     }
   });
 });
+
+describe("uploaded videos (live storage)", () => {
+  const vid = "u-0000000c-aaaa-bbbb-cccc-dddddddddddd";
+
+  async function setup(
+    savedValues: string[],
+    keys: { key: string; uploaded: Date; size: number }[],
+  ) {
+    vi.resetModules();
+    vi.doMock("@/content/backend-config", () => ({ localStoreEnabled: () => false }));
+    const deleted: string[][] = [];
+    const db = {
+      prepare: () => ({ all: async () => ({ results: savedValues.map((value) => ({ value })) }) }),
+    };
+    const bucket = {
+      list: async () => ({ objects: keys, truncated: false }),
+      delete: async (k: string[]) => void deleted.push(k),
+    };
+    (globalThis as { __env__?: unknown }).__env__ = { DB: db, UPLOADS: bucket };
+    const mod = await import("@/content/uploads.server");
+    return { ...mod, deleted };
+  }
+  const cleanup = () => {
+    delete (globalThis as { __env__?: unknown }).__env__;
+    vi.doUnmock("@/content/backend-config");
+    vi.resetModules();
+  };
+
+  it("lists only videos, newest first, with their size", async () => {
+    try {
+      const { listStoredVideos } = await setup(
+        [],
+        [
+          { key: `${vid}.mp4`, uploaded: new Date(1000), size: 5_000_000 },
+          { key: `${vid}-480.webp`, uploaded: new Date(2000), size: 10 },
+          { key: "u-0000000d-aaaa-bbbb-cccc-dddddddddddd.webm", uploaded: new Date(3000), size: 7 },
+        ],
+      );
+      expect(await listStoredVideos()).toEqual([
+        { name: "/uploads/u-0000000d-aaaa-bbbb-cccc-dddddddddddd.webm", uploaded: 3000, size: 7 },
+        { name: `/uploads/${vid}.mp4`, uploaded: 1000, size: 5_000_000 },
+      ]);
+    } finally {
+      cleanup();
+    }
+  });
+
+  it("deletes an unused video, and refuses one the saved content uses", async () => {
+    try {
+      const unused = await setup([JSON.stringify({ video: "video/hero.mp4" })], []);
+      await unused.deleteStoredVideo(`/uploads/${vid}.mp4`);
+      expect(unused.deleted).toEqual([[`${vid}.mp4`]]);
+      cleanup();
+      const used = await setup([JSON.stringify({ video: `/uploads/${vid}.mp4` })], []);
+      await expect(used.deleteStoredVideo(`/uploads/${vid}.mp4`)).rejects.toThrow("בשימוש");
+      await expect(used.deleteStoredVideo("/uploads/../x.mp4")).rejects.toThrow();
+      expect(used.deleted).toEqual([]);
+    } finally {
+      cleanup();
+    }
+  });
+});

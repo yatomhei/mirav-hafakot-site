@@ -46,6 +46,25 @@ export const listPhotos = createServerFn({ method: "GET" }).handler(async () => 
   return listStoredPhotos();
 });
 
+/** Every video uploaded in the admin, newest first. */
+export const listVideos = createServerFn({ method: "GET" }).handler(async () => {
+  await signedInAdmin();
+  const { listStoredVideos } = await import("@/content/uploads.server");
+  return listStoredVideos();
+});
+
+/** Deletes an uploaded video for good; refused while the saved content uses it. */
+export const deleteVideo = createServerFn({ method: "POST" })
+  .inputValidator((name: string) => {
+    if (typeof name !== "string") throw new Error("Bad video address");
+    return name;
+  })
+  .handler(async ({ data }) => {
+    await signedInAdmin();
+    const { deleteStoredVideo } = await import("@/content/uploads.server");
+    await deleteStoredVideo(data);
+  });
+
 /** Deletes a photo from storage for good; refused while the saved content uses it. */
 export const deletePhoto = createServerFn({ method: "POST" })
   .inputValidator((name: string) => {

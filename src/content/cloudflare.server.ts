@@ -45,7 +45,7 @@ export interface R2Bucket {
   ): Promise<R2Object | null>;
   delete(keys: string | string[]): Promise<void>;
   list(options?: { prefix?: string; cursor?: string; limit?: number }): Promise<{
-    objects: { key: string; uploaded: Date }[];
+    objects: { key: string; uploaded: Date; size?: number }[];
     truncated: boolean;
     cursor?: string;
   }>;

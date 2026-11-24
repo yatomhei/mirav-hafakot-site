@@ -15,7 +15,13 @@ export const Route = createFileRoute("/services/$slug")({
     const service = (content?.services ?? defaultContent.services).find(
       (s) => s.slug === params.slug,
     );
-    if (!service) throw notFound();
+    if (!service) {
+      // A service the site launched with, deleted since: its old links and Google results go
+      // to the homepage for good. An address that never existed stays "not found".
+      if (defaultContent.services.some((s) => s.slug === params.slug))
+        throw redirect({ href: "/", statusCode: 301 });
+      throw notFound();
+    }
     // A service that leads to its own page (a landing page) forwards its old address there
     // for good, so shared links and Google's results move with it, even while its card is
     // hidden (the landing page is still there).
