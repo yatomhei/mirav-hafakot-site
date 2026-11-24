@@ -11,11 +11,15 @@ import { BrokenLines } from "@/components/ui/BrokenLines";
 const CARD =
   "svc-card relative block aspect-video overflow-hidden rounded-[clamp(12px,1.2vw,18px)] bg-beige text-cream no-underline";
 
-/** A card's veil, centred title (+ optional meta line), and the round arrow. */
-function CardFace({ title, meta }: { title: string; meta?: string }) {
+/**
+ * A card's veil (over a photo only: a card without one is plain sage with dark text, see
+ * .svc-card-plain), centred title
+ * (+ optional meta line), and the round arrow.
+ */
+function CardFace({ title, meta, veil = true }: { title: string; meta?: string; veil?: boolean }) {
   return (
     <>
-      <span className="svc-veil absolute inset-0" aria-hidden="true" />
+      {veil && <span className="svc-veil absolute inset-0" aria-hidden="true" />}
       <span className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-[clamp(16px,2vw,28px)] text-center">
         <h3 className="text-[clamp(24px,2.4vw,36px)] leading-[1.15] font-light text-cream [text-shadow:0_1px_12px_rgb(0_0_0/0.25)]">
           {title}
@@ -90,11 +94,11 @@ export function Services() {
         >
           {visibleServices(services).map((s) => (
             <li key={s.slug}>
-              <ServiceLink service={s} className={CARD}>
+              <ServiceLink service={s} className={s.image ? CARD : `${CARD} svc-card-plain`}>
                 {s.image && (
                   <Picture photo={s.image} decorative sizes="(max-width: 640px) 92vw, 46vw" />
                 )}
-                <CardFace title={s.title} meta={s.meta} />
+                <CardFace title={s.title} meta={s.meta} veil={Boolean(s.image)} />
               </ServiceLink>
             </li>
           ))}
@@ -102,8 +106,8 @@ export function Services() {
               hide it on phones only (one column, where the section's contact button follows). */}
           {!servicesIntro.otherCard.hidden && (
             <li className={servicesIntro.otherCard.hideOnMobile ? "max-[640px]:hidden" : undefined}>
-              <HomeLink hash="contact" className={CARD}>
-                <CardFace title={servicesIntro.otherCard.title} />
+              <HomeLink hash="contact" className={`${CARD} svc-card-plain`}>
+                <CardFace title={servicesIntro.otherCard.title} veil={false} />
               </HomeLink>
             </li>
           )}

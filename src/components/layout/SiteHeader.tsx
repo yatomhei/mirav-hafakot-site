@@ -73,8 +73,19 @@ export function SiteHeader() {
 
           <nav
             aria-label="ניווט ראשי"
-            className="hidden gap-[clamp(18px,2.2vw,40px)] text-[15px] font-normal tracking-[0.04em] nav:flex"
+            className="hidden gap-[clamp(18px,2.2vw,40px)] text-[15px] font-normal tracking-[0.04em] whitespace-nowrap nav:flex"
           >
+            {/* Home: on the homepage itself it scrolls back to the top. */}
+            <Link
+              to="/"
+              className="nav-link text-ink"
+              onClick={() => {
+                if (window.location.pathname === "/")
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+            >
+              בית
+            </Link>
             {nav.map((item) => (
               <HomeLink key={item.hash} hash={item.hash} className="nav-link text-ink">
                 {item.label}

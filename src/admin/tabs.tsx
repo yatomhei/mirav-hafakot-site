@@ -743,11 +743,12 @@ export const TABS: TabDef[] = [
                     decorative
                     removable="הסרת התמונה"
                     empty={{
-                      // The card's own colours on the site: beige under the dark olive veil.
+                      // The card's own colour on the site: plain sage, like the last card.
                       preview: (
-                        <span aria-hidden="true" className="svc-card absolute inset-0 bg-beige">
-                          <span className="svc-veil absolute inset-0" />
-                        </span>
+                        <span
+                          aria-hidden="true"
+                          className="svc-card svc-card-plain absolute inset-0"
+                        />
                       ),
                       note: "בלי תמונה: הכרטיס באתר בצבע ירוק, כמו הכרטיס האחרון",
                     }}

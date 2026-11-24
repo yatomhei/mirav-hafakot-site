@@ -57,6 +57,8 @@
   --color-olive-hover: var(--olive-hover);
   --color-btn: var(--btn);
   --color-btn-ink: var(--btn-ink);
+  --color-accent-sage: var(--accent-sage);
+  --color-accent-sage-ink: var(--accent-sage-ink);
   --color-olive-deep: var(--olive-deep);
   --color-blue: var(--blue);
   --color-ink: var(--ink);
@@ -85,9 +87,14 @@
     0.518 0.042 119.7
   ); /* #656C51 logo olive: "הרבה מעבר לצילום" band, outline borders */
   --olive-hover: oklch(0.459 0.037 119.7); /* #555B44 */
-  --btn: var(--sage); /* #A2A58F buttons, always dark text */
-  --btn-hover: oklch(0.68 0.031 113.5); /* #989B85 button hover (ink text 4.6:1) */
-  --btn-ink: var(--ink);
+  --btn: var(--olive); /* #656C51 buttons: the logo olive with cream text (5.6:1) */
+  --btn-hover: var(--olive-hover);
+  --btn-ink: var(--cream);
+  /* The sage accent, always with dark text: the floating WhatsApp button, outline buttons and
+     the carousel arrows on hover, the open FAQ icon, and service cards without a photo. */
+  --accent-sage: var(--sage); /* #A2A58F */
+  --accent-sage-hover: oklch(0.68 0.031 113.5); /* #989B85 (ink 4.6:1) */
+  --accent-sage-ink: var(--ink);
   --olive-deep: oklch(0.497 0.041 120.1); /* #5F664C section captions; testimonials backdrop */
   --blue: oklch(0.516 0.024 203.9); /* #586C6E: dark version used for photo overlays only */
   --ink: oklch(0.307 0.016 122.4); /* #2E3128 text */
@@ -278,9 +285,9 @@
     border-color: var(--olive);
   }
   .btn-outline:hover {
-    background: var(--btn);
-    border-color: var(--btn);
-    color: var(--btn-ink);
+    background: var(--accent-sage);
+    border-color: var(--accent-sage);
+    color: var(--accent-sage-ink);
   }
   .btn-light {
     background: var(--cream);
@@ -442,6 +449,25 @@
 .svc-card:hover .svc-veil,
 .svc-card:focus-visible .svc-veil {
   background: rgb(46 51 36 / 0.5);
+}
+/* A card without a photo: plain sage accent with dark text, no veil (a veil over it read
+   almost black). */
+.svc-card.svc-card-plain {
+  background: var(--accent-sage);
+  color: var(--accent-sage-ink);
+  transition: background-color 300ms ease;
+}
+.svc-card.svc-card-plain:hover,
+.svc-card.svc-card-plain:focus-visible {
+  background: var(--accent-sage-hover);
+}
+.svc-card-plain h3 {
+  color: var(--accent-sage-ink);
+  text-shadow: none;
+}
+.svc-card-plain .svc-arrow {
+  border-color: rgb(46 49 40 / 0.55);
+  color: var(--accent-sage-ink);
 }
 .svc-card .svc-arrow {
   transition:
@@ -642,9 +668,9 @@
   color: var(--ink);
 }
 .car-arrow:hover {
-  background: var(--btn);
-  border-color: var(--btn);
-  color: var(--btn-ink);
+  background: var(--accent-sage);
+  border-color: var(--accent-sage);
+  color: var(--accent-sage-ink);
 }
 @media (max-width: 640px) {
   .car-arrow {
@@ -738,8 +764,9 @@
     color 200ms ease;
 }
 .faq-q:hover .faq-icon {
-  background: var(--btn);
-  color: var(--btn-ink);
+  background: var(--accent-sage);
+  border-color: var(--accent-sage);
+  color: var(--accent-sage-ink);
 }
 
 /* ---------- Testimonials: full screen, pinned while the quotes advance with the scroll ---------- */
@@ -797,14 +824,7 @@
   background: var(--ink-deep);
   color: var(--cream);
 }
-/* Contact submit: the logo's dark olive with cream text, so it stands out on the brown. */
-.btn-primary.submit-btn {
-  background: var(--olive);
-  color: var(--cream);
-}
-.btn-primary.submit-btn:hover {
-  background: var(--olive-hover);
-}
+/* Contact submit: the default olive button; its focus ring stays visible on the brown. */
 .submit-btn:focus-visible,
 .call-btn:focus-visible {
   outline-color: var(--ink-deep);
@@ -844,7 +864,7 @@
     transform 250ms ease;
 }
 .wa-float:hover {
-  background: var(--btn-hover);
+  background: var(--accent-sage-hover);
   transform: translateY(-2px);
 }
 
