@@ -9,7 +9,7 @@ import {
 } from "@/content/schema";
 import type { Faq, Service, StillPhoto, StripPhoto, Testimonial, Video } from "@/content/types";
 import { defaultContent } from "@/content/docs";
-import { MAX_FEATURED_STILLS, MAX_FEATURED_VIDEOS, featuredStills } from "@/content/featured";
+import { MAX_FEATURED_STILLS, MAX_FEATURED_VIDEOS } from "@/content/featured";
 import { photoFile } from "@/lib/asset";
 import { useContent } from "@/content/context";
 import { ServiceSearchFields } from "./SearchFields";
@@ -17,10 +17,8 @@ import { BarMitzvahLandingFields } from "./LandingTab";
 import {
   AddPhotoButton,
   Card,
-  FeatureToggle,
   Lines,
   List,
-  OrderList,
   PhotoInput,
   TextList,
   Text,
@@ -455,31 +453,50 @@ function WorksVideos() {
   );
 }
 
-/** סטילס: the order of the featured photos in the homepage mosaic. */
-function StillsOrder() {
-  const { value: photos } = useField<StillPhoto[]>("photos");
-  const { value: order, set } = useField<string[]>("order");
-  const chosen = featuredStills(photos ?? [], order ?? []);
+/** Places 2 and 6 of the mosaic are narrow and tall on phones. */
+const TALL_ON_PHONES = new Set([1, 5]);
+
+/**
+ * סטילס: the homepage mosaic, its own places (up to 9), each filled by an upload or from the
+ * photo library. A photo from the stills gallery brings its type of shot along.
+ */
+function StillsMosaic() {
+  const { value: gallery } = useField<StillPhoto[]>("photos");
+  const labelOf = (name: string) => (gallery ?? []).find((p) => p.name === name)?.label ?? "";
   return (
-    <OrderList
-      aspect="1 / 1"
-      empty="עדיין לא נבחרו תמונות. בוחרים אותן בלשונית 'עמודי שירות', בגלריית הסטילס."
-      onReorder={set}
-      items={chosen.map((p, i) => ({
-        id: p.name,
-        src: photoFile(p.name, 480),
-        title: p.label || "תמונה",
-        // Places 2 and 6 are narrow and tall on phones.
-        ...(i === 1 || i === 5 ? { note: "בטלפון המקום הזה גבוה וצר: מתאים לתמונה לאורך" } : {}),
-      }))}
-    />
+    <>
+      <List<StillPhoto>
+        path="mosaic"
+        itemTitle={(i, p) => `מקום ${i + 1}${p.label ? `: ${p.label}` : ""}`}
+        grid
+        editable={{ min: 1, max: MAX_FEATURED_STILLS }}
+      >
+        {(p, i) => (
+          <>
+            <PhotoInput
+              path={p}
+              label="תמונה"
+              aspect="1 / 1"
+              withRatio
+              {...(TALL_ON_PHONES.has(i)
+                ? { hint: "בטלפון המקום הזה גבוה וצר: מתאים לתמונה לאורך" }
+                : {})}
+            />
+            <Text path={`${p}.label`} label="סוג הצילום" hint="מוצג בתצוגה המוגדלת" />
+          </>
+        )}
+      </List>
+      <AddPhotoButton<StillPhoto>
+        path="mosaic"
+        max={MAX_FEATURED_STILLS}
+        make={({ name, ratio }) => ({ name, ratio, alt: "", label: labelOf(name) })}
+      />
+    </>
   );
 }
 
-/** The stills gallery (the stills service page), with the homepage pick on each photo. */
+/** The stills gallery (the stills service page). */
 function StillsGallery() {
-  const { value: photos } = useField<StillPhoto[]>("photos");
-  const full = (photos ?? []).filter((p) => p.featured).length >= MAX_FEATURED_STILLS;
   return (
     <>
       <List<StillPhoto>
@@ -492,14 +509,6 @@ function StillsGallery() {
           <>
             <PhotoInput path={p} label="תמונה" withRatio />
             <Text path={`${p}.label`} label="סוג הצילום" hint="מוצג בתצוגה המוגדלת" />
-            <FeatureToggle
-              path={`${p}.featured`}
-              label="הצגה בדף הבית"
-              full={
-                full &&
-                `בדף הבית יש מקום ל־${MAX_FEATURED_STILLS} תמונות. כדי להוסיף את זו, מורידים קודם סימון מתמונה אחרת`
-              }
-            />
           </>
         )}
       </List>
@@ -654,10 +663,10 @@ export const TABS: TabDef[] = [
               <Text path="text" label="פסקה" multiline />
             </Card>
             <Card
-              title="סדר התמונות בדף הבית"
-              hint={`עד ${MAX_FEATURED_STILLS} תמונות, 3 שורות של 3. בוחרים אותן בלשונית 'עמודי שירות', בגלריית הסטילס. כאן קובעים רק את הסדר`}
+              title="התמונות בדף הבית"
+              hint={`עד ${MAX_FEATURED_STILLS} תמונות, 3 שורות של 3, בסדר שבו הן מופיעות: החיצים משנים את הסדר. מעלים תמונה חדשה, או בוחרים מתמונות שכבר הועלו, מכל עמוד באתר. ${CONSENT}`}
             >
-              <StillsOrder />
+              <StillsMosaic />
             </Card>
           </>
         ),
@@ -1019,7 +1028,7 @@ export const TABS: TabDef[] = [
         render: () => (
           <Card
             title="גלריית צילומי סטילס"
-            hint={`כל התמונות בעמוד 'צילומי סטילס'. מה שמסומן ב'הצגה בדף הבית' מופיע גם בדף הבית, והסדר שם נקבע בלשונית 'סטילס'. ${CONSENT}`}
+            hint={`כל התמונות בעמוד 'צילומי סטילס'. את התמונות בדף הבית בוחרים בלשונית 'סטילס'. ${CONSENT}`}
           >
             <StillsGallery />
           </Card>

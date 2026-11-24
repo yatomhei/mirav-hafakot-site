@@ -1,7 +1,6 @@
 import { isExternalHref, serviceHref, visibleServices } from "@/content/services";
 import { serviceLinkProblem } from "@/content/schema";
 import { sitemapPaths } from "@/lib/sitemap";
-import { featuredStills } from "@/content/featured";
 import { DEFAULT_MESSAGE_TEMPLATE, fillMessage } from "@/content/whatsapp-message";
 import { adsEnabled } from "@/lib/ads";
 import { describe, expect, it } from "vitest";
@@ -138,11 +137,34 @@ describe("saved content", () => {
     expect(validateDoc("home.works", withVideos(6)).success).toBe(true);
     expect(validateDoc("home.works", withVideos(7)).success).toBe(false);
     expect(validateDoc("home.works", withVideos(0)).success).toBe(false);
+  });
 
+  it("keeps the homepage mosaic as its own places, 1 to 9", () => {
     const stills = defaultContent.home.stills;
-    expect(featuredStills(stills.photos, stills.order)).toHaveLength(9);
-    const allFeatured = stills.photos.map((p) => ({ ...p, featured: true }));
-    expect(validateDoc("home.stills", { ...stills, photos: allFeatured }).success).toBe(false);
+    expect(stills.mosaic).toHaveLength(9);
+    const photo = stills.photos[0]!;
+    const withMosaic = (n: number) => ({
+      ...stills,
+      mosaic: Array.from({ length: n }, () => photo),
+    });
+    expect(validateDoc("home.stills", withMosaic(9)).success).toBe(true);
+    expect(validateDoc("home.stills", withMosaic(10)).success).toBe(false);
+    expect(validateDoc("home.stills", withMosaic(0)).success).toBe(false);
+  });
+
+  it("converts a mosaic saved the old way (marked in the stills gallery, ordered by name)", () => {
+    const { mosaic: _mosaic, photos, ...text } = defaultContent.home.stills;
+    // The old record: photos 3, 1 and 5 marked, in that order.
+    const marked = new Set([0, 2, 4]);
+    const saved = {
+      ...text,
+      photos: photos.map((p, i) => ({ ...p, featured: marked.has(i) })),
+      order: [photos[2]!.name, photos[0]!.name, photos[4]!.name],
+    };
+    const stills = assembleContent({ "home.stills": saved }).home.stills;
+    expect(stills.mosaic.map((p) => p.name)).toEqual(saved.order);
+    expect(stills.photos).toHaveLength(photos.length);
+    expect([...stills.mosaic, ...stills.photos].some((p) => "featured" in p)).toBe(false);
   });
 
   it("converts selected videos saved the old way (marked in the galleries, ordered by id)", () => {

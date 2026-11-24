@@ -119,13 +119,13 @@ const stillPhotos: StillPhoto[] = [
 export const stills = {
   title: "רגעים שתפסתי בעדשה",
   text: "צילומי משפחה, בריתות ובר ובת מצווה, בטבע או בבית. אני אוהבת לצלם אנשים בסביבה שבה הם מרגישים בנוח ולתפוס את הרגעים שקורים באופן טבעי.",
+  /** The stills service page shows all of these. */
+  photos: stillPhotos,
   /**
-   * The stills service page shows all of these. The homepage mosaic (3 rows of 3) shows the
-   * ones marked `featured`, in `order` (photo names): slots 2 and 6 are narrow and tall on
-   * phones, so portrait photos go there.
+   * The homepage mosaic (3 rows of 3), in order: places 2 and 6 are narrow and tall on phones,
+   * so portrait photos go there.
    */
-  photos: stillPhotos.map((p, i) => ({ ...p, featured: i < 9 })),
-  order: stillPhotos.slice(0, 9).map((p) => p.name),
+  mosaic: stillPhotos.slice(0, 9),
 };
 
 export const servicesIntro = {

@@ -91,7 +91,5 @@ export type IncludeItem = { num: string; title: string; meta: string; desc: stri
 export type StillPhoto = Photo & {
   label: string;
   ratio: number;
-  /** Also shown in the homepage mosaic. */
-  featured?: boolean;
 };
 export type StripPhoto = Photo & { ratio: number };

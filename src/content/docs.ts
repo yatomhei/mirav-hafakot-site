@@ -15,7 +15,7 @@ import { servicePage, services } from "./services";
 import { barMitzvahLanding } from "./landing";
 import { seo, site } from "./site";
 import { docSchemas, type DocKey } from "./schema";
-import { worksFromGalleries } from "./featured";
+import { mosaicFromGallery, worksFromGalleries } from "./featured";
 import type { Service } from "./types";
 
 // The admin saves the site as one record per section, keyed like this. The launch content
@@ -127,6 +127,23 @@ function withWorksList(stored: StoredDocs): StoredDocs {
 }
 
 /**
+ * A "home.stills" record saved before the mosaic had its own places (its gallery photos were
+ * marked for it, in an `order` of names) gets the mosaic it showed then. The first save from
+ * the admin then stores it.
+ */
+function withMosaic(stored: StoredDocs): StoredDocs {
+  const stills = stored["home.stills"];
+  if (!isPlainObject(stills) || "mosaic" in stills) return stored;
+  const order = Array.isArray(stills["order"])
+    ? stills["order"].filter((name) => typeof name === "string")
+    : [];
+  const photos = Array.isArray(stills["photos"]) ? stills["photos"].filter(isPlainObject) : [];
+  const mosaic = mosaicFromGallery(photos as Parameters<typeof mosaicFromGallery>[0], order);
+  const { order: _order, ...rest } = stills;
+  return { ...stored, "home.stills": mosaic.length ? { ...rest, mosaic } : rest };
+}
+
+/**
  * Builds what the site shows: each saved record that passes its schema replaces the launch
  * content for that section. A record that fails only because the code has since gained a
  * field is completed from the launch content (a record that passes is used exactly as saved,
@@ -134,7 +151,7 @@ function withWorksList(stored: StoredDocs): StoredDocs {
  * edits, never the page.
  */
 export function assembleContent(saved: StoredDocs): SiteContent {
-  const stored = withWorksList(saved);
+  const stored = withMosaic(withWorksList(saved));
   let content = defaultContent;
   for (const key of DOC_KEYS) {
     if (!(key in stored)) continue;

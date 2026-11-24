@@ -4,7 +4,6 @@ import { useHome } from "@/content/context";
 import { Picture } from "@/components/ui/Picture";
 import { PhotoLightbox } from "@/components/ui/PhotoLightbox";
 import type { StillPhoto } from "@/content/types";
-import { featuredStills } from "@/content/featured";
 
 /** Stills band under the works: centred heading and text, then a full-width photo mosaic. */
 export function Stills() {
@@ -78,7 +77,7 @@ function StillTile({
 }
 
 /**
- * The stills photos. "mosaic" (homepage): the featured ones (up to 9) in the 3×3 mosaic above. "masonry"
+ * The stills photos. "mosaic" (homepage): the mosaic's own photos (up to 9) in the 3×3 grid above. "masonry"
  * (the stills service page): every photo in its own shape, in up to 3 columns. Clicking a
  * photo opens it in the lightbox.
  */
@@ -95,8 +94,7 @@ export function StillsGrid({
   // The lightbox steps through the photos this gallery shows.
   const { stills } = useHome();
   const [open, setOpen] = useState<number | null>(null);
-  const photos =
-    layout === "masonry" ? (own ?? stills.photos) : featuredStills(stills.photos, stills.order);
+  const photos = layout === "masonry" ? (own ?? stills.photos) : stills.mosaic;
   const lightbox = <PhotoLightbox photos={photos} index={open} onIndex={setOpen} />;
 
   if (layout === "masonry") {

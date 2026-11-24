@@ -70,6 +70,9 @@ export const YOUTUBE_ID = /^[\w-]{11}$/;
 export const META_PIXEL_ID = /^\d{8,20}$/;
 export const GOOGLE_ADS_ID = /^AW-\d{6,15}$/;
 export const GOOGLE_ADS_LABEL = /^[\w-]{4,60}$/;
+/** A stills photo: its shape, and the type of shot (shown when it's enlarged). */
+const stillSchema = photoSchema.extend({ label: text, ratio });
+
 const videoSchema = z.object({
   title: text,
   youtubeId: z.string().regex(YOUTUBE_ID),
@@ -115,22 +118,13 @@ export const docSchemas = {
   "home.stills": z.object({
     title: text,
     text: longText,
-    photos: z
-      .array(photoSchema.extend({ label: text, ratio, featured: z.boolean().optional() }))
-      .min(1)
-      .max(60)
-      .superRefine((photos, ctx) => {
-        const n = photos.filter((p) => p.featured).length;
-        if (n === 0)
-          ctx.addIssue({ code: "custom", message: "צריך לסמן לפחות תמונה אחת לדף הבית" });
-        if (n > MAX_FEATURED_STILLS) {
-          ctx.addIssue({
-            code: "custom",
-            message: `בדף הבית יש מקום ל־${MAX_FEATURED_STILLS} תמונות. כרגע מסומנות ${n}`,
-          });
-        }
-      }),
-    order: z.array(z.string().max(500)).max(60),
+    /** The stills service page's gallery. */
+    photos: z.array(stillSchema).min(1).max(60),
+    /** The homepage mosaic, its own places. */
+    mosaic: z
+      .array(stillSchema)
+      .min(1, "צריך לפחות תמונה אחת בדף הבית")
+      .max(MAX_FEATURED_STILLS, `בדף הבית יש מקום ל־${MAX_FEATURED_STILLS} תמונות`),
   }),
   "home.services": z.object({
     caption: text,
@@ -211,10 +205,7 @@ export const docSchemas = {
         lead: longText,
         videos: z.array(videoSchema).max(30),
         gallery: z.enum(["stills"]).optional(),
-        photos: z
-          .array(photoSchema.extend({ label: text, ratio, featured: z.boolean().optional() }))
-          .max(60)
-          .optional(),
+        photos: z.array(stillSchema).max(60).optional(),
         hidden: z.boolean().optional(),
         // Where the card and links lead instead of the regular page (see serviceLinkProblem).
         link: z.string().max(500).optional(),
