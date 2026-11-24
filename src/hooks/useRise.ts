@@ -1,3 +1,4 @@
+import { useRouter } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 
 /**
@@ -7,6 +8,10 @@ import { useEffect, useRef } from "react";
  * function giving each item its own).
  * `delay(k)` staggers items that arrive together. Plays once; nothing is hidden until this
  * has run, and never under reduced motion. Styles: .rise / .rise-card / .is-up in styles.css.
+ *
+ * Arriving from another page, the first check waits until the router has moved the new page
+ * to the top: until then the old page's scroll position applies, and every item would count
+ * as already passed (shown at once, without its rise).
  */
 export function useRise<T extends HTMLElement>(
   selector: string,
@@ -16,6 +21,7 @@ export function useRise<T extends HTMLElement>(
   }: { at?: number | ((k: number) => number); delay?: (k: number) => number } = {},
 ) {
   const root = useRef<T>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const el = root.current;
@@ -45,10 +51,30 @@ export function useRise<T extends HTMLElement>(
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    const start = () => {
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll);
+      update();
+    };
+    // Mid-navigation the router hasn't yet recorded the new address as shown (it does that,
+    // and resets the scroll, once the page has rendered). A fallback timer covers a render
+    // event that never comes.
+    let unsubscribe = () => {};
+    let fallback = 0;
+    if (router.stores.resolvedLocation.get()?.href !== router.latestLocation.href) {
+      const go = () => {
+        unsubscribe();
+        window.clearTimeout(fallback);
+        start();
+      };
+      unsubscribe = router.subscribe("onRendered", go);
+      fallback = window.setTimeout(go, 1000);
+    } else {
+      start();
+    }
     return () => {
+      unsubscribe();
+      window.clearTimeout(fallback);
       cancelAnimationFrame(frame);
       stop();
     };
