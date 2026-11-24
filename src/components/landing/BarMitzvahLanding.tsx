@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import {
+  Fragment,
   useEffect,
   useRef,
   useState,
@@ -767,11 +768,13 @@ function useFinaleConfetti<T extends HTMLElement>(enabled: boolean) {
 
 function Process() {
   const { process } = useLanding();
-  // The first card waits until it is well up the screen, and a moment more, so the title is
-  // read first; the others follow the scroll, rising as soon as they come into view, and the
-  // last card ("your clip is ready!") pops in as soon as it peeks in.
+  // In order: the title counts down as it moves up the screen ("3," as it enters, then "2,
+  // 1... אקשן!"), and the subtitle is complete by the time the title reaches the upper third;
+  // then the first card rises, the others as they come into view, and the last one ("your
+  // clip is ready!") as soon as it peeks in.
+  const header = useHeaderSteps<HTMLDivElement>();
   const list = useRise<HTMLOListElement>(".lp-step", {
-    at: (k) => (k === 0 ? 0.7 : k === process.steps.length ? 0.97 : 0.9),
+    at: (k) => (k === 0 ? 0.55 : k === process.steps.length ? 0.97 : 0.9),
     delay: (k) => (k === 0 ? 300 : 0),
   });
   const finale = useFinaleConfetti<HTMLDivElement>(!process.finale.noConfetti);
@@ -779,14 +782,15 @@ function Process() {
     <section aria-labelledby="lp-process" className={SECTION}>
       <div className="mx-auto max-w-[var(--content-max)]">
         <div
-          data-reveal
-          className="mx-auto mb-[clamp(64px,8vw,112px)] flex max-w-[760px] flex-col gap-[18px] text-center"
+          ref={header}
+          className="lp-hs mx-auto mb-[clamp(64px,8vw,112px)] flex max-w-[760px] flex-col gap-[18px] text-center"
         >
-          <h2 id="lp-process" className={H2}>
-            {process.title}
-          </h2>
+          <CountdownTitle id="lp-process" text={process.title} />
           {process.lead && (
-            <p className={`${ACCENT} text-[clamp(22px,2.4vw,32px)] leading-[1.4] text-balance`}>
+            <p
+              data-step="0.75 1"
+              className={`${ACCENT} text-[clamp(22px,2.4vw,32px)] leading-[1.4] text-balance`}
+            >
               {process.lead}
             </p>
           )}
@@ -844,6 +848,82 @@ function Process() {
         </ol>
       </div>
     </section>
+  );
+}
+
+/**
+ * Scroll-driven steps for a header, without pinning (.lp-hs in styles.css): as the header's
+ * top moves up the screen, from 85% of its height to 30%, each element with data-step="from
+ * to" gets --t, 0 to 1, as that progress goes through its range. Tied to the scroll, so the
+ * header is always complete by the time it reaches the upper third, however fast the page is
+ * scrolled. Nothing happens under reduced motion (everything simply shows).
+ */
+function useHeaderSteps<T extends HTMLElement>() {
+  const root = useRef<T>(null);
+  useEffect(() => {
+    const el = root.current;
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const steps = Array.from(el.querySelectorAll<HTMLElement>("[data-step]")).map((node) => {
+      const [from = 0, to = 1] = (node.dataset["step"] ?? "").split(" ").map(Number);
+      return { node, from, to };
+    });
+    el.classList.add("lp-hs-armed");
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const start = window.innerHeight * 0.85;
+      const end = window.innerHeight * 0.3;
+      const progress = (start - el.getBoundingClientRect().top) / (start - end);
+      for (const { node, from, to } of steps) {
+        const t = Math.min(1, Math.max(0, (progress - from) / (to - from)));
+        node.style.setProperty("--t", t.toFixed(3));
+      }
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      el.classList.remove("lp-hs-armed");
+    };
+  }, []);
+  return root;
+}
+
+/**
+ * The process title as a countdown ("3, 2, 1... אקשן!"): each word appears in turn as the
+ * page scrolls (a data-step range each, see useHeaderSteps), and the last one pops in larger.
+ * Works for any title the admin writes (word by word). The full title is in the page from the
+ * start, so screen readers and search engines read it whole; without motion it simply shows.
+ */
+function CountdownTitle({ id, text }: { id: string; text: string }) {
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  // The first word shows as the title enters; the others share the way up to 0.7, and the
+  // subtitle follows (useHeaderSteps).
+  const step = (i: number) => {
+    if (i === 0) return "-1 0";
+    const slot = 0.7 / Math.max(1, words.length - 1);
+    return `${((i - 1) * slot + 0.04).toFixed(3)} ${(i * slot).toFixed(3)}`;
+  };
+  return (
+    <h2 id={id} className={`${H2} lp-countdown`}>
+      {words.map((word, i) => (
+        <Fragment key={i}>
+          {i > 0 && " "}
+          <span
+            data-step={step(i)}
+            className={`lp-count ${i === words.length - 1 ? "lp-count-last" : ""}`}
+          >
+            {word}
+          </span>
+        </Fragment>
+      ))}
+    </h2>
   );
 }
 

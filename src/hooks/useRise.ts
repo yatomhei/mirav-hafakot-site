@@ -9,6 +9,9 @@ import { useEffect, useRef } from "react";
  * `delay(k)` staggers items that arrive together. Plays once; nothing is hidden until this
  * has run, and never under reduced motion. Styles: .rise / .rise-card / .is-up in styles.css.
  *
+ * `hold`: the items are hidden, waiting, until it turns false (for example until a heading's
+ * own animation has played); they then rise as usual.
+ *
  * Arriving from another page, the first check waits until the router has moved the new page
  * to the top: until then the old page's scroll position applies, and every item would count
  * as already passed (shown at once, without its rise).
@@ -18,7 +21,12 @@ export function useRise<T extends HTMLElement>(
   {
     at = 0.9,
     delay = () => 0,
-  }: { at?: number | ((k: number) => number); delay?: (k: number) => number } = {},
+    hold = false,
+  }: {
+    at?: number | ((k: number) => number);
+    delay?: (k: number) => number;
+    hold?: boolean;
+  } = {},
 ) {
   const root = useRef<T>(null);
   const router = useRouter();
@@ -33,6 +41,8 @@ export function useRise<T extends HTMLElement>(
       mover.classList.add("rise", "rise-card");
       return [item, mover, typeof at === "function" ? at(k) : at] as const;
     });
+    // Hidden and waiting: this runs again once `hold` is lifted.
+    if (hold) return;
 
     let frame = 0;
     const update = () => {
@@ -78,9 +88,9 @@ export function useRise<T extends HTMLElement>(
       cancelAnimationFrame(frame);
       stop();
     };
-    // Options are read once on mount.
+    // Options are read once on mount (and again when `hold` is lifted).
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selector]);
+  }, [selector, hold]);
 
   return root;
 }

@@ -1073,6 +1073,23 @@
   }
 }
 
+/* The process title (useHeaderSteps): its words count down as it moves up the screen
+   (data-step sets --t), the last one pops in from larger, like a clapperboard, and the
+   subtitle follows. Without motion it simply shows. */
+@media (prefers-reduced-motion: no-preference) {
+  .lp-hs-armed [data-step] {
+    opacity: var(--t, 1);
+    transform: translateY(calc((1 - var(--t, 1)) * 28px));
+  }
+  .lp-countdown .lp-count {
+    display: inline-block;
+  }
+  .lp-hs-armed .lp-count-last {
+    transform: none;
+    scale: calc(1.8 - 0.8 * var(--t, 1));
+  }
+}
+
 /* Questions section: pinned on screens wide and tall enough for both columns, while the
    questions and answers come in with the scroll; elsewhere a plain section. */
 .lp-pin2 {
