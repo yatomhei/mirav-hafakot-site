@@ -9,6 +9,9 @@ export const getRouter = () => {
     routeTree,
     context: { queryClient },
     scrollRestoration: true,
+    // A new page opens at the top straight away. Without this, the site-wide smooth scrolling
+    // (for in-page links) would show the page landing low and then gliding up.
+    scrollRestorationBehavior: "instant",
     defaultPreloadStaleTime: 0,
   });
 
