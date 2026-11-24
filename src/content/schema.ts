@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { DEFAULT_MESSAGE_TEMPLATE, REQUIRED_FIELDS } from "./whatsapp-message";
 import { contact } from "./home";
-import { MAX_FEATURED_STILLS, MAX_FEATURED_VIDEOS, countFeaturedVideos } from "./featured";
+import { MAX_FEATURED_STILLS, MAX_FEATURED_VIDEOS } from "./featured";
 
 // The shape every saved record must have before the site uses it (see docs.ts). Counts the
 // layout depends on are fixed here, so a saved record can never break the design: a record
@@ -74,7 +74,6 @@ const videoSchema = z.object({
   title: text,
   youtubeId: z.string().regex(YOUTUBE_ID),
   thumb: photoSchema.optional(),
-  featured: z.boolean().optional(),
 });
 
 /** Empty, a [placeholder] or a secure web address (https only). */
@@ -108,7 +107,10 @@ export const docSchemas = {
     caption: text,
     title: text,
     lead: longText,
-    order: z.array(z.string().max(20)).max(250),
+    videos: z
+      .array(videoSchema)
+      .min(1, "צריך לפחות סרטון אחד בעבודות הנבחרות")
+      .max(MAX_FEATURED_VIDEOS, `בעבודות הנבחרות יש מקום ל־${MAX_FEATURED_VIDEOS} סרטונים`),
   }),
   "home.stills": z.object({
     title: text,
@@ -254,16 +256,6 @@ export const docSchemas = {
       });
       if (services.every((s) => s.hidden)) {
         ctx.addIssue({ code: "custom", message: "צריך להשאיר לפחות שירות אחד גלוי באתר" });
-      }
-      const n = countFeaturedVideos(services);
-      if (n === 0) {
-        ctx.addIssue({ code: "custom", message: "צריך לסמן לפחות סרטון אחד לעבודות הנבחרות" });
-      }
-      if (n > MAX_FEATURED_VIDEOS) {
-        ctx.addIssue({
-          code: "custom",
-          message: `בעבודות הנבחרות יש מקום ל־${MAX_FEATURED_VIDEOS} סרטונים. כרגע מסומנים ${n}`,
-        });
       }
     }),
   servicePage: z.object({

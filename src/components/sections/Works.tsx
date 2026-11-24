@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { useContent } from "@/content/context";
-import { featuredVideos } from "@/content/featured";
 import type { Video } from "@/content/types";
 import { VideoThumb } from "@/components/ui/Picture";
 import { useVideoLink } from "@/components/ui/VideoPlayer";
@@ -47,9 +46,8 @@ function Slide({ clip, visible, basis }: { clip: Video; visible: boolean; basis:
 }
 
 export function Works() {
-  const { home, services } = useContent();
-  const { works } = home;
-  const clips = featuredVideos(services, works.order);
+  const { works } = useContent().home;
+  const clips = works.videos.filter((v) => v.youtubeId);
   const pv = usePerView();
   // The title rises up quickly as it comes into view.
   const head = useRise<HTMLDivElement>(":scope > h2", { at: 0.92 });

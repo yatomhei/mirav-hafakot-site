@@ -1,8 +1,12 @@
-import type { Service, StillPhoto, Video } from "./types";
+import type { StillPhoto, Video } from "./types";
 
-// What the homepage shows of the service galleries: the items marked `featured`, arranged by
-// an order list kept with the homepage section. Items missing from the order (just marked)
-// follow in gallery order; ids in the order that no longer match anything are ignored.
+// The homepage stills mosaic shows the stills gallery's photos marked `featured`, arranged by
+// an order list kept with the homepage section. Photos missing from the order (just marked)
+// follow in gallery order; names in the order that no longer match anything are ignored.
+//
+// The selected-works videos are their own list in "home.works" (up to MAX_FEATURED_VIDEOS).
+// They used to be picked in the service galleries; worksFromGalleries converts a record saved
+// that way.
 
 export const MAX_FEATURED_VIDEOS = 6;
 /** The homepage stills mosaic has 9 places (3 rows of 3). */
@@ -16,27 +20,26 @@ function byOrder<T>(items: T[], id: (item: T) => string, order: string[]): T[] {
     .map(({ item }) => item);
 }
 
-/** Featured videos from every service, once each (a video can sit on two pages). */
-type Featurable = { youtubeId: string; featured?: boolean | undefined };
-function collectVideos<V extends Featurable>(services: { videos: V[] }[]): V[] {
+type SavedVideo = Video & { featured?: boolean };
+
+/**
+ * The selected works as they were picked before they had their own list: the gallery videos
+ * marked `featured` (once each), in the saved carousel order, without the old mark.
+ */
+export function worksFromGalleries(services: { videos: SavedVideo[] }[], order: string[]): Video[] {
   const seen = new Set<string>();
-  const list: V[] = [];
+  const picked: SavedVideo[] = [];
   for (const service of services) {
-    for (const video of service.videos) {
+    for (const video of service.videos ?? []) {
       if (!video.featured || !video.youtubeId || seen.has(video.youtubeId)) continue;
       seen.add(video.youtubeId);
-      list.push(video);
+      picked.push(video);
     }
   }
-  return list;
+  return byOrder(picked, (v) => v.youtubeId, order)
+    .slice(0, MAX_FEATURED_VIDEOS)
+    .map(({ featured: _featured, ...video }) => video);
 }
-
-export const countFeaturedVideos = (services: { videos: Featurable[] }[]) =>
-  collectVideos(services).length;
-
-/** The homepage carousel, in order. */
-export const featuredVideos = (services: Service[], order: string[]): Video[] =>
-  byOrder(collectVideos(services), (v) => v.youtubeId, order).slice(0, MAX_FEATURED_VIDEOS);
 
 /** The homepage mosaic, in order. */
 export const featuredStills = (photos: StillPhoto[], order: string[]) =>

@@ -1,35 +1,33 @@
 import type { Service, Video } from "./types";
 
 /** The bar/bat mitzvah clips; at launch they are also the homepage "selected works". */
-export const barMitzvahClips: Video[] = (
-  [
-    {
-      title: "קליפ בת מצווה של גפן - בכרם עם המשפחה",
-      youtubeId: "QWX2MCzFjdk",
-      thumb: { name: "clip-gefen", alt: "" },
-    },
-    {
-      title: "קליפ בר מצווה בירושלים",
-      youtubeId: "0tKX4jDtYpc",
-      thumb: { name: "clip-home", alt: "" },
-    },
-    {
-      title: "קליפ בר מצווה - הנחת תפילין ראשונה",
-      youtubeId: "WSmlCo4dfOM",
-      thumb: { name: "clip-tefillin", alt: "" },
-    },
-    {
-      title: "קליפ בת מצווה - אופות עם סבתא",
-      youtubeId: "iiymbAVd0WM",
-      thumb: { name: "clip-baking", alt: "" },
-    },
-    {
-      title: "סרט בר מצווה - ברכות מהמשפחה",
-      youtubeId: "qHyDDsU9k34",
-      thumb: { name: "clip-blessings", alt: "" },
-    },
-  ] as Video[]
-).map((v) => ({ ...v, featured: true }));
+export const barMitzvahClips: Video[] = [
+  {
+    title: "קליפ בת מצווה של גפן - בכרם עם המשפחה",
+    youtubeId: "QWX2MCzFjdk",
+    thumb: { name: "clip-gefen", alt: "" },
+  },
+  {
+    title: "קליפ בר מצווה בירושלים",
+    youtubeId: "0tKX4jDtYpc",
+    thumb: { name: "clip-home", alt: "" },
+  },
+  {
+    title: "קליפ בר מצווה - הנחת תפילין ראשונה",
+    youtubeId: "WSmlCo4dfOM",
+    thumb: { name: "clip-tefillin", alt: "" },
+  },
+  {
+    title: "קליפ בת מצווה - אופות עם סבתא",
+    youtubeId: "iiymbAVd0WM",
+    thumb: { name: "clip-baking", alt: "" },
+  },
+  {
+    title: "סרט בר מצווה - ברכות מהמשפחה",
+    youtubeId: "qHyDDsU9k34",
+    thumb: { name: "clip-blessings", alt: "" },
+  },
+];
 
 /**
  * The launch services: homepage cards (title, meta, optional image) and their pages

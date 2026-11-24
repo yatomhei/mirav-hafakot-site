@@ -15,6 +15,7 @@ import { servicePage, services } from "./services";
 import { barMitzvahLanding } from "./landing";
 import { seo, site } from "./site";
 import { docSchemas, type DocKey } from "./schema";
+import { worksFromGalleries } from "./featured";
 import type { Service } from "./types";
 
 // The admin saves the site as one record per section, keyed like this. The launch content
@@ -103,13 +104,37 @@ export function fillMissing(launch: unknown, saved: unknown): unknown {
 }
 
 /**
+ * A "home.works" record saved before the selected works had their own list (it has an `order`
+ * of YouTube ids instead) gets the list it showed then: the gallery videos marked for it, in
+ * that order, from the saved services (or the launch ones). The first save from the admin
+ * then stores the list itself.
+ */
+function withWorksList(stored: StoredDocs): StoredDocs {
+  const works = stored["home.works"];
+  if (!isPlainObject(works) || "videos" in works) return stored;
+  const order = Array.isArray(works["order"])
+    ? works["order"].filter((id) => typeof id === "string")
+    : [];
+  const galleries = Array.isArray(stored.services) ? stored.services : defaultContent.services;
+  const videos = worksFromGalleries(
+    galleries.filter(isPlainObject).map((s) => ({
+      videos: Array.isArray(s["videos"]) ? s["videos"].filter(isPlainObject) : [],
+    })) as Parameters<typeof worksFromGalleries>[0],
+    order,
+  );
+  const { order: _order, ...rest } = works;
+  return { ...stored, "home.works": videos.length ? { ...rest, videos } : rest };
+}
+
+/**
  * Builds what the site shows: each saved record that passes its schema replaces the launch
  * content for that section. A record that fails only because the code has since gained a
  * field is completed from the launch content (a record that passes is used exactly as saved,
  * so something deliberately removed stays removed). A bad record costs one section its
  * edits, never the page.
  */
-export function assembleContent(stored: StoredDocs): SiteContent {
+export function assembleContent(saved: StoredDocs): SiteContent {
+  const stored = withWorksList(saved);
   let content = defaultContent;
   for (const key of DOC_KEYS) {
     if (!(key in stored)) continue;

@@ -41,11 +41,8 @@ export const works = {
   caption: "01 / עבודות נבחרות",
   title: "סרטים וקליפים שהפקתי",
   lead: "הצצה לכמה מהסיפורים שזכיתי לספר דרך המצלמה, מאירועים משפחתיים ועד סרטי תדמית ופרסומת.",
-  /**
-   * The homepage carousel shows the service-page videos marked `featured` (up to 6, see
-   * featured.ts), in this order of YouTube ids; any not listed follow in service order.
-   */
-  order: barMitzvahClips.map((v) => v.youtubeId),
+  /** The homepage carousel, in order (up to 6). */
+  videos: barMitzvahClips,
 };
 
 /** Every stills photo (the stills service page gallery). */

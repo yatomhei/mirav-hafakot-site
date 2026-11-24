@@ -1,7 +1,7 @@
 import { isExternalHref, serviceHref, visibleServices } from "@/content/services";
 import { serviceLinkProblem } from "@/content/schema";
 import { sitemapPaths } from "@/lib/sitemap";
-import { featuredStills, featuredVideos } from "@/content/featured";
+import { featuredStills } from "@/content/featured";
 import { DEFAULT_MESSAGE_TEMPLATE, fillMessage } from "@/content/whatsapp-message";
 import { adsEnabled } from "@/lib/ads";
 import { describe, expect, it } from "vitest";
@@ -128,31 +128,48 @@ describe("saved content", () => {
     expect(validateDoc("services", allHidden).success).toBe(false);
   });
 
-  it("limits and orders the homepage picks from the service galleries", () => {
-    const services = defaultContent.services;
-    const video = (i: number) => ({ title: `v${i}`, youtubeId: `abcdefghij${i}`, featured: true });
-    const withFeatured = (n: number) =>
-      services.map((s, i) =>
-        i === 1 ? { ...s, videos: Array.from({ length: n }, (_, k) => video(k)) } : s,
-      );
-    // The bar/bat mitzvah page already has 5 featured videos at launch.
-    expect(validateDoc("services", withFeatured(1)).success).toBe(true);
-    expect(validateDoc("services", withFeatured(2)).success).toBe(false);
-    const none = services.map((s) => ({
-      ...s,
-      videos: s.videos.map((v) => ({ ...v, featured: false })),
-    }));
-    expect(validateDoc("services", none).success).toBe(false);
-
-    const launch = featuredVideos(services, defaultContent.home.works.order);
-    expect(launch.map((v) => v.youtubeId)).toEqual(defaultContent.home.works.order);
-    const reversed = [...defaultContent.home.works.order].reverse();
-    expect(featuredVideos(services, reversed).map((v) => v.youtubeId)).toEqual(reversed);
+  it("keeps the selected videos as their own list, 1 to 6", () => {
+    const works = defaultContent.home.works;
+    const video = (i: number) => ({ title: `v${i}`, youtubeId: `abcdefghij${i}` });
+    const withVideos = (n: number) => ({
+      ...works,
+      videos: Array.from({ length: n }, (_, k) => video(k)),
+    });
+    expect(validateDoc("home.works", withVideos(6)).success).toBe(true);
+    expect(validateDoc("home.works", withVideos(7)).success).toBe(false);
+    expect(validateDoc("home.works", withVideos(0)).success).toBe(false);
 
     const stills = defaultContent.home.stills;
     expect(featuredStills(stills.photos, stills.order)).toHaveLength(9);
     const allFeatured = stills.photos.map((p) => ({ ...p, featured: true }));
     expect(validateDoc("home.stills", { ...stills, photos: allFeatured }).success).toBe(false);
+  });
+
+  it("converts selected videos saved the old way (marked in the galleries, ordered by id)", () => {
+    const { videos: launchVideos, ...text } = defaultContent.home.works;
+    const ids = launchVideos.map((v) => v.youtubeId);
+    // The old services record: the launch videos marked, plus one unmarked.
+    const services = defaultContent.services.map((s, i) =>
+      i === 1
+        ? {
+            ...s,
+            videos: [
+              ...launchVideos.map((v) => ({ ...v, featured: true })),
+              { title: "לא נבחר", youtubeId: "zzzzzzzzzzz", featured: false },
+            ],
+          }
+        : s,
+    );
+    const reversed = [...ids].reverse();
+    const content = assembleContent({
+      services,
+      "home.works": { ...text, title: "כותרת שנשמרה", order: reversed },
+    });
+    expect(content.home.works.title).toBe("כותרת שנשמרה");
+    expect(content.home.works.videos.map((v) => v.youtubeId)).toEqual(reversed);
+    expect(content.home.works.videos.some((v) => "featured" in v)).toBe(false);
+    // The services record itself still loads, its old marks dropped.
+    expect(validateDoc("services", services).success).toBe(true);
   });
 
   it("fills the WhatsApp message and drops lines left empty", () => {
@@ -318,7 +335,10 @@ describe("a record saved before the code gained a field", () => {
 
 describe("landing page ad pixels", () => {
   const launch = defaultContent.barMitzvahLanding;
-  const withAds = (ads: Partial<typeof launch.ads>) => ({ ...launch, ads: { ...launch.ads, ...ads } });
+  const withAds = (ads: Partial<typeof launch.ads>) => ({
+    ...launch,
+    ads: { ...launch.ads, ...ads },
+  });
 
   it("start switched off", () => {
     expect(adsEnabled(launch.ads)).toBe(false);
@@ -337,13 +357,15 @@ describe("landing page ad pixels", () => {
       googleAdsLabel: "AbC-D_efG-h12",
     });
     expect(validateDoc("barMitzvahLanding", ok).success).toBe(true);
-    expect(validateDoc("barMitzvahLanding", withAds({ metaPixelId: "fb-123" })).success).toBe(false);
+    expect(validateDoc("barMitzvahLanding", withAds({ metaPixelId: "fb-123" })).success).toBe(
+      false,
+    );
     expect(validateDoc("barMitzvahLanding", withAds({ googleAdsId: "123456789" })).success).toBe(
       false,
     );
-    expect(
-      validateDoc("barMitzvahLanding", withAds({ googleAdsLabel: "<script>" })).success,
-    ).toBe(false);
+    expect(validateDoc("barMitzvahLanding", withAds({ googleAdsLabel: "<script>" })).success).toBe(
+      false,
+    );
   });
 
   it("are filled in (switched off) for a record saved before they existed", () => {

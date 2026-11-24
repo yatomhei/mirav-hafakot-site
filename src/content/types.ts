@@ -18,8 +18,6 @@ export type Video = {
   title: string;
   youtubeId: string;
   thumb?: Photo;
-  /** Also shown in the homepage "selected works" carousel. */
-  featured?: boolean;
 };
 
 export type SiteSettings = {

@@ -376,6 +376,8 @@ type PhotoProps = {
   withRatio?: boolean;
   /** What the site shows when there is no photo (e.g. the YouTube cover). */
   fallback?: string;
+  /** What the site shows when there is no photo, drawn in the empty box with a note under it. */
+  empty?: { preview: ReactNode; note: string };
 };
 
 /** A photo: thumbnail, replace, the part to keep in view, and its description. */
@@ -388,6 +390,7 @@ export function PhotoInput({
   removable,
   withRatio,
   fallback,
+  empty,
 }: PhotoProps) {
   const { value: photo, set, backend } = useField<(Photo & { ratio?: number }) | undefined>(path);
   const { upload, busy, error } = useUpload(backend);
@@ -435,6 +438,16 @@ export function PhotoInput({
               style={{ aspectRatio: aspect }}
             />
             <p className="mt-1 text-[12.5px] leading-snug text-ink/65">התמונה מיוטיוב</p>
+          </>
+        ) : empty ? (
+          <>
+            <div
+              className="relative w-full overflow-hidden rounded-md"
+              style={{ aspectRatio: aspect }}
+            >
+              {empty.preview}
+            </div>
+            <p className="mt-1 text-[12.5px] leading-snug text-ink/65">{empty.note}</p>
           </>
         ) : (
           <div

@@ -9,13 +9,7 @@ import {
 } from "@/content/schema";
 import type { Faq, Service, StillPhoto, StripPhoto, Testimonial, Video } from "@/content/types";
 import { defaultContent } from "@/content/docs";
-import {
-  MAX_FEATURED_STILLS,
-  MAX_FEATURED_VIDEOS,
-  countFeaturedVideos,
-  featuredStills,
-  featuredVideos,
-} from "@/content/featured";
+import { MAX_FEATURED_STILLS, MAX_FEATURED_VIDEOS, featuredStills } from "@/content/featured";
 import { photoFile } from "@/lib/asset";
 import { useContent } from "@/content/context";
 import { ServiceSearchFields } from "./SearchFields";
@@ -77,23 +71,7 @@ function VideoFields({ path }: { path: string }) {
       />
       <Text path={`${path}.title`} label="שם הסרטון" />
       <YouTubeInput path={`${path}.youtubeId`} />
-      <FeaturedVideoToggle path={path} />
     </>
-  );
-}
-
-function FeaturedVideoToggle({ path }: { path: string }) {
-  const draft = useDraft();
-  const full = countFeaturedVideos(draft.services) >= MAX_FEATURED_VIDEOS;
-  return (
-    <FeatureToggle
-      path={`${path}.featured`}
-      label="הצגה בעבודות הנבחרות בדף הבית"
-      full={
-        full &&
-        `כבר נבחרו ${MAX_FEATURED_VIDEOS} סרטונים. כדי להוסיף את זה, מורידים קודם סימון מסרטון אחר`
-      }
-    />
   );
 }
 
@@ -313,7 +291,7 @@ function LinkedAwayNote({ path }: { path: string }) {
   return (
     <p className="admin-note">
       הכרטיס של השירות הזה מוביל ל־<span dir="ltr">{link}</span> (בלשונית 'שירותים'), ולכן העמוד
-      הרגיל לא מוצג באתר. סרטונים שמסומנים כאן ל'עבודות הנבחרות' עדיין מופיעים בדף הבית
+      הרגיל לא מוצג באתר, וגם לא הסרטונים שכאן. את הסרטונים בדף הבית עורכים בלשונית 'וידאו קליפים'
     </p>
   );
 }
@@ -376,28 +354,104 @@ function StripPhotoInput({ path, index }: { path: string; index: number }) {
 
 const ytCover = (id: string) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 
-/** וידאו קליפים: the order of the featured videos in the homepage carousel. */
-function WorksOrder() {
+/** Every video already on the site (service pages and the landing page), once each. */
+function siteVideos(draft: ReturnType<typeof useDraft>) {
+  const found: { video: Video; source: string }[] = [];
+  const seen = new Set<string>();
+  const add = (video: Video | undefined, source: string) => {
+    if (!video?.youtubeId || seen.has(video.youtubeId)) return;
+    seen.add(video.youtubeId);
+    found.push({ video, source });
+  };
+  const landing = draft.barMitzvahLanding;
+  const landingName = "דף הנחיתה: בר/בת מצווה";
+  add(landing.hero.video, landingName);
+  for (const v of landing.clips.items) add(v, landingName);
+  add(landing.story.video, landingName);
+  for (const s of draft.services) for (const v of s.videos) add(v, s.title || "שירות");
+  return found;
+}
+
+/**
+ * וידאו קליפים: the selected works, their own list. A video already on the site can be copied
+ * in (title, link and cover), so nothing has to be typed twice; the copy is then independent.
+ */
+function WorksVideos() {
   const draft = useDraft();
-  const { value: order, set } = useField<string[]>("order");
-  const videos = featuredVideos(draft.services, order ?? []);
-  const source = (id: string) =>
-    draft.services.find((s) => s.videos.some((v) => v.youtubeId === id))?.title;
+  const { value: videos, set } = useField<Video[]>("videos");
+  const list = videos ?? [];
+  const inList = new Set(list.map((v) => v.youtubeId));
+  const full = list.length >= MAX_FEATURED_VIDEOS;
+  const [open, setOpen] = useState(false);
+  const existing = siteVideos(draft);
+
   return (
-    <OrderList
-      aspect="16 / 10"
-      empty="עדיין לא נבחרו סרטונים. בוחרים אותם בלשונית 'עמודי שירות'."
-      onReorder={set}
-      items={videos.map((v) => {
-        const note = source(v.youtubeId);
-        return {
-          id: v.youtubeId,
-          src: v.thumb ? photoFile(v.thumb.name, 480) : ytCover(v.youtubeId),
-          title: v.title || "סרטון",
-          ...(note ? { note } : {}),
-        };
-      })}
-    />
+    <>
+      <List<Video>
+        path="videos"
+        itemTitle={(i, v) => `${i + 1}. ${v.title || "סרטון"}`}
+        grid
+        editable={{
+          min: 1,
+          max: MAX_FEATURED_VIDEOS,
+          create: newVideo,
+          addLabel: "הוספת סרטון חדש",
+        }}
+      >
+        {(p) => <VideoFields path={p} />}
+      </List>
+      <div className="rounded-lg border border-dashed border-ink/25 p-3">
+        <button
+          type="button"
+          className="admin-btn"
+          aria-expanded={open}
+          onClick={() => setOpen((o) => !o)}
+          disabled={full}
+        >
+          {open ? "סגירת הרשימה" : "הוספה מסרטון שכבר באתר"}
+        </button>
+        <p className="mt-2 text-[13px] leading-snug text-ink/65">
+          {full
+            ? `יש כבר ${MAX_FEATURED_VIDEOS} סרטונים. כדי להוסיף, מוחקים קודם סרטון מהרשימה`
+            : "מעתיק סרטון מעמודי השירות או מדף הנחיתה: השם, הקישור והכריכה. אחר כך אפשר לשנות אותו כאן בלי שישתנה שם"}
+        </p>
+        {open && !full && (
+          <ul className="m-0 mt-3 grid list-none grid-cols-2 gap-3 p-0 sm:grid-cols-3">
+            {existing.map(({ video, source }) => {
+              const added = inList.has(video.youtubeId);
+              return (
+                <li key={video.youtubeId}>
+                  <button
+                    type="button"
+                    disabled={added}
+                    onClick={() => {
+                      const { title, youtubeId, thumb } = video;
+                      set([...list, { title, youtubeId, ...(thumb ? { thumb } : {}) }]);
+                      if (list.length + 1 >= MAX_FEATURED_VIDEOS) setOpen(false);
+                    }}
+                    className="flex w-full cursor-pointer flex-col gap-1.5 rounded-lg border border-ink/12 bg-white p-2 text-start disabled:cursor-default disabled:opacity-55"
+                  >
+                    <img
+                      src={
+                        video.thumb ? photoFile(video.thumb.name, 480) : ytCover(video.youtubeId)
+                      }
+                      alt=""
+                      className="aspect-[16/10] w-full rounded-md bg-beige object-cover"
+                    />
+                    <span className="text-[13.5px] font-medium leading-snug text-ink">
+                      {video.title || "סרטון"}
+                    </span>
+                    <span className="text-[12px] leading-snug text-ink/60">
+                      {added ? "כבר ברשימה" : source}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+    </>
   );
 }
 
@@ -576,10 +630,10 @@ export const TABS: TabDef[] = [
               <Text path="lead" label="פסקה" multiline />
             </Card>
             <Card
-              title="סדר הסרטונים בדף הבית"
-              hint={`עד ${MAX_FEATURED_VIDEOS} סרטונים בקרוסלה. בוחרים אותם בלשונית 'עמודי שירות', בסימון 'הצגה בעבודות הנבחרות' שליד כל סרטון. כאן קובעים רק את הסדר`}
+              title="הסרטונים בקרוסלה"
+              hint={`עד ${MAX_FEATURED_VIDEOS} סרטונים, בסדר שבו הם מופיעים בדף הבית: החיצים משנים את הסדר. מוסיפים סרטון חדש עם קישור מיוטיוב, או מעתיקים סרטון שכבר מופיע בעמודי השירות או בדף הנחיתה. ${CONSENT}`}
             >
-              <WorksOrder />
+              <WorksVideos />
             </Card>
           </>
         ),
@@ -679,6 +733,15 @@ export const TABS: TabDef[] = [
                     aspect="16 / 9"
                     decorative
                     removable="הסרת התמונה"
+                    empty={{
+                      // The card's own colours on the site: beige under the dark olive veil.
+                      preview: (
+                        <span aria-hidden="true" className="svc-card absolute inset-0 bg-beige">
+                          <span className="svc-veil absolute inset-0" />
+                        </span>
+                      ),
+                      note: "בלי תמונה: הכרטיס באתר בצבע ירוק, כמו הכרטיס האחרון",
+                    }}
                   />
                   <Text path={`${p}.title`} label="שם השירות" />
                   <Text path={`${p}.meta`} label="שורה קטנה מתחת לשם" />
