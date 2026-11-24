@@ -30,9 +30,18 @@ export function LegalPage({
 }
 
 /** One section: a heading and its paragraphs or list. */
-export function LegalSection({ title, children }: { title: string; children: ReactNode }) {
+export function LegalSection({
+  title,
+  id,
+  children,
+}: {
+  title: string;
+  /** An anchor, for links straight to this section. */
+  id?: string;
+  children: ReactNode;
+}) {
   return (
-    <section>
+    <section {...(id ? { id } : {})}>
       <h2 className="mb-3 text-[clamp(20px,1.8vw,24px)] font-medium leading-snug">{title}</h2>
       <div className="flex flex-col gap-3 text-[17px] leading-[1.75] font-light">{children}</div>
     </section>

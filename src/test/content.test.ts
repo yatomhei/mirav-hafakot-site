@@ -3,6 +3,7 @@ import { serviceLinkProblem } from "@/content/schema";
 import { sitemapPaths } from "@/lib/sitemap";
 import { featuredStills, featuredVideos } from "@/content/featured";
 import { DEFAULT_MESSAGE_TEMPLATE, fillMessage } from "@/content/whatsapp-message";
+import { adsEnabled } from "@/lib/ads";
 import { describe, expect, it } from "vitest";
 import { DOC_KEYS, assembleContent, defaultContent, getDoc, validateDoc } from "@/content/docs";
 
@@ -312,5 +313,41 @@ describe("a record saved before the code gained a field", () => {
     const saved = { ...launch, hero: { ...launch.hero, video } };
     const page = assembleContent({ barMitzvahLanding: saved }).barMitzvahLanding;
     expect(page.hero.video.thumb).toBeUndefined();
+  });
+});
+
+describe("landing page ad pixels", () => {
+  const launch = defaultContent.barMitzvahLanding;
+  const withAds = (ads: Partial<typeof launch.ads>) => ({ ...launch, ads: { ...launch.ads, ...ads } });
+
+  it("start switched off", () => {
+    expect(adsEnabled(launch.ads)).toBe(false);
+  });
+
+  it("switch on with either platform's ID", () => {
+    expect(adsEnabled({ ...launch.ads, metaPixelId: "123456789012345" })).toBe(true);
+    expect(adsEnabled({ ...launch.ads, googleAdsId: "AW-123456789" })).toBe(true);
+    expect(adsEnabled({ ...launch.ads, metaPixelId: "   " })).toBe(false);
+  });
+
+  it("accept real-looking IDs and reject mistakes", () => {
+    const ok = withAds({
+      metaPixelId: "123456789012345",
+      googleAdsId: "AW-123456789",
+      googleAdsLabel: "AbC-D_efG-h12",
+    });
+    expect(validateDoc("barMitzvahLanding", ok).success).toBe(true);
+    expect(validateDoc("barMitzvahLanding", withAds({ metaPixelId: "fb-123" })).success).toBe(false);
+    expect(validateDoc("barMitzvahLanding", withAds({ googleAdsId: "123456789" })).success).toBe(
+      false,
+    );
+    expect(
+      validateDoc("barMitzvahLanding", withAds({ googleAdsLabel: "<script>" })).success,
+    ).toBe(false);
+  });
+
+  it("are filled in (switched off) for a record saved before they existed", () => {
+    const { ads: _ads, ...older } = launch;
+    expect(assembleContent({ barMitzvahLanding: older }).barMitzvahLanding.ads).toEqual(launch.ads);
   });
 });

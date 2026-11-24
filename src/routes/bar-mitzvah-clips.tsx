@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { AdsConsent } from "@/components/landing/AdsConsent";
 import { BarMitzvahLanding, LandingFooter } from "@/components/landing/BarMitzvahLanding";
 import { VideoPlayerProvider } from "@/components/ui/VideoPlayer";
+import { useContent } from "@/content/context";
 import type { SiteContent } from "@/content/docs";
 import { photoFile } from "@/lib/asset";
 import { absImage, pageAddress } from "@/lib/seo";
@@ -36,6 +38,7 @@ export const Route = createFileRoute("/bar-mitzvah-clips")({
 });
 
 function LandingRoute() {
+  const { ads } = useContent().barMitzvahLanding;
   return (
     <VideoPlayerProvider>
       <a href="#main" className="skip-link">
@@ -45,6 +48,7 @@ function LandingRoute() {
         <BarMitzvahLanding />
       </main>
       <LandingFooter />
+      <AdsConsent ids={ads} />
     </VideoPlayerProvider>
   );
 }

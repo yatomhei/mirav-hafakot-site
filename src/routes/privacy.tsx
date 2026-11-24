@@ -1,15 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { LegalList, LegalPage, LegalSection } from "@/components/legal/LegalPage";
-import { useSite } from "@/content/context";
+import { useContent, useSite } from "@/content/context";
 import type { SiteContent } from "@/content/docs";
 import { legal } from "@/content/legal";
+import { adsEnabled } from "@/lib/ads";
 import { mailHref, telHref } from "@/lib/contact";
 import { pageAddress } from "@/lib/seo";
 
 // The privacy policy. Every statement here describes how this site actually works: the form
 // builds a WhatsApp message on the visitor's device and sends nothing to the site's server;
-// there are no visitor cookies, analytics or ads; the font and video thumbnails are served
-// from the site; YouTube loads only when a video is played. Change it with the code.
+// there are no visitor cookies, analytics or ads (except the landing page's ad pixels, and only
+// while the admin has a pixel ID set: section 4 then says so); the font and video thumbnails
+// are served from the site; YouTube loads only when a video is played. Change it with the code.
 export const Route = createFileRoute("/privacy")({
   head: ({ matches }) => {
     const content = matches[0]?.loaderData as SiteContent | undefined;
@@ -32,6 +34,13 @@ export const Route = createFileRoute("/privacy")({
 
 function PrivacyPage() {
   const site = useSite();
+  const { ads } = useContent().barMitzvahLanding;
+  const pixels = adsEnabled(ads);
+  const meta = Boolean(ads.metaPixelId.trim());
+  const google = Boolean(ads.googleAdsId.trim());
+  const platforms = [meta && "Meta (פייסבוק ואינסטגרם)", google && "Google Ads"]
+    .filter(Boolean)
+    .join(" ו־");
   const phone = (
     <a href={telHref(site)} className="underline underline-offset-4" dir="ltr">
       {site.phone}
@@ -84,11 +93,36 @@ function PrivacyPage() {
         </p>
       </LegalSection>
 
-      <LegalSection title="4. עוגיות, אנליטיקה ופרסום">
-        <p>
-          האתר לא שומר עוגיות אצל הגולשים, ולא משתמש בכלי אנליטיקה, בפיקסלים או בפרסום ממוקד. הגופן
-          ותמונות האתר נטענים מהאתר עצמו.
-        </p>
+      <LegalSection id="cookies" title="4. עוגיות, אנליטיקה ופרסום">
+        {pixels ? (
+          <>
+            <p>
+              האתר לא משתמש בכלי אנליטיקה. רוב דפי האתר לא שומרים עוגיות אצל הגולשים. הגופן ותמונות
+              האתר נטענים מהאתר עצמו.
+            </p>
+            <p>
+              היוצא מן הכלל הוא דף הקליפים לבר ובת מצווה (
+              <Link to="/bar-mitzvah-clips" className="underline underline-offset-4">
+                <span dir="ltr">/bar-mitzvah-clips</span>
+              </Link>
+              ), שאליו מגיעים גם ממודעות. בדף הזה, ורק אם אישרתם בהודעה שמופיעה בו, נטען הפיקסל של{" "}
+              {platforms}. הפיקסל שומר עוגיות בדפדפן שלכם ושולח לחברה פרטים על הביקור: הדף, הדפדפן
+              והמכשיר, כתובת ה־IP, ואם שלחתם את הטופס או לחצתם על וואטסאפ או על הטלפון. תוכן הטופס
+              עצמו, השם והטלפון, לא נשלח.
+            </p>
+            <p>
+              המטרה: לדעת אילו מודעות מביאות פניות, ולהציג מודעות לאנשים שביקרו בדף. החברה עשויה לקשר
+              את הביקור לחשבון שלכם אצלה, לפי מדיניות הפרטיות שלה. בלי אישור הפיקסל לא נטען, ואפשר
+              להשתמש בדף כרגיל. הבחירה נשמרת בדפדפן שלכם, ואפשר לשנות אותה בכל עת בקישור "הגדרות
+              עוגיות" בתחתית אותו דף. ביטול האישור מוחק את עוגיות הפיקסל מהדפדפן.
+            </p>
+          </>
+        ) : (
+          <p>
+            האתר לא שומר עוגיות אצל הגולשים, ולא משתמש בכלי אנליטיקה, בפיקסלים או בפרסום ממוקד.
+            הגופן ותמונות האתר נטענים מהאתר עצמו.
+          </p>
+        )}
         <p>
           כמו בכל אתר, שרתי האחסון מקבלים את כתובת ה־IP ופרטים טכניים על הדפדפן, כדי להציג את האתר
           ולהגן עליו מפני שימוש לרעה.
@@ -109,6 +143,17 @@ function PrivacyPage() {
           <li>Cloudflare: אחסון האתר והגנה עליו. מקבלת נתונים טכניים, כמו כתובת IP.</li>
           <li>WhatsApp (Meta): העברת ההודעה ששלחתם מהטופס או ישירות.</li>
           <li>Google: מייל (Gmail) כשפונים אליי במייל, ונגן YouTube כשמפעילים סרטון.</li>
+          {meta && (
+            <li>
+              Meta: הפיקסל בדף הקליפים לבר ובת מצווה, רק אם אישרתם. מקבלת את פרטי הביקור שבסעיף 4.
+            </li>
+          )}
+          {google && (
+            <li>
+              Google Ads: התג בדף הקליפים לבר ובת מצווה, רק אם אישרתם. מקבלת את פרטי הביקור שבסעיף
+              4.
+            </li>
+          )}
         </LegalList>
         <p>
           החברות האלה פועלות מחוץ לישראל, והמידע עשוי להישמר בשרתים שלהן בחו״ל, לפי התנאים ואמצעי

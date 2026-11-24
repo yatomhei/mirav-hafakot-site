@@ -167,6 +167,18 @@ export const barMitzvahLanding = {
     /** Goes into the WhatsApp message as the subject ({נושא} in the contact tab's message). */
     interest: "קליפ לבר/בת מצווה",
   },
+  /**
+   * Ad measurement, off until Merav enters an ID from her ad account. With an ID set, the page
+   * asks visitors for consent, and loads that platform's pixel only for those who agree.
+   */
+  ads: {
+    /** Meta (Facebook / Instagram) pixel ID: digits only. */
+    metaPixelId: "",
+    /** Google Ads tag ID, for example AW-123456789. */
+    googleAdsId: "",
+    /** The Google Ads conversion label for a contact (the part after the slash). */
+    googleAdsLabel: "",
+  },
   /** The page's footer: a last invitation, then the logo and contact details. */
   footer: {
     title: "יש לכם שאלות או רעיון לקליפ? בואו נדבר!",

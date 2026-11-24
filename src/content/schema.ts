@@ -66,6 +66,10 @@ export function serviceLinkProblem(link: string): string | null {
 }
 
 export const YOUTUBE_ID = /^[\w-]{11}$/;
+/** Ad platform IDs (the landing page's pixels). */
+export const META_PIXEL_ID = /^\d{8,20}$/;
+export const GOOGLE_ADS_ID = /^AW-\d{6,15}$/;
+export const GOOGLE_ADS_LABEL = /^[\w-]{4,60}$/;
 const videoSchema = z.object({
   title: text,
   youtubeId: z.string().regex(YOUTUBE_ID),
@@ -337,6 +341,23 @@ export const docSchemas = {
       text: z.array(longText.min(1)).max(4),
       submit: text.min(1, "חסר טקסט לכפתור"),
       interest: text,
+    }),
+    ads: z.object({
+      metaPixelId: z
+        .string()
+        .trim()
+        .regex(META_PIXEL_ID, "מזהה פיקסל של Meta הוא מספר בלבד (בדרך כלל 15-16 ספרות)")
+        .or(z.literal("")),
+      googleAdsId: z
+        .string()
+        .trim()
+        .regex(GOOGLE_ADS_ID, "מזהה Google Ads נראה כך: AW-123456789")
+        .or(z.literal("")),
+      googleAdsLabel: z
+        .string()
+        .trim()
+        .regex(GOOGLE_ADS_LABEL, "תווית ההמרה היא אותיות, ספרות, מקף וקו תחתון בלבד")
+        .or(z.literal("")),
     }),
     footer: z.object({
       title: text,

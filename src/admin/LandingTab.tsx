@@ -275,6 +275,38 @@ export function BarMitzvahLandingFields() {
       </Card>
 
       <Card
+        title="מדידת פרסום (פיקסלים)"
+        hint="כל עוד השדות ריקים, הדף לא שומר עוגיות ולא מציג הודעה עליהן. כשממלאים מזהה ושומרים, הדף מבקש מהגולשים הסכמה, וטוען את הפיקסל רק למי שאישר. מחיקת המזהה ושמירה מכבות הכול"
+      >
+        <Text
+          path="ads.metaPixelId"
+          label="מזהה הפיקסל של Meta (פייסבוק ואינסטגרם)"
+          hint="מספר בלבד. נמצא ב־Meta Events Manager, תחת מקורות הנתונים"
+          placeholder="123456789012345"
+          inputMode="numeric"
+          ltr
+        />
+        <Text
+          path="ads.googleAdsId"
+          label="מזהה התג של Google Ads"
+          hint="מתחיל ב־AW-. נמצא ב־Google Ads, בהגדרת ההמרה, תחת 'התקנת התג'"
+          placeholder="AW-123456789"
+          ltr
+        />
+        <Text
+          path="ads.googleAdsLabel"
+          label="תווית ההמרה של Google Ads"
+          hint="מה שמופיע אחרי הלוכסן ב־send_to. בלי תווית, Google רק סופרת ביקורים ולא פניות"
+          placeholder="AbC-D_efG-h12_34-567"
+          ltr
+        />
+        <p className="admin-note">
+          פנייה נספרת כשגולש שולח את הטופס או לוחץ על כפתור הוואטסאפ, ואצל Meta גם כשלוחצים על מספר
+          הטלפון. הפיקסלים פועלים רק בדף הזה, לא בשאר האתר. מדיניות הפרטיות מתעדכנת לבד כשיש מזהה.
+        </p>
+      </Card>
+
+      <Card
         title="תחתית הדף"
         hint="הזמנה אחרונה ליצור קשר, ומתחתיה הלוגו, המייל והטלפון (מלשונית 'פרטים והגדרות')"
       >

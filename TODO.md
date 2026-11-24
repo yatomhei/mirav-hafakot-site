@@ -42,18 +42,25 @@ no other changes.
   - **Google:** its own title and description are done (admin tab). Once the service leads to
     it, the sitemap lists it automatically. Still to do: move the service's structured data
     (JSON-LD) from the service page to this page.
-  - **Ads and tracking:** build the consent banner in, ready for ads (decided 2026-11-22).
+  - **Ads and tracking:** built (2026-11-24), switched off until a pixel ID is entered.
     **Merav will advertise this page** (confirmed 2026-11-23). Ask her on which platforms
-    (Facebook / Instagram, Google, both); she'll get the pixel IDs from her ad accounts once they
-    exist and enter them in the admin herself.
-    - Off while no pixel ID is set (no banner, no cookies). Saving a pixel ID (Meta, Google Ads
-      ID and label) in the admin settings turns on the banner and the pixel; the pixel loads
-      only after the visitor approves, declining leaves the page working, the choice is
-      remembered. Clearing the ID turns both off.
-    - Pixel and banner on the landing page only; the rest of the site stays without tracking.
-    - The privacy policy's pixel section is written now, reviewed by the lawyer with the rest,
-      and shown only while a pixel ID is set.
-    - The landing page's content policy allows Meta's and Google's addresses from the start.
+    (Facebook / Instagram, Google, both); she gets the IDs from her ad accounts and enters them
+    in the landing page tab, card "מדידת פרסום (פיקסלים)" (Meta pixel ID, Google Ads ID and
+    conversion label).
+    - With an ID saved, the landing page shows a consent banner; the pixel loads only after
+      "מאשרים", "לא, תודה" leaves the page working, the choice is kept in the browser, and
+      "הגדרות עוגיות" in the page's footer changes it (taking it back clears the pixel's
+      cookies). Clearing the IDs turns everything off.
+    - Leads: the form and the WhatsApp button send Meta's "Lead" and the Google Ads conversion;
+      a tap on the phone sends Meta's "Contact". The form's contents are never sent.
+    - Pixel and banner on the landing page only (Meta's page-view tracking on navigation is
+      off, so the rest of the site isn't tracked). The content policy allows Meta's and
+      Google's addresses on every page (a visitor arriving through a link keeps the first
+      page's policy).
+    - The privacy policy's section 4 and service list change by themselves while an ID is set.
+      For the lawyer: review that text with the rest.
+    - Once IDs are in: check on the live site that the banner shows, and that Meta's Events
+      Manager and Google Ads see the page view and a test lead.
     - Only a new platform (for example TikTok) needs code.
 - **Check it like the rest of the site:** the four checkers (QA, security, legal and
   accessibility, SEO), plus the sitemap and structured data.

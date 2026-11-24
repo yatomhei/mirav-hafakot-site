@@ -17,6 +17,7 @@ import { isPlaceholder, useContactLinks } from "@/lib/contact";
 import { BrokenLines } from "@/components/ui/BrokenLines";
 import { Picture, VideoThumb } from "@/components/ui/Picture";
 import { useVideoLink } from "@/components/ui/VideoPlayer";
+import { adsEnabled, reopenConsent, trackCall, trackLead } from "@/lib/ads";
 import { FINALE_ICON, MaskIcon, stepIcon } from "./step-icons";
 import { Facebook, Instagram, Phone, TikTok, WhatsApp, YouTube } from "@/components/ui/icons";
 
@@ -947,6 +948,7 @@ function Contact() {
       message: "",
     });
     const href = links.whatsapp(text);
+    trackLead();
     const win = window.open(href, "_blank");
     if (win) win.opener = null;
     setFallback(win ? "" : href);
@@ -1071,7 +1073,7 @@ function FooterTitle({ text }: { text: string }) {
 }
 
 export function LandingFooter() {
-  const { footer } = useLanding();
+  const { footer, ads } = useLanding();
   const { site, tel, mail, whatsapp } = useContactLinks();
   const socials = [
     { label: "יוטיוב", href: site.youtubeUrl, Icon: YouTube },
@@ -1098,6 +1100,7 @@ export function LandingFooter() {
               href={whatsapp()}
               target="_blank"
               rel="noopener"
+              onClick={trackLead}
               className="btn btn-primary lp-btn !min-h-[60px] !px-9 !text-[18px]"
             >
               <WhatsApp size={22} />
@@ -1109,6 +1112,7 @@ export function LandingFooter() {
                 {footer.call}{" "}
                 <a
                   href={tel}
+                  onClick={trackCall}
                   className="lp-link font-medium text-ink no-underline max-[640px]:mt-1 max-[640px]:block"
                 >
                   <span dir="ltr">{site.phone}</span>
@@ -1141,7 +1145,7 @@ export function LandingFooter() {
             </a>
           )}
           {hasPhone && (
-            <a href={tel} className={CONTACT_LINK}>
+            <a href={tel} onClick={trackCall} className={CONTACT_LINK}>
               <Phone size={18} />
               <span dir="ltr">{site.phone}</span>
             </a>
@@ -1174,6 +1178,18 @@ export function LandingFooter() {
         <Link to="/accessibility" className="text-inherit underline-offset-4 hover:underline">
           הצהרת נגישות
         </Link>
+        {adsEnabled(ads) && (
+          <>
+            {" · "}
+            <button
+              type="button"
+              onClick={reopenConsent}
+              className="cursor-pointer border-0 bg-transparent p-0 text-inherit underline-offset-4 hover:underline"
+            >
+              הגדרות עוגיות
+            </button>
+          </>
+        )}
       </p>
     </footer>
   );
