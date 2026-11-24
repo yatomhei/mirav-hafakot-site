@@ -45,7 +45,7 @@ no other changes.
   - **Ads and tracking:** built (2026-11-24), switched off until a pixel ID is entered.
     **Merav will advertise this page** (confirmed 2026-11-23). Ask her on which platforms
     (Facebook / Instagram, Google, both); she gets the IDs from her ad accounts and enters them
-    in the landing page tab, card "מדידת פרסום (פיקסלים)" (Meta pixel ID, Google Ads ID and
+    in the landing page tab, card "הודעת העוגיות ופיקסלי הפרסום" (Meta pixel ID, Google Ads ID and
     conversion label).
     - With an ID saved, the landing page shows a consent banner; the pixel loads only after
       "מאשרים", "לא, תודה" leaves the page working, the choice is kept in the browser, and
