@@ -1,18 +1,21 @@
 import { Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { DOC_KEYS, getDoc, type SiteContent } from "@/content/docs";
+import { DOC_KEYS, defaultContent, getDoc, type SiteContent } from "@/content/docs";
 import type { DocKey } from "@/content/schema";
 import { photoFile } from "@/lib/asset";
 import type { AdminBackend } from "./backend";
 import { photosIn } from "./PhotoLibrary";
 import { TABS } from "./tabs";
 
-// The "תמונות שהועלו" tab: every photo uploaded in the admin, where each one is used, and a
-// way to delete the ones the site no longer uses. The site's own original photos aren't
-// listed: they're part of the code. A photo the saved content or the unsaved draft uses can't
-// be deleted; the server checks the saved content again before deleting.
+// The "תמונות שהועלו" tab: the same photos as the photo library (every upload in storage,
+// then the site's original photos), where each one is used, and a way to delete uploads the
+// site no longer uses. Original photos are part of the code, so they can't be deleted. A photo
+// the saved content or the unsaved draft uses can't be deleted; the server checks the saved
+// content again before deleting.
 
 type Stored = { name: string; uploaded: number };
+/** `uploaded` is set for a photo in storage (an upload that can be deleted). */
+type Row = { name: string; uploaded?: number };
 
 /** The admin tab that edits a section, for "used in". */
 const tabOf = (key: DocKey) => TABS.find((t) => t.docs.some((d) => d.key === key))?.label ?? key;
@@ -63,11 +66,26 @@ export function UploadsPanel({
   const where = useMemo(() => usage(saved, draft), [saved, draft]);
   // A photo's description, from wherever it's used (or was, in the saved content).
   const alts = useMemo(() => photosIn(draft, photosIn(saved)), [saved, draft]);
-  const all = stored ?? [];
-  const unusedCount = all.filter((p) => !where.has(p.name)).length;
+  // Storage first (newest first), then photos the content names that aren't in storage: the
+  // originals, in the content and the launch content (as the photo library lists them).
+  const all = useMemo<Row[]>(() => {
+    if (!stored) return [];
+    const seen = new Set(stored.map((p) => p.name));
+    const rest: Row[] = [];
+    for (const content of [draft, saved, defaultContent]) {
+      for (const name of photosIn(content).keys()) {
+        if (seen.has(name)) continue;
+        seen.add(name);
+        rest.push({ name });
+      }
+    }
+    return [...stored, ...rest];
+  }, [stored, draft, saved]);
+  const uploadsCount = stored?.length ?? 0;
+  const unusedCount = (stored ?? []).filter((p) => !where.has(p.name)).length;
   const shown = all.filter((p) => !onlyUnused || !where.has(p.name));
 
-  async function remove(photo: Stored) {
+  async function remove(photo: Row) {
     if (
       !window.confirm(
         "למחוק את התמונה מהאחסון לצמיתות? אי אפשר לשחזר אותה אחר כך, ואם תצטרכו אותה שוב צריך להעלות אותה מחדש.",
@@ -90,9 +108,10 @@ export function UploadsPanel({
     <section className="rounded-xl border border-ink/12 bg-white p-4 sm:p-6">
       <h2 className="text-[18px] font-medium">תמונות שהועלו</h2>
       <p className="mt-1 text-[13.5px] leading-snug text-ink/65">
-        כל התמונות שהועלו בממשק הניהול, החדשות ראשונות. תמונה שהוסרה מהאתר נשארת כאן, ואפשר להחזיר
-        אותה בכפתור 'בחירה מתמונות שהועלו' שליד כל העלאה. תמונה שלא בשימוש אפשר למחוק לצמיתות.
-        התמונות המקוריות של האתר לא מופיעות כאן.
+        אותן תמונות שמופיעות ב'בחירה מתמונות שהועלו': קודם מה שהועלה בממשק הניהול (החדשות ראשונות),
+        ואחריהן התמונות המקוריות של האתר. תמונה שהוסרה מהאתר נשארת כאן, ואפשר להחזיר אותה בכפתור
+        'בחירה מתמונות שהועלו' שליד כל העלאה. תמונה שהועלתה ולא בשימוש אפשר למחוק לצמיתות. תמונות
+        מקוריות הן חלק מקוד האתר, ולכן אי אפשר למחוק אותן.
       </p>
 
       <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
@@ -107,7 +126,7 @@ export function UploadsPanel({
         </label>
         {stored && (
           <span className="text-[13.5px] text-ink/65">
-            {all.length} תמונות, {unusedCount} מהן לא בשימוש
+            {all.length} תמונות: {uploadsCount} שהועלו ({unusedCount} מהן לא בשימוש), והשאר מקוריות
           </span>
         )}
       </div>
@@ -146,9 +165,13 @@ export function UploadsPanel({
                 <span className="text-[12px] leading-snug text-ink/60">
                   {tabs ? `בשימוש: ${[...tabs].join(", ")}` : "לא בשימוש"}
                   {" · "}
-                  הועלתה ב־{dateOf(photo.uploaded)}
+                  {photo.uploaded !== undefined
+                    ? `הועלתה ב־${dateOf(photo.uploaded)}`
+                    : photo.name.startsWith("/")
+                      ? "לא נמצאה באחסון"
+                      : "תמונה מקורית של האתר"}
                 </span>
-                {!tabs && (
+                {!tabs && photo.uploaded !== undefined && (
                   <button
                     type="button"
                     className="admin-btn mt-auto self-start !text-red-700"
