@@ -1,10 +1,10 @@
 # To-do
 
-What's still open, grouped by what each item waits on. Updated 2026-11-23.
+What's still open, grouped by what each item waits on. Updated 2026-11-24.
 
 The site is live on https://hafakathamerav.co.il (kept out of Google until launch). Content is
 edited only on the live admin; code goes through GitHub (work on `admin`, merging into `main`
-publishes in about 2 minutes, so merge only with Yatom's go-ahead). How it's set up is at the
+publishes in about 2 minutes, so merge only with Heidi's go-ahead). How it's set up is at the
 end of this file.
 
 ## Now
@@ -17,8 +17,8 @@ Version 2 is designed on its own canvas (https://claude.ai/artifact/Face9DiaM57e
 design source for the build. Ortal's comments (2026-11-23): add motion effects to some elements,
 no other changes.
 
-- ~~**Build it into the site's code**~~ Built 2026-11-23, reviewed and adjusted by Heidi the same
-  day (committed on `admin`, not yet deployed): `/bar-mitzvah-clips`
+- ~~**Build it into the site's code**~~ Built 2026-11-23, reviewed and adjusted by Heidi, live
+  since 2026-11-24: `/bar-mitzvah-clips`
   (`src/routes/bar-mitzvah-clips.tsx`, `src/components/landing/`), standalone with its own footer
   (a WhatsApp call to action, the logo linking to the home page, email and phone). The clips play
   in the site's in-page player; the form opens a WhatsApp message like the site's (subject
@@ -35,13 +35,12 @@ no other changes.
     survive code changes.
   - **Open in the content:** the 6th clip's title is still "[שם הקליפ]", and the testimonial's
     name "[שם המשפחה]" (or hide the testimonials until real ones exist).
-  - **Address `/bar-mitzvah-clips`** (decided 2026-11-23). After Ortal's review: in the admin
-    (שירותים > the bar/bat mitzvah card) choose "דף אחר" and type `/bar-mitzvah-clips`: the
-    homepage card, footer and "more services" lead there, and `/services/bar-bat-mitzvah`
-    forwards to it (301).
-  - **Google:** its own title and description are done (admin tab). Once the service leads to
-    it, the sitemap lists it automatically. Still to do: move the service's structured data
-    (JSON-LD) from the service page to this page.
+  - ~~**Address `/bar-mitzvah-clips`**~~ Done: the bar/bat mitzvah card is set to "דף אחר"
+    `/bar-mitzvah-clips`, so the homepage card, footer and "more services" lead there, and
+    `/services/bar-bat-mitzvah` forwards to it (301).
+  - **Google:** its own title and description are done (admin tab), and since the service leads
+    to it, the sitemap will list it once the site is indexable. Still to do: move the service's
+    structured data (JSON-LD) from the service page to this page.
   - **Ads and tracking:** built (2026-11-24), switched off until a pixel ID is entered.
     **Merav will advertise this page** (confirmed 2026-11-23). Ask her on which platforms
     (Facebook / Instagram, Google, both); she gets the IDs from her ad accounts and enters them
@@ -105,7 +104,7 @@ services in `src/content/seo-pages.ts`) come from a first keyword plan, not from
 - Whether the music in her clips is licensed.
 - Accepting the Google Cloud owner invitation; switching the support email to hers.
 - At launch, her own task: a Google Business profile, from her Google account, as a
-  service-area business with the address hidden (areas only), linking to the site. Yatom can
+  service-area business with the address hidden (areas only), linking to the site. Heidi can
   send her a short how-to; she does the sign-up and Google's verification herself.
 
 ## Before launch
@@ -133,14 +132,14 @@ services in `src/content/seo-pages.ts`) come from a first keyword plan, not from
       (301). With an `https://` address, the service is left out. Switch back to "עמוד השירות"
       and save.
    4. If the sitemap didn't change, look for caching (Cloudflare, or the Worker) first.
-5. **Search Console** (already verified, Yatom's account, Merav is Owner): Sitemaps → submit
+5. **Search Console** (already verified, Heidi's account, Merav is Owner): Sitemaps → submit
    `sitemap.xml`; URL inspection → homepage → Request indexing. Optional: Bing Webmaster Tools,
    imported from Search Console in one click. After a few weeks, Performance shows the real
    searches (feeds the second keyword round).
 
 ## Handover to Merav
 
-When the site is launched, Yatom sends Merav one email (keep a copy) with everything she owns
+When the site is launched, Heidi sends Merav one email (keep a copy) with everything she owns
 and how to reach it:
 
 - **The site:** https://hafakathamerav.co.il
@@ -165,7 +164,8 @@ and how to reach it:
   - **Hide rather than delete** when a service pauses (a season, a break): hiding keeps
     everything and it comes back with one click. Delete only when it's gone for good.
   - **Deleting:** the card, the page, its videos and photos are gone after saving, and the old
-    address shows "not found". A video marked for the homepage disappears from there too.
+    address shows "not found". The homepage's selected videos and stills mosaic are their own
+    lists, so they aren't affected.
   - **Reusing an old address:** fine for an address that was never shown. For one that was live,
     only for a closely related service: old links and Google results will lead to it.
   - **Renaming:** only to reword the same service (for example "סרטי תדמית" to "סרטי תדמית
@@ -186,8 +186,8 @@ and how to reach it:
 - **Her hero video:** the requirements (MP4, up to 8MB, a 6-15 second loop, 1080p landscape, no
   sound, calm framing with the key part in the middle), and where to upload it in the admin.
 - **Cloudflare** (dash.cloudflare.com): hosting, DNS, storage. Her login, and a reminder that
-  two-factor authentication is on and Yatom is a Super Administrator there. **The card on file
-  is Yatom's** (added 2026-11-23 to switch on R2 storage, free tier): ask her to replace it with
+  two-factor authentication is on and Heidi is a Super Administrator there. **The card on file
+  is Heidi's** (added 2026-11-23 to switch on R2 storage, free tier): ask her to replace it with
   her own under Manage Account → Billing → Payment info. The site and stored files aren't
   affected.
 - **mynames.co.il:** the domain registrar. Her login, the renewal date (22 November 2027,
@@ -199,7 +199,7 @@ and how to reach it:
 - **GitHub:** where the site's code lives, and who owns the repository.
 - **Google Business profile** (if she made it) and **Meta Business / Google Ads** (if she
   advertises): where the pixel IDs go in the admin.
-- **Who to call:** Yatom's contact details for changes and problems, and what's included.
+- **Who to call:** Heidi's contact details for changes and problems, and what's included.
 
 **Logins, not in the email body:** don't put passwords in plain email (anyone who gets into her
 inbox gets everything). Share them through a password manager (for example a shared Bitwarden
@@ -221,7 +221,7 @@ offered (Google, mynames).
 
 ## How the live site is set up (reference)
 
-- **Cloudflare, Merav's account** (both Merav and Yatom are Super Administrators, 2FA required):
+- **Cloudflare, Merav's account** (both Merav and Heidi are Super Administrators, 2FA required):
   Worker `mirav-hafakot-site` builds `main` from GitHub (`npm run build`, `npx wrangler deploy`,
   preview builds off). D1 `mirav-content` (saved sections, added admins) and R2 `mirav-uploads`
   (photos and videos, served at `/uploads/<name>`), both region EEUR. Settings in
@@ -230,13 +230,13 @@ offered (Google, mynames).
 - **Secrets** (Worker → Settings → Variables and Secrets): `GOOGLE_CLIENT_ID`,
   `GOOGLE_CLIENT_SECRET`, `ADMIN_EMAILS`, `ADMIN_SESSION_SECRET` (its value is kept in
   `.local-content/live-admin-session-secret.txt`, git-ignored).
-- **Domain:** `hafakathamerav.co.il` (owner Merav Verner, Yatom as technical contact, renews 22
+- **Domain:** `hafakathamerav.co.il` (owner Merav Verner, Heidi as technical contact, renews 22
   November 2027), nameservers at mynames point to Cloudflare. `www` is a proxied AAAA `100::`
   record plus the "Redirect from WWW to root" rule (301); "Always Use HTTPS" is on. The Google
   verification TXT record must never be deleted.
 - **Google sign-in:** OAuth client in the "Merav hafakot admin" project, redirect URIs for
   localhost and `https://hafakathamerav.co.il/admin/auth/callback`; the app is published.
-- **Wrangler** on Yatom's computer is signed in with access to Merav's account only.
+- **Wrangler** on Heidi's computer is signed in with access to Merav's account only.
 - **Changing the admin later:** adding a field or section is safe (saved content gets the code's
   defaults); renaming or removing one needs a step that carries saved content over.
 - `scripts/copy-content-to-cloudflare.mjs` did the one-time copy of local content into D1
