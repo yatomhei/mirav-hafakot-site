@@ -179,8 +179,9 @@ and how to reach it:
     before editing if a tab was left open.
   - **Testimonials:** the section can be hidden (and shown again) in the "המלצות" tab, for
     example until she has real ones. Only real testimonials, with the client's permission.
-  - **A photo removed and saved** can't be brought back in the admin: upload it again, or ask
-    Yatom to restore it from storage.
+  - **Photos already uploaded** can be used again anywhere without uploading twice: "בחירה
+    מתמונות שהועלו" next to every upload button. A photo removed from the site stays there, so
+    it can be brought back the same way.
 - **Her hero video:** the requirements (MP4, up to 8MB, a 6-15 second loop, 1080p landscape, no
   sound, calm framing with the key part in the middle), and where to upload it in the admin.
 - **Cloudflare** (dash.cloudflare.com): hosting, DNS, storage. Her login, and a reminder that
@@ -208,11 +209,10 @@ offered (Google, mynames).
 ## Small cleanups, any time
 
 - **Unused uploads in R2:** nothing deletes a photo or video from storage when it's removed,
-  replaced, or uploaded and never saved. A small script (or admin button) lists R2, compares it
-  with every `/uploads/...` address the saved content uses, and deletes the unused files after
-  a grace period (for example 30 days since upload), so a file removed by mistake can still be
-  found and put back by hand. Not urgent: the free tier is 10GB and a photo set is under 1MB.
-  (Decided 2026-11-23: no "uploaded photos" library in the admin.)
+  replaced, or uploaded and never saved. The admin's photo library (2026-11-24) already lists
+  storage and marks each photo "לא בשימוש"; a delete button there (for photos not in use, after
+  a grace period such as 30 days since upload) would clean up. Not urgent: the free tier is
+  10GB and a photo set is under 1MB.
 - A deleted service's old address answers "not found"; a permanent redirect to the homepage
   could be added if old links matter.
 - Hydration warnings from the scroll-in animations (console noise only).

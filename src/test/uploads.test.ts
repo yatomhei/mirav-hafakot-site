@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { contentTypeOf, signatureMatches, UPLOAD_NAME } from "@/content/uploads.server";
 
 const bytes = (...parts: (string | number[])[]) =>
@@ -39,5 +39,37 @@ describe("uploads", () => {
     expect(signatureMatches("a-480.webp", page)).toBe(false);
     expect(signatureMatches("a.mp4", webp)).toBe(false);
     expect(signatureMatches("a.webm", mp4)).toBe(false);
+  });
+});
+
+describe("photo library", () => {
+  it("lists each stored photo once, newest first, without videos (live storage)", async () => {
+    vi.resetModules();
+    vi.doMock("@/content/backend-config", () => ({ localStoreEnabled: () => false }));
+    const id = (n: number) => `u-0000000${n}-aaaa-bbbb-cccc-dddddddddddd`;
+    const keys = [
+      ...[480, 960, 1600].map((w) => ({ key: `${id(1)}-${w}.webp`, uploaded: new Date(1000) })),
+      ...[480, 960, 1600].map((w) => ({ key: `${id(2)}-${w}.webp`, uploaded: new Date(3000) })),
+      { key: `${id(3)}.mp4`, uploaded: new Date(5000) },
+    ];
+    // Two pages, as R2 returns a long list.
+    const bucket = {
+      list: async ({ cursor }: { cursor?: string }) =>
+        cursor
+          ? { objects: keys.slice(4), truncated: false }
+          : { objects: keys.slice(0, 4), truncated: true, cursor: "next" },
+    };
+    (globalThis as { __env__?: unknown }).__env__ = { UPLOADS: bucket };
+    try {
+      const { listStoredPhotos } = await import("@/content/uploads.server");
+      expect(await listStoredPhotos()).toEqual([
+        { name: `/uploads/${id(2)}`, uploaded: 3000 },
+        { name: `/uploads/${id(1)}`, uploaded: 1000 },
+      ]);
+    } finally {
+      delete (globalThis as { __env__?: unknown }).__env__;
+      vi.doUnmock("@/content/backend-config");
+      vi.resetModules();
+    }
   });
 });

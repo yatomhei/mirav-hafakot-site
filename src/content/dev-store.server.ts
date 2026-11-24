@@ -25,6 +25,20 @@ export async function writeLocalDocs(docs: StoredDocs) {
 }
 
 /** Saves one uploaded file (checked by storeUpload) and returns its address on the site. */
+/** The files in the local uploads folder, with when each was written. */
+export async function listLocalUploads() {
+  const { readdir, stat } = await import("node:fs/promises");
+  let names: string[] = [];
+  try {
+    names = await readdir(UPLOAD_DIR);
+  } catch {
+    return [];
+  }
+  return Promise.all(
+    names.map(async (name) => ({ name, modified: (await stat(join(UPLOAD_DIR, name))).mtimeMs })),
+  );
+}
+
 export async function writeLocalUpload(name: string, data: Uint8Array) {
   await mkdir(UPLOAD_DIR, { recursive: true });
   await writeFile(join(UPLOAD_DIR, name), data);

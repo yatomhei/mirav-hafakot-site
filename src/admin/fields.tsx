@@ -26,6 +26,7 @@ import type { Photo } from "@/content/types";
 import { getDoc, type SiteContent } from "@/content/docs";
 import type { DocKey } from "@/content/schema";
 import type { AdminBackend } from "./backend";
+import { PhotoLibraryButton } from "./PhotoLibrary";
 
 // Field components for the editor tabs. A <Doc> provides one saved record; every field
 // inside it names its place in that record with a dotted path ("portrait.alt",
@@ -393,6 +394,7 @@ export function PhotoInput({
   empty,
 }: PhotoProps) {
   const { value: photo, set, backend } = useField<(Photo & { ratio?: number }) | undefined>(path);
+  const { draft } = useDraftContext();
   const { upload, busy, error } = useUpload(backend);
   const point = parsePosition(photo?.pos);
 
@@ -474,6 +476,22 @@ export function PhotoInput({
               // Keeps the description (and a gallery photo's label); the new photo starts centred.
               const { pos: _pos, ...rest } = photo ?? { alt: "" };
               set({ ...rest, name: result.name, ...(withRatio ? { ratio: result.ratio } : {}) });
+            }}
+          />
+          <PhotoLibraryButton
+            backend={backend}
+            draft={draft}
+            disabled={busy}
+            onPick={(picked) => {
+              // Like an upload, but a photo that has a description elsewhere brings it along.
+              const { pos: _pos, ...rest } = photo ?? { alt: "" };
+              set({
+                ...rest,
+                name: picked.name,
+                // A decorative photo (a video cover) keeps an empty description.
+                alt: decorative || rest.alt?.trim() ? (rest.alt ?? "") : picked.alt,
+                ...(withRatio ? { ratio: picked.ratio } : {}),
+              });
             }}
           />
           {photo && removable && (
@@ -841,6 +859,7 @@ export function AddPhotoButton<T>({
   label?: string;
 }) {
   const { value, set, backend } = useField<T[]>(path);
+  const { draft } = useDraftContext();
   const { upload, busy, error } = useUpload(backend);
   const items = value ?? [];
   return (
@@ -851,6 +870,21 @@ export function AddPhotoButton<T>({
         onFile={async (file) => {
           const result = await upload(file);
           if (result) set([...items, make(result)]);
+        }}
+      />
+      <PhotoLibraryButton
+        backend={backend}
+        draft={draft}
+        disabled={busy || items.length >= max}
+        label="הוספה מתמונות שהועלו"
+        onPick={(picked) => {
+          const item = make({ name: picked.name, ratio: picked.ratio });
+          // Brings along a description written for this photo elsewhere.
+          const withAlt =
+            item && typeof item === "object" && "alt" in item && !(item as { alt?: string }).alt
+              ? { ...item, alt: picked.alt }
+              : item;
+          set([...items, withAlt]);
         }}
       />
       <span className="text-[13px] text-ink/60">

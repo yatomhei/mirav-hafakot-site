@@ -35,6 +35,13 @@ export const saveDocs = createServerFn({ method: "POST" })
     await writeD1Docs(db, data, email);
   });
 
+/** The photo library: every photo in storage, newest first. */
+export const listPhotos = createServerFn({ method: "GET" }).handler(async () => {
+  await signedInAdmin();
+  const { listStoredPhotos } = await import("@/content/uploads.server");
+  return listStoredPhotos();
+});
+
 /** One photo size or the hero video, sent as the file itself. Returns its address. */
 export const uploadFile = createServerFn({ method: "POST" })
   .inputValidator((form: FormData) => {

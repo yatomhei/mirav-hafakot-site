@@ -1,7 +1,7 @@
 import { localStoreEnabled } from "@/content/backend-config";
 import type { StoredDocs } from "@/content/docs";
 import { PHOTO_WIDTHS, preparePhotoSet } from "./image";
-import { saveDocs, uploadFile } from "./store-fns";
+import { listPhotos, saveDocs, uploadFile } from "./store-fns";
 
 /** What the admin needs from wherever content is stored. */
 export interface AdminBackend {
@@ -15,6 +15,8 @@ export interface AdminBackend {
   uploadPhoto(file: File): Promise<{ name: string; ratio: number }>;
   /** Stores a video file as is (checked first by prepareVideo). Returns its address. */
   uploadVideo(file: File, extension: string): Promise<string>;
+  /** Every photo in storage (the photo library), newest first. */
+  listPhotos(): Promise<{ name: string; uploaded: number }[]>;
 }
 
 function send(name: string, file: Blob) {
@@ -46,6 +48,9 @@ export function getBackend(): AdminBackend {
     },
     async uploadVideo(file, extension) {
       return send(`u-${crypto.randomUUID()}.${extension}`, file);
+    },
+    listPhotos() {
+      return listPhotos();
     },
   };
 }

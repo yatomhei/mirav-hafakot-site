@@ -43,6 +43,11 @@ export interface R2Bucket {
     value: ArrayBuffer | Uint8Array | ReadableStream | Blob,
     options?: { httpMetadata?: { contentType?: string; cacheControl?: string } },
   ): Promise<R2Object | null>;
+  list(options?: { prefix?: string; cursor?: string; limit?: number }): Promise<{
+    objects: { key: string; uploaded: Date }[];
+    truncated: boolean;
+    cursor?: string;
+  }>;
 }
 
 interface CloudflareEnv {

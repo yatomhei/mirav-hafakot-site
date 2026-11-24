@@ -53,6 +53,39 @@ export async function storeUpload(name: string, bytes: Uint8Array) {
   return `/uploads/${name}`;
 }
 
+export type StoredPhoto = { name: string; uploaded: number };
+
+/**
+ * Every photo in storage (the admin's photo library), newest first: one entry per set, by the
+ * address the site uses for it. Videos are left out.
+ */
+export async function listStoredPhotos(): Promise<StoredPhoto[]> {
+  const small = /^(u-[\w-]{8,64})-480\.webp$/;
+  const found: StoredPhoto[] = [];
+  if (localStoreEnabled()) {
+    const { listLocalUploads } = await import("./dev-store.server");
+    for (const { name, modified } of await listLocalUploads()) {
+      const match = small.exec(name);
+      if (match) found.push({ name: `/local-uploads/${match[1]}`, uploaded: modified });
+    }
+  } else {
+    const { uploadsBucket } = await import("./cloudflare.server");
+    const bucket = uploadsBucket();
+    if (!bucket) throw new Error("Uploads storage isn't connected");
+    let cursor: string | undefined;
+    do {
+      const page = await bucket.list({ prefix: "u-", ...(cursor ? { cursor } : {}) });
+      for (const object of page.objects) {
+        const match = small.exec(object.key);
+        if (match)
+          found.push({ name: `/uploads/${match[1]}`, uploaded: object.uploaded.getTime() });
+      }
+      cursor = page.truncated ? page.cursor : undefined;
+    } while (cursor);
+  }
+  return found.sort((a, b) => b.uploaded - a.uploaded);
+}
+
 /** Names never change content (a new upload gets a new name), so browsers may keep them. */
 const CACHE_FOREVER = "public, max-age=31536000, immutable";
 
