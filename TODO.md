@@ -237,8 +237,8 @@ offered (Google, mynames).
   found".)
 - ~~**Hydration warnings and `npm audit`**~~ Checked 2026-11-24: no hydration warnings on the
   main pages, and `npm audit` reports no vulnerabilities.
-- **Image file names:** Hebrew or descriptive names for photos, decided later (renaming changes
-  addresses, so the old ones would need to forward).
+- ~~**Image file names**~~ Skipped (decided 2026-11-24): descriptive names would add little to
+  search (descriptions and page text matter far more), and renaming changes image addresses.
 
 ## How the live site is set up (reference)
 
