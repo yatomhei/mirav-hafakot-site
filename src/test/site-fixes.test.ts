@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { waNumber } from "@/lib/contact";
 import { absUrl, internationalPhone, jsonLd, pageAddress, serviceJsonLd } from "@/lib/seo";
 import { hebrewDate, lastUpdated, legal } from "@/content/legal";
+import { altText, SCREENSHOT_FALLBACK, stillFallback } from "@/lib/alt";
 import { validateDoc, defaultContent } from "@/content/docs";
 import { SEO_AREA, serviceSeoFor } from "@/content/seo-pages";
 
@@ -146,5 +147,15 @@ describe("checker fixes (2026-11-24)", () => {
     expect(lastUpdated("2020-01-01")).toBe(hebrewDate(legal.updatedOn));
     expect(lastUpdated("2099-03-05")).toBe(hebrewDate("2099-03-05"));
     expect(hebrewDate("2026-11-24")).toContain("2026");
+  });
+});
+
+describe("photo descriptions with a fallback", () => {
+  it("use the written description, or a general one when it's empty", () => {
+    expect(altText("ילדה על שפת הים", "צילום סטילס")).toBe("ילדה על שפת הים");
+    expect(altText("   ", "צילום סטילס")).toBe("צילום סטילס");
+    expect(altText(undefined, SCREENSHOT_FALLBACK)).toBe("צילום מסך של המלצה בוואטסאפ");
+    expect(stillFallback("משפחה")).toBe("צילום משפחה");
+    expect(stillFallback("")).toBe("צילום סטילס");
   });
 });

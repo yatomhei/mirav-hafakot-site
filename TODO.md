@@ -146,15 +146,15 @@ and how to reach it:
 - **The admin:** https://hafakathamerav.co.il/admin. She signs in with her Google account
   (Meravi2340@gmail.com), no password of its own. A short guide: editing texts, photos, videos
   and services, hiding a service, adding another admin, and the reminders the admin shows.
-- **Accessibility texts are mandatory** (state it clearly in the guide): the accessibility
-  statement promises alternative text for every photo that carries information, so whenever she
-  adds or replaces one she must fill in **"תיאור התמונה"** (what the photo shows; the stills,
-  service pages, photo strip and her portrait), **"סוג הצילום"** (stills and service page
-  photos: it names the "enlarge photo" button), and **"שם הסרטון"** for every video (it names the
-  play button). The admin doesn't block a save without them, so an empty one is a gap against
-  the statement. Not needed: the service card photos, video covers and backgrounds are
-  decorative (the card's name or the video's title says what they are). Checked 2026-11-23:
-  all filled in on the live site.
+- **Photo descriptions** (in the guide, plainly): "תיאור התמונה" is what screen readers read out
+  for a photo. It's recommended, not required: when it's empty the site says something general
+  by itself (the type of shot for stills, "צילום מסך של המלצה בוואטסאפ" for testimonial
+  screenshots, the section for other photos), and the accessibility statement says so (changed
+  2026-11-24: "כשלתמונה אין עדיין תיאור מפורט, מוצג תיאור כללי שלה"). If someone asks for a
+  detailed description of a photo, she sends it. Still needed: **"סוג הצילום"** (stills and service
+  page photos: it names the "enlarge photo" button and feeds the general description) and **"שם
+  הסרטון"** for every video (it names the play button). Not needed: service card photos, video
+  covers and backgrounds are decorative.
 - **Services: best practices** (part of the guide, in plain words):
   - **Adding:** a new service starts hidden. Fill in everything (name, card photo, opening
     paragraph, videos and/or photos), check it, then untick "hidden" and save.
@@ -193,8 +193,8 @@ and how to reach it:
     starting point.
 - **Her responsibility for what she publishes** (a reminder of Heidi's WhatsApp, 2026-11-24):
   - The privacy policy and the accessibility statement are in her name: she reads them, she is
-    the contact for privacy and accessibility requests and answers them, and she fills in the
-    descriptions when she adds photos.
+    the contact for privacy and accessibility requests and answers them. Photo descriptions are
+    recommended, not required (see "Photo descriptions").
   - Written consent from clients whose WhatsApp messages appear as testimonials (on the site
     and in ads), kept as their reply; parents' consent for children's photos, clips and names
     in paid ads.

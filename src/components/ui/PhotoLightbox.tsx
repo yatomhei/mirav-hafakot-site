@@ -1,4 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
+import { altText, stillFallback } from "@/lib/alt";
 import { useReturnFocus } from "@/hooks/useReturnFocus";
 import { useEffect, useRef } from "react";
 import type { StillPhoto } from "@/content/types";
@@ -85,7 +86,7 @@ export function PhotoLightbox({
                 src={photoFile(photo.name, 1600)}
                 srcSet={`${photoFile(photo.name, 960)} 960w, ${photoFile(photo.name, 1600)} 1600w`}
                 sizes="100vw"
-                alt={photo.alt}
+                alt={altText(photo.alt, stillFallback(photo.label))}
                 className="max-h-full max-w-full rounded-[clamp(8px,1vw,14px)] object-contain animate-in fade-in-0"
                 style={{ aspectRatio: photo.ratio }}
               />

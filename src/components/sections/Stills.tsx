@@ -1,4 +1,5 @@
 import { useState, type CSSProperties } from "react";
+import { stillFallback } from "@/lib/alt";
 import { useRise } from "@/hooks/useRise";
 import { useHome } from "@/content/context";
 import { Picture } from "@/components/ui/Picture";
@@ -63,7 +64,11 @@ function StillTile({
     <li style={natural ? { aspectRatio: p.ratio, ...style } : style}>
       {/* The whole tile is the first child, so a rise-in moves the tile, not the photo inside it. */}
       <figure className="still img-zoom relative m-0 h-full overflow-hidden rounded-[clamp(12px,1.2vw,18px)] bg-beige">
-        <Picture photo={p} sizes="(max-width: 640px) 92vw, 40vw" />
+        <Picture
+          photo={p}
+          sizes="(max-width: 640px) 92vw, 40vw"
+          fallbackAlt={stillFallback(p.label)}
+        />
         <button
           type="button"
           onClick={onOpen}

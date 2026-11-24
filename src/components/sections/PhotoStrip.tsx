@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { WORK_PHOTO_FALLBACK } from "@/lib/alt";
 import { useHome } from "@/content/context";
 import { Picture } from "@/components/ui/Picture";
 
@@ -17,7 +18,11 @@ export function PhotoStrip() {
             className="strip-ph img-zoom relative h-[clamp(200px,19vw,380px)] min-w-0 overflow-hidden rounded-[clamp(10px,1vw,16px)] bg-beige"
             style={{ flex: `${p.ratio} 1 0`, "--ar": p.ratio } as CSSProperties}
           >
-            <Picture photo={p} sizes="(max-width: 760px) 70vw, 25vw" />
+            <Picture
+              photo={p}
+              sizes="(max-width: 760px) 70vw, 25vw"
+              fallbackAlt={WORK_PHOTO_FALLBACK}
+            />
           </li>
         ))}
       </ul>

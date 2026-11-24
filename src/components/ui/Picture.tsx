@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import { photoFile } from "@/lib/asset";
 import type { Photo, Video } from "@/content/types";
+import { altText } from "@/lib/alt";
 
 const WIDTHS = [480, 960, 1600] as const;
 
@@ -14,17 +15,27 @@ type Props = {
   priority?: boolean;
   /** Decorative images (a caption or title already says what they are). */
   decorative?: boolean;
+  /** Said instead when the photo's own description is empty (see src/lib/alt.ts). */
+  fallbackAlt?: string;
 };
 
 /** Responsive WebP (public/images or an admin upload), filling its (positioned) parent with object-fit: cover. */
-export function Picture({ photo, sizes, className = "", style, priority, decorative }: Props) {
+export function Picture({
+  photo,
+  sizes,
+  className = "",
+  style,
+  priority,
+  decorative,
+  fallbackAlt = "",
+}: Props) {
   const srcSet = WIDTHS.map((w) => `${photoFile(photo.name, w)} ${w}w`).join(", ");
   return (
     <img
       src={photoFile(photo.name, 960)}
       srcSet={srcSet}
       sizes={sizes}
-      alt={decorative ? "" : photo.alt}
+      alt={decorative ? "" : altText(photo.alt, fallbackAlt)}
       aria-hidden={decorative || undefined}
       loading={priority ? "eager" : "lazy"}
       fetchPriority={priority ? "high" : undefined}

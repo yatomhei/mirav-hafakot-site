@@ -18,6 +18,7 @@ import { BrokenLines } from "@/components/ui/BrokenLines";
 import { Picture, VideoThumb } from "@/components/ui/Picture";
 import { useVideoLink } from "@/components/ui/VideoPlayer";
 import { adsEnabled, reopenConsent, trackCall, trackLead } from "@/lib/ads";
+import { altText, PORTRAIT_FALLBACK, SCREENSHOT_FALLBACK } from "@/lib/alt";
 import { FINALE_ICON, MaskIcon, stepIcon } from "./step-icons";
 import { Facebook, Instagram, Phone, TikTok, WhatsApp, YouTube } from "@/components/ui/icons";
 
@@ -457,7 +458,11 @@ function Story() {
           {story.photos.map((photo, i) => (
             <div key={`${photo.name}-${i}`} className="lp-strip-item">
               <div className="lp-strip-photo img-zoom relative aspect-[3/2] overflow-hidden rounded-[clamp(10px,1vw,16px)] bg-[#7C8366]">
-                <Picture photo={photo} sizes="(max-width: 640px) 46vw, 20vw" />
+                <Picture
+                  photo={photo}
+                  sizes="(max-width: 640px) 46vw, 20vw"
+                  fallbackAlt={story.caption ? `תמונה מתוך ${story.caption}` : "תמונה מתוך הסיפור"}
+                />
               </div>
             </div>
           ))}
@@ -668,7 +673,7 @@ function Testimonials() {
                     .map((w) => `${photoFile(photo.name, w)} ${w}w`)
                     .join(", ")}
                   sizes="(max-width: 640px) 46vw, 30vw"
-                  alt={photo.alt}
+                  alt={altText(photo.alt, SCREENSHOT_FALLBACK)}
                   loading="lazy"
                   decoding="async"
                   className="block h-auto w-full rounded-[clamp(10px,1vw,16px)] border border-[rgb(46_49_40/0.22)]"
@@ -857,7 +862,11 @@ function About() {
         className="mx-auto grid max-w-[var(--content-max)] grid-cols-[minmax(0,2fr)_minmax(0,3fr)] items-center gap-[clamp(40px,6vw,96px)] max-[900px]:grid-cols-1"
       >
         <div className="portrait-frame relative mx-auto aspect-[3/4] w-full max-w-[460px] overflow-hidden rounded-[clamp(12px,1.2vw,18px)] bg-beige max-[900px]:order-last max-[900px]:max-w-[320px]">
-          <Picture photo={about.photo} sizes="(max-width: 900px) 320px, 460px" />
+          <Picture
+            photo={about.photo}
+            sizes="(max-width: 900px) 320px, 460px"
+            fallbackAlt={PORTRAIT_FALLBACK}
+          />
         </div>
         <div className="flex flex-col gap-[22px]">
           <h2
