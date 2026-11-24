@@ -86,12 +86,15 @@ export function homeJsonLd(content: SiteContent) {
   });
 }
 
-/** A service page: the service, offered by the business, and its place in the site. */
+/**
+ * A service's page: the service, offered by the business, and its place in the site. `path`
+ * is the page that presents it: its service page, or a landing page that replaces it.
+ */
 export function serviceJsonLd(
   content: SiteContent,
   service: { slug: string; title: string; lead: string },
+  path = `/services/${service.slug}`,
 ) {
-  const path = `/services/${service.slug}`;
   const crumb = (position: number, name: string, p: string) => ({
     "@type": "ListItem",
     position,

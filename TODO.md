@@ -39,8 +39,9 @@ no other changes.
     `/bar-mitzvah-clips`, so the homepage card, footer and "more services" lead there, and
     `/services/bar-bat-mitzvah` forwards to it (301).
   - **Google:** its own title and description are done (admin tab), and since the service leads
-    to it, the sitemap will list it once the site is indexable. Still to do: move the service's
-    structured data (JSON-LD) from the service page to this page.
+    to it, the sitemap will list it once the site is indexable. It carries the service's
+    structured data (JSON-LD: the service, offered by the business, and the breadcrumb), moved
+    from the service page on 2026-11-24.
   - **Ads and tracking:** built (2026-11-24), switched off until a pixel ID is entered.
     **Merav will advertise this page** (confirmed 2026-11-23). Ask her on which platforms
     (Facebook / Instagram, Google, both); she gets the IDs from her ad accounts and enters them

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { waNumber } from "@/lib/contact";
-import { absUrl, jsonLd, pageAddress } from "@/lib/seo";
+import { absUrl, jsonLd, pageAddress, serviceJsonLd } from "@/lib/seo";
 import { validateDoc, defaultContent } from "@/content/docs";
 import { SEO_AREA, serviceSeoFor } from "@/content/seo-pages";
 
@@ -33,6 +33,22 @@ describe("search tags", () => {
     const tag = jsonLd({ name: "</script><script>alert(1)</script>" });
     expect(tag.children).not.toContain("</script>");
     expect(JSON.parse(tag.children).name).toBe("</script><script>alert(1)</script>");
+  });
+
+  it("describe a service on the landing page that replaces its service page", () => {
+    const service = { slug: "bar-bat-mitzvah", title: "קליפים לבר ובת מצווה", lead: "תיאור" };
+    const graph = JSON.parse(serviceJsonLd(defaultContent, service, "/bar-mitzvah-clips").children)[
+      "@graph"
+    ];
+    const [offer, crumbs] = graph;
+    expect(offer["@type"]).toBe("Service");
+    expect(offer.name).toBe("קליפים לבר ובת מצווה");
+    expect(offer.description).toBe("תיאור");
+    expect(offer.provider.name).toBe(defaultContent.site.name);
+    expect(crumbs.itemListElement.map((c: { name: string }) => c.name)).toEqual([
+      defaultContent.site.name,
+      "קליפים לבר ובת מצווה",
+    ]);
   });
 });
 
