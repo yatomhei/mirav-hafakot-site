@@ -237,7 +237,7 @@ function Hero() {
 // ---------- 02 The idea ----------
 
 function Idea() {
-  const { idea, hero } = useLanding();
+  const { idea } = useLanding();
   return (
     <section
       aria-labelledby="lp-idea"
@@ -261,24 +261,6 @@ function Idea() {
           </p>
         )}
       </div>
-      {/* The large clip, under the text (saved with the opening, edited in the admin's "הרעיון" card). */}
-      {hero.video.youtubeId && (
-        <div data-reveal className="mx-auto mt-[clamp(48px,6vw,88px)] max-w-[1120px]">
-          <ClipLink
-            video={hero.video}
-            className="relative block aspect-video overflow-hidden rounded-[clamp(16px,2vw,28px)] bg-beige"
-          >
-            <VideoThumb video={hero.video} sizes="(max-width: 1200px) 92vw, 1120px" />
-            <span aria-hidden="true" className="absolute inset-0 bg-[rgb(46_49_40/0.15)]" />
-            <span
-              aria-hidden="true"
-              className="lp-play absolute top-1/2 left-1/2 flex h-[88px] w-[88px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[rgb(250_240_235/0.9)] text-cream"
-            >
-              <PlayTriangle size={26} />
-            </span>
-          </ClipLink>
-        </div>
-      )}
     </section>
   );
 }

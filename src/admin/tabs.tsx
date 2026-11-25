@@ -363,7 +363,6 @@ function siteVideos(draft: ReturnType<typeof useDraft>) {
   };
   const landing = draft.barMitzvahLanding;
   const landingName = "דף הנחיתה: בר/בת מצווה";
-  add(landing.hero.video, landingName);
   for (const v of landing.clips.items) add(v, landingName);
   add(landing.story.video, landingName);
   for (const s of draft.services) for (const v of s.videos) add(v, s.title || "שירות");

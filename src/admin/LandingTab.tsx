@@ -175,8 +175,6 @@ export function BarMitzvahLandingFields() {
         <Text path="idea.title" label="כותרת" />
         <Text path="idea.question" label="משפט מודגש" />
         <Lines path="idea.text" label="פסקה" max={6} />
-        <h3 className="text-[15px] font-medium text-ink">הקליפ הגדול מתחת לטקסט</h3>
-        <ClipFields path="hero.video" />
       </Card>
 
       <Card title="3. קליפים לדוגמה" hint={CONSENT}>
