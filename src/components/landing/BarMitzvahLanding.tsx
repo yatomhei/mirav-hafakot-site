@@ -638,6 +638,29 @@ const quoted = (text: string) =>
     .replace(/^["'״“”„]+|["'״“”„]+$/g, "")
     .trim()}״`;
 
+/** The testimonial screenshots' two layouts: three columns, two on phones. */
+const SHOT_COLUMNS = [
+  { count: 3, className: "flex max-[640px]:hidden" },
+  { count: 2, className: "hidden max-[640px]:flex" },
+];
+/** A screenshot's shape (width ÷ height) when it wasn't saved: a typical phone message. */
+const SHOT_RATIO = 1.6;
+
+/**
+ * Masonry columns: each screenshot, in order, goes into the column that's shortest so far
+ * (heights from each one's shape), so the columns end close together.
+ */
+function shotColumns<T extends { ratio?: number | undefined }>(shots: T[], count: number) {
+  const columns: T[][] = Array.from({ length: count }, () => []);
+  const heights = Array.from({ length: count }, () => 0);
+  for (const shot of shots) {
+    const shortest = heights.indexOf(Math.min(...heights));
+    columns[shortest]!.push(shot);
+    heights[shortest]! += 1 / (shot.ratio || SHOT_RATIO);
+  }
+  return columns;
+}
+
 function Testimonials() {
   const { testimonials } = useLanding();
   const shots = useRise<HTMLDivElement>(".lp-shot", { delay: (k) => (k % 3) * 100 });
@@ -664,30 +687,44 @@ function Testimonials() {
           </figure>
         )}
         {testimonials.shots.length > 0 && (
-          // Masonry: each screenshot at its own shape, straight on the section's background,
-          // with a thin frame; three columns, two on phones.
-          <div
-            ref={shots}
-            className="w-full columns-3 gap-[clamp(12px,2vw,28px)] text-start max-[640px]:columns-2"
-          >
-            {testimonials.shots.map((photo, i) => (
-              <div
-                key={`${photo.name}-${i}`}
-                className="lp-shot mb-[clamp(12px,2vw,28px)] break-inside-avoid"
-              >
-                <img
-                  src={photoFile(photo.name, 960)}
-                  srcSet={[480, 960, 1600]
-                    .map((w) => `${photoFile(photo.name, w)} ${w}w`)
-                    .join(", ")}
-                  sizes="(max-width: 640px) 46vw, 30vw"
-                  alt={altText(photo.alt, SCREENSHOT_FALLBACK)}
-                  loading="lazy"
-                  decoding="async"
-                  className="block h-auto w-full rounded-[clamp(10px,1vw,16px)] border border-[rgb(46_49_40/0.22)]"
-                />
-              </div>
-            ))}
+          <div ref={shots} className="w-full">
+            {
+              // Masonry: each screenshot at its own shape, straight on the section's background,
+              // with a thin frame; three columns, two on phones. Each screenshot goes into the
+              // column that's shortest so far (by its shape), so the columns end close together.
+              // Both layouts are in the page; CSS shows one (the hidden one's images don't load).
+              SHOT_COLUMNS.map(({ count, className }) => (
+                <div
+                  key={count}
+                  className={`w-full gap-[clamp(12px,2vw,28px)] text-start ${className}`}
+                >
+                  {shotColumns(testimonials.shots, count).map((column, c) => (
+                    <div
+                      key={c}
+                      className="flex min-w-0 flex-1 flex-col gap-[clamp(12px,2vw,28px)]"
+                    >
+                      {column.map((photo) => (
+                        <div key={photo.name} className="lp-shot">
+                          <img
+                            src={photoFile(photo.name, 960)}
+                            srcSet={[480, 960, 1600]
+                              .map((w) => `${photoFile(photo.name, w)} ${w}w`)
+                              .join(", ")}
+                            sizes={count === 3 ? "30vw" : "46vw"}
+                            alt={altText(photo.alt, SCREENSHOT_FALLBACK)}
+                            loading="lazy"
+                            decoding="async"
+                            width={1000}
+                            height={Math.round(1000 / (photo.ratio || SHOT_RATIO))}
+                            className="block h-auto w-full rounded-[clamp(10px,1vw,16px)] border border-[rgb(46_49_40/0.22)]"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              ))
+            }
           </div>
         )}
       </div>
