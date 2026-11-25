@@ -3,6 +3,11 @@ import { DEFAULT_MESSAGE_TEMPLATE, REQUIRED_FIELDS } from "./whatsapp-message";
 import { contact } from "./home";
 import { MAX_FEATURED_STILLS, MAX_FEATURED_VIDEOS } from "./featured";
 
+// Zod can speed up checks by building code from text, which the site's content policy forbids
+// ('unsafe-eval'). Its test for that showed up as a policy violation on every page: switch it
+// off (the checks work the same, just without that shortcut).
+z.config({ jitless: true });
+
 // The shape every saved record must have before the site uses it (see docs.ts). Counts the
 // layout depends on are fixed here, so a saved record can never break the design: a record
 // that fails falls back to the launch content for that section only.

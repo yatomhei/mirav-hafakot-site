@@ -9,7 +9,8 @@ import { pageAddress } from "@/lib/seo";
 
 // The privacy policy. Every statement here describes how this site actually works: the form
 // builds a WhatsApp message on the visitor's device and sends nothing to the site's server;
-// there are no visitor cookies, analytics or ads (except the landing page's ad pixels, and only
+// visits are counted by Cloudflare Web Analytics (no cookies, nothing stored on the device,
+// injected by Cloudflare); there are no visitor cookies or ads (except the landing page's ad pixels, and only
 // while the admin has a pixel ID set: section 4 then says so); the font and video thumbnails
 // are served from the site; YouTube loads only when a video is played. Change it with the code.
 export const Route = createFileRoute("/privacy")({
@@ -96,10 +97,7 @@ function PrivacyPage() {
       <LegalSection id="cookies" title="4. עוגיות, אנליטיקה ופרסום">
         {pixels ? (
           <>
-            <p>
-              האתר לא משתמש בכלי אנליטיקה. רוב דפי האתר לא שומרים עוגיות אצל הגולשים. הגופן ותמונות
-              האתר נטענים מהאתר עצמו.
-            </p>
+            <p>רוב דפי האתר לא שומרים עוגיות אצל הגולשים. הגופן ותמונות האתר נטענים מהאתר עצמו.</p>
             <p>
               היוצא מן הכלל הוא דף הקליפים לבר ובת מצווה (
               <Link to="/bar-mitzvah-clips" className="underline underline-offset-4">
@@ -121,10 +119,15 @@ function PrivacyPage() {
           </>
         ) : (
           <p>
-            האתר לא שומר עוגיות אצל הגולשים, ולא משתמש בכלי אנליטיקה, בפיקסלים או בפרסום ממוקד.
-            הגופן ותמונות האתר נטענים מהאתר עצמו.
+            האתר לא שומר עוגיות אצל הגולשים, ולא משתמש בפיקסלים או בפרסום ממוקד. הגופן ותמונות האתר
+            נטענים מהאתר עצמו.
           </p>
         )}
+        <p>
+          לספירת ביקורים האתר משתמש בכלי הסטטיסטיקה של Cloudflare (Web Analytics), שמאחסנת את האתר.
+          הכלי לא שומר עוגיות ולא שום מידע במכשיר שלכם, ולא מזהה גולשים או עוקב אחריהם בין אתרים:
+          הוא סופר כמה ביקורים היו, באילו דפים, מאיזו מדינה ומאיזה אתר הגיעו, וכמה מהר הדף נטען.
+        </p>
         <p>
           כמו בכל אתר, שרתי האחסון מקבלים את כתובת ה־IP ופרטים טכניים על הדפדפן, כדי להציג את האתר
           ולהגן עליו מפני שימוש לרעה.
@@ -142,7 +145,10 @@ function PrivacyPage() {
 
       <LegalSection title="6. שירותים שמקבלים מידע, והעברה לחו״ל">
         <LegalList>
-          <li>Cloudflare: אחסון האתר והגנה עליו. מקבלת נתונים טכניים, כמו כתובת IP.</li>
+          <li>
+            Cloudflare: אחסון האתר, הגנה עליו וספירת ביקורים (בלי עוגיות). מקבלת נתונים טכניים, כמו
+            כתובת IP.
+          </li>
           <li>WhatsApp (Meta): העברת ההודעה ששלחתם מהטופס או ישירות.</li>
           <li>Google: מייל (Gmail) כשפונים אליי במייל, ונגן YouTube כשמפעילים סרטון.</li>
           {meta && (

@@ -9,7 +9,7 @@ export const legal = {
   /** Her עוסק number, as given by Merav. */
   businessNumber: "302502711",
   /** The date both documents were last reviewed (YYYY-MM-DD). Update it with every change. */
-  updatedOn: "2026-11-24",
+  updatedOn: "2026-11-25",
 };
 
 /** A YYYY-MM-DD date as the legal pages show it, e.g. "24 בנובמבר 2026". */
