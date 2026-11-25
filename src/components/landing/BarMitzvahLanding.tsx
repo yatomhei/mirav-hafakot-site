@@ -812,10 +812,10 @@ function useFinaleConfetti<T extends HTMLElement>(enabled: boolean) {
 
 function Process() {
   const { process } = useLanding();
-  // In order: the title counts down as it moves up the screen ("3," as it enters, then "2,
-  // 1... אקשן!"), and the subtitle is complete by the time the title reaches the upper third;
-  // then the first card rises, the others as they come into view, and the last one ("your
-  // clip is ready!") as soon as it peeks in.
+  // In order: the subtitle comes in as the section arrives, then the title below it counts
+  // down as it moves up the screen ("3, 2, 1... אקשן!"), complete by the upper third; then the
+  // first card rises, the others as they come into view, and the last one ("your clip is
+  // ready!") as soon as it peeks in.
   const header = useHeaderSteps<HTMLDivElement>();
   const list = useRise<HTMLOListElement>(".lp-step", {
     at: (k) => (k === 0 ? 0.55 : k === process.steps.length ? 0.97 : 0.9),
@@ -829,15 +829,16 @@ function Process() {
           ref={header}
           className="lp-hs mx-auto mb-[clamp(64px,8vw,112px)] flex max-w-[760px] flex-col gap-[18px] text-center"
         >
-          <CountdownTitle id="lp-process" text={process.title} />
+          {/* The subtitle first (it comes in as the section arrives), then the countdown. */}
           {process.lead && (
             <p
-              data-step="0.75 1"
+              data-step="-1 0"
               className={`${ACCENT} text-[clamp(22px,2.4vw,32px)] leading-[1.4] text-balance`}
             >
               {process.lead}
             </p>
           )}
+          <CountdownTitle id="lp-process" text={process.title} />
         </div>
         {/* A zigzag timeline: the line runs down the middle with a dot beside each step, and
             the square cards alternate sides, the first on the right (where reading starts).
@@ -947,15 +948,17 @@ function useHeaderSteps<T extends HTMLElement>() {
  */
 function CountdownTitle({ id, text }: { id: string; text: string }) {
   const words = text.trim().split(/\s+/).filter(Boolean);
-  // The first word shows as the title enters; the others share the way up to 0.7, and the
-  // subtitle follows (useHeaderSteps).
+  // The subtitle above it shows as the section arrives; after a short pause the words share
+  // the way from 0.2 to 1 (useHeaderSteps).
   const step = (i: number) => {
-    if (i === 0) return "-1 0";
-    const slot = 0.7 / Math.max(1, words.length - 1);
-    return `${((i - 1) * slot + 0.04).toFixed(3)} ${(i * slot).toFixed(3)}`;
+    const slot = 0.8 / Math.max(1, words.length);
+    return `${(0.2 + i * slot + 0.04).toFixed(3)} ${(0.2 + (i + 1) * slot).toFixed(3)}`;
   };
   return (
-    <h2 id={id} className={`${H2} lp-countdown`}>
+    <h2
+      id={id}
+      className="lp-countdown m-0 font-light text-[clamp(48px,7.4vw,104px)] leading-[1.05] tracking-[-0.02em] text-balance"
+    >
       {words.map((word, i) => (
         <Fragment key={i}>
           {i > 0 && " "}
