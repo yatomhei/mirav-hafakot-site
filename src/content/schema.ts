@@ -276,6 +276,7 @@ export const docSchemas = {
       leadAccent: text,
       cta: text.min(1, "חסר טקסט לכפתור"),
       clipsLink: text.min(1, "חסר טקסט לקישור"),
+      photo: photoSchema,
       video: videoSchema,
     }),
     idea: z.object({ title: text, question: text, text: z.array(longText).max(6) }),

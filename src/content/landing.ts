@@ -24,14 +24,19 @@ export const barMitzvahLanding = {
       "קליפ בר מצווה או בת מצווה שמספר את הסיפור של הילד או הילדה שלכם: מהרעיון ועד הקליפ המוכן, עם ליווי אישי ובאור טבעי. מרב ורנר, יד בנימין והסביבה.",
   },
   hero: {
-    /** The page's main heading. */
-    title: ["קליפ בר.בת מצווה מרגש ומפתיע שישאר כמזכרת לשנים הבאות"],
-    lead: "חוגגים בר או בת מצווה? מזל טוב! בואו ניצור יחד קליפ אישי שמספר את הסיפור של הילד או הילדה שלכם, ומביא לידי ביטוי את האופי, התחביבים, המשפחה וכל מה שמיוחד בהם.",
+    /** The page's main heading: the first line in bold brown, the rest light. */
+    title: ["קליפ בר.בת מצווה", "מרגש ומפתיע שישאר כמזכרת לשנים הבאות"],
+    lead: "חוגגים בר או בת מצווה? מזל טוב! בואו ניצור יחד קליפ אישי שמביא לידי ביטוי את כל מה שמיוחד בילד או בילדה שלכם, יפתיע את האורחים, ירגש את המשפחה ויישאר איתכם לשנים.",
     /** The lead's closing sentence, in the olive accent colour. */
-    leadAccent: "מהרעיון ועד לקליפ המוכן, עם ליווי אישי ובדרך שמתאימה לכם.",
+    leadAccent: "והכול בליווי אישי, מהרעיון ועד לקליפ המוכן.",
     cta: "בואו נדבר על הקליפ שלכם",
     clipsLink: "צפו בקליפים שהפקתי",
-    /** The large clip under the opening. */
+    /** Beside the text (below it on phones): a cut-out photo on a light circle. */
+    photo: {
+      name: "lp-hero-kids",
+      alt: "נער צועק במגפון ונערה עם כובע מחזיקה קלאפר צילום, שניהם מחייכים",
+    } as Photo,
+    /** The large clip, at the top of the next section ("הרעיון"). */
     video: video("קליפ בת מצווה של גפן - בכרם עם המשפחה", "QWX2MCzFjdk", "clip-gefen"),
   },
   idea: {

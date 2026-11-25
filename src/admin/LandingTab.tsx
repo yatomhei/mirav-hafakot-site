@@ -154,19 +154,29 @@ export function BarMitzvahLandingFields() {
       </Card>
 
       <Card title="1. פתיח">
-        <Lines path="hero.title" label="כותרת" />
+        <Lines
+          path="hero.title"
+          label="כותרת"
+          hint="השורה הראשונה מודגשת ובצבע חום, השאר דק. Enter מתחיל שורה חדשה (עד 3)"
+        />
         <Text path="hero.lead" label="פסקה" multiline />
         <Text path="hero.leadAccent" label="משפט מודגש בסוף הפסקה" />
         <Text path="hero.cta" label="טקסט הכפתור" hint="מוביל לטופס בתחתית הדף" />
         <Text path="hero.clipsLink" label="הקישור לקליפים" hint="מוביל לקליפים לדוגמה" />
-        <h3 className="text-[15px] font-medium text-ink">הקליפ הגדול מתחת לפתיח</h3>
-        <ClipFields path="hero.video" />
+        <PhotoInput
+          path="hero.photo"
+          label="התמונה ליד הטקסט"
+          hint="מוצגת בשלמותה, בלי חיתוך. הכי טוב: תמונה עם רקע שקוף (PNG או WebP), כמו התמונה המקורית"
+          aspect="1254 / 1200"
+        />
       </Card>
 
       <Card title="2. הרעיון">
         <Text path="idea.title" label="כותרת" />
         <Text path="idea.question" label="משפט מודגש" />
         <Lines path="idea.text" label="פסקה" max={6} />
+        <h3 className="text-[15px] font-medium text-ink">הקליפ הגדול מתחת לטקסט</h3>
+        <ClipFields path="hero.video" />
       </Card>
 
       <Card title="3. קליפים לדוגמה" hint={CONSENT}>

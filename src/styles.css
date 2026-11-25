@@ -1073,6 +1073,25 @@
   }
 }
 
+/* The landing hero's photo: as wide as its column, never taller than the screen allows under
+   the logo, and at most 720px wide (it's 1254 x 1200). On wide screens it may reach past its
+   column into the margin outside the content (up to 4vw, never off the screen); the page clips
+   sideways overflow. */
+.lp-hero-photo {
+  width: min(100%, calc((100svh - 170px) * 1.045));
+}
+@media (min-width: 56.26rem) {
+  .lp-hero-photo {
+    justify-self: start;
+    margin-inline: 0;
+    width: min(
+      calc(100% + max(0px, min(4vw, (100vw - var(--content-max)) / 2))),
+      calc((100svh - 170px) * 1.045),
+      720px
+    );
+  }
+}
+
 /* The process title (useHeaderSteps): its words count down as it moves up the screen
    (data-step sets --t), the last one pops in from larger, like a clapperboard, and the
    subtitle follows. Without motion it simply shows. */
@@ -1284,12 +1303,6 @@
   .lp-in {
     animation: lp-in 1000ms var(--ease-out-expo) var(--d, 0ms) both;
   }
-  .lp-hero-clip {
-    animation: lp-in-far 1300ms var(--ease-out-expo) 450ms both;
-  }
-  .lp-settle {
-    animation: lp-settle 2600ms var(--ease-out-expo) 450ms both;
-  }
 
   /* Worries: each question pops from its bubble's tail, each answer fades in (useWorriesSequence
      turns them on, .is-on; .lp-armed only once that script runs). */
@@ -1324,17 +1337,6 @@
   from {
     opacity: 0;
     transform: translateY(28px);
-  }
-}
-@keyframes lp-in-far {
-  from {
-    opacity: 0;
-    transform: translateY(64px);
-  }
-}
-@keyframes lp-settle {
-  from {
-    transform: scale(1.08);
   }
 }
 @keyframes lp-shake {

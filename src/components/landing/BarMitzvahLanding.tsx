@@ -151,78 +151,85 @@ function ClipLink({
 
 function Hero() {
   const { hero } = useLanding();
+  const [first, ...rest] = hero.title;
   return (
+    // Inside the content width, as tall as its content: the logo on its own row at the top
+    // right, then the text on the right and the photo on the left. The photo grows with the
+    // screen (see .lp-hero-photo: its column and, on wide screens, the margin beside it; never
+    // taller than the screen allows under the logo) and stands on the section's bottom edge;
+    // the text is centred on the photo's middle. Phones: all centred, text first, then photo.
     <section
       aria-labelledby="lp-title"
-      className="px-[var(--gutter)] pt-[clamp(56px,7vw,110px)] pb-[clamp(56px,7vw,100px)] text-center"
+      className="lp-hero flex flex-col bg-[#f2e1da] px-[var(--gutter)] pt-[clamp(24px,3vw,40px)]"
     >
-      <div className="mx-auto flex max-w-[960px] flex-col items-center gap-[22px]">
-        <div className="lp-in mb-[clamp(16px,3vw,48px)]" style={{ "--d": "0ms" } as CSSProperties}>
-          <HomeLogo className="h-[clamp(80px,9vw,128px)]" />
-        </div>
-        <h1
-          id="lp-title"
-          className="lp-in m-0 text-[clamp(42px,6vw,84px)] font-light leading-[1.15] tracking-[-0.02em] text-balance"
-          style={{ "--d": "120ms" } as CSSProperties}
-        >
-          <BrokenLines lines={hero.title} />
-        </h1>
-        <p
-          className="lp-in m-0 mt-2 max-w-[36em] text-[clamp(18px,1.7vw,22px)] leading-[1.6]"
-          style={{ "--d": "300ms" } as CSSProperties}
-        >
-          {hero.lead}
-          {hero.leadAccent && (
-            <>
-              {" "}
-              <span className="font-medium text-olive-deep">{hero.leadAccent}</span>
-            </>
-          )}
-        </p>
-        <div
-          className="lp-in mt-[clamp(16px,2.4vw,32px)] flex flex-wrap items-center justify-center gap-x-7 gap-y-3 max-[640px]:w-full max-[640px]:flex-col max-[640px]:items-stretch"
-          style={{ "--d": "360ms" } as CSSProperties}
-        >
-          <ToForm>{hero.cta}</ToForm>
-          <a
-            href="#lp-clips"
-            className="lp-link inline-flex min-h-11 items-center justify-center gap-2 text-[17px] font-normal text-ink no-underline"
-          >
-            <svg
-              aria-hidden="true"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinejoin="round"
-            >
-              <path d="M17 12L8 6.5v11z" />
-            </svg>
-            {hero.clipsLink}
-          </a>
-        </div>
+      <div
+        className="lp-in mx-auto mb-[clamp(16px,3vw,32px)] flex w-full max-w-[var(--content-max)] justify-start max-[900px]:justify-center"
+        style={{ "--d": "0ms" } as CSSProperties}
+      >
+        <HomeLogo className="h-[clamp(64px,6vw,88px)]" />
       </div>
-      {hero.video.youtubeId && (
-        <div className="lp-hero-clip mx-auto mt-[clamp(56px,7vw,104px)] max-w-[1120px]">
-          <ClipLink
-            video={hero.video}
-            className="relative block aspect-video overflow-hidden rounded-[clamp(16px,2vw,28px)] bg-beige"
+      <div className="mx-auto mt-auto grid w-full max-w-[var(--content-max)] grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] items-center gap-x-[clamp(24px,4vw,72px)] gap-y-10 max-[900px]:grid-cols-1">
+        <div className="flex flex-col items-start gap-[clamp(18px,2vw,24px)] text-start max-[900px]:items-center max-[900px]:text-center">
+          <h1
+            id="lp-title"
+            className="lp-in m-0 text-[clamp(40px,4.2vw,64px)] max-[640px]:-mb-2 max-[640px]:text-[36px] font-light leading-[1.12] tracking-[-0.02em] text-balance"
+            style={{ "--d": "120ms" } as CSSProperties}
           >
-            <span className="lp-settle absolute inset-0 block">
-              <VideoThumb video={hero.video} sizes="(max-width: 1200px) 92vw, 1120px" priority />
-            </span>
-            <span aria-hidden="true" className="absolute inset-0 bg-[rgb(46_49_40/0.15)]" />
-            <span
-              aria-hidden="true"
-              className="lp-play absolute top-1/2 left-1/2 flex h-[88px] w-[88px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[rgb(250_240_235/0.9)] text-cream"
+            {first && <span className="block font-medium text-[#92664e]">{first}</span>}
+            {rest.length > 0 && <BrokenLines lines={rest} />}
+          </h1>
+          <p
+            className="lp-in m-0 max-w-[34em] text-[clamp(17px,1.5vw,21px)] leading-[1.6]"
+            style={{ "--d": "300ms" } as CSSProperties}
+          >
+            {hero.lead}
+            {hero.leadAccent && (
+              <>
+                {" "}
+                <span className="font-medium">{hero.leadAccent}</span>
+              </>
+            )}
+          </p>
+          <div
+            className="lp-in mt-[clamp(8px,2vw,28px)] flex flex-wrap items-center gap-x-7 gap-y-3 max-[900px]:justify-center max-[640px]:w-full max-[640px]:flex-col max-[640px]:items-center"
+            style={{ "--d": "360ms" } as CSSProperties}
+          >
+            <ToForm>{hero.cta}</ToForm>
+            <a
+              href="#lp-clips"
+              className="lp-link inline-flex min-h-11 items-center justify-center gap-2 text-[17px] font-normal text-ink no-underline"
             >
-              <PlayTriangle size={26} />
-            </span>
-          </ClipLink>
+              <svg
+                aria-hidden="true"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinejoin="round"
+              >
+                <path d="M17 12L8 6.5v11z" />
+              </svg>
+              {hero.clipsLink}
+            </a>
+          </div>
         </div>
-      )}
+        {hero.photo && (
+          <div
+            className="lp-in lp-hero-photo relative mx-auto aspect-[1254/1200] self-end"
+            style={{ "--d": "200ms" } as CSSProperties}
+          >
+            <Picture
+              photo={hero.photo}
+              sizes="(max-width: 900px) 92vw, 58vw"
+              priority
+              className="!object-contain !object-bottom"
+              fallbackAlt="נער ונערה מחייכים עם מגפון וקלאפר צילום"
+            />
+          </div>
+        )}
+      </div>
     </section>
   );
 }
@@ -230,11 +237,11 @@ function Hero() {
 // ---------- 02 The idea ----------
 
 function Idea() {
-  const { idea } = useLanding();
+  const { idea, hero } = useLanding();
   return (
     <section
       aria-labelledby="lp-idea"
-      className="px-[var(--gutter)] pt-[clamp(24px,4vw,48px)] pb-[var(--section-pad)]"
+      className="px-[var(--gutter)] pt-[var(--section-pad)] pb-[var(--section-pad)]"
     >
       <div
         data-reveal
@@ -254,6 +261,24 @@ function Idea() {
           </p>
         )}
       </div>
+      {/* The large clip, under the text (saved with the opening, edited in the admin's "הרעיון" card). */}
+      {hero.video.youtubeId && (
+        <div data-reveal className="mx-auto mt-[clamp(48px,6vw,88px)] max-w-[1120px]">
+          <ClipLink
+            video={hero.video}
+            className="relative block aspect-video overflow-hidden rounded-[clamp(16px,2vw,28px)] bg-beige"
+          >
+            <VideoThumb video={hero.video} sizes="(max-width: 1200px) 92vw, 1120px" />
+            <span aria-hidden="true" className="absolute inset-0 bg-[rgb(46_49_40/0.15)]" />
+            <span
+              aria-hidden="true"
+              className="lp-play absolute top-1/2 left-1/2 flex h-[88px] w-[88px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[rgb(250_240_235/0.9)] text-cream"
+            >
+              <PlayTriangle size={26} />
+            </span>
+          </ClipLink>
+        </div>
+      )}
     </section>
   );
 }
