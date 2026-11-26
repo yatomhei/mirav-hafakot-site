@@ -144,19 +144,6 @@ and how to reach it:
   - **Read the privacy policy and the accessibility statement**, and collect the consents (see
     "Her responsibility" below). Questions or corrections: to Heidi.
   - **Accept the Google Cloud owner invitation**, and switch the project's support email to hers.
-  - **A few questions about search wording** (from the research, 2026-11-26). Her answers may
-    change a title, description or sentence, which she can do in the admin (see "How pages show
-    in Google") or send to Heidi:
-    - Which words do her clients use when they contact her?
-    - Does she work in Rehovot, Gan Yavne, Bnei Ayish or Kiryat Ekron? ("צלמת רחובות" is
-      searched.) If so, add them to the descriptions and to the service area ("פרטים והגדרות").
-    - Does she make year-end clips ("קליפ סיום", יב / כיתה ו)? The event summary page's title
-      and opening mention them; if not, remove "קליפ סיום" / "סיום שנה" there.
-    - Should the site say the clips suit religious families? "דתי" and "צנוע" are common
-      search words.
-    - Where are digital courses filmed (her place, the client's, a studio)?
-  - **FAQ ideas** she may add in the admin (the "שאלות" tab), in her own words: how long editing
-    takes; family photos outdoors or at home, which is better.
   - **After launch:** in a month or two, Search Console (Performance) shows the real searches
     people used to find the site. Worth a look to adjust the titles and descriptions.
 - **Photo descriptions** (in the guide, plainly): "תיאור התמונה" is what screen readers read out
@@ -218,6 +205,21 @@ and how to reach it:
     change from 06 to 05.
   - Her social links (none for now), the landing page's quote, and anything else written as a
     starting point.
+  - **A few questions about search wording** (from the research, 2026-11-26). Her answers may
+    change a title, description or sentence, which she can do in the admin (see "How pages show
+    in Google") or send to Heidi:
+    - Which words do her clients use when they contact her?
+    - Does she work in Rehovot, Gan Yavne, Bnei Ayish or Kiryat Ekron? ("צלמת רחובות" is
+      searched.) If so, add them to the descriptions and to the service area ("פרטים והגדרות").
+    - Does she make year-end clips ("קליפ סיום", יב / כיתה ו)? The event summary page's title
+      and opening mention them; if not, remove "קליפ סיום" / "סיום שנה" there.
+    - Should the site say the clips suit religious families? "דתי" and "צנוע" are common
+      search words.
+    - Where are digital courses filmed (her place, the client's, a studio)?
+  - **FAQ ideas** she may add in the admin (the "שאלות" tab), in her own words: how long editing
+    takes; family photos outdoors or at home, which is better.
+  - **Her hero video:** the requirements (MP4, up to 8MB, a 6-15 second loop, 1080p landscape, no
+    sound, calm framing with the key part in the middle), and where to upload it in the admin.
 - **Her responsibility for what she publishes** (a reminder of Heidi's WhatsApp, 2026-11-24):
   - The privacy policy and the accessibility statement are in her name: she reads them, she is
     the contact for privacy and accessibility requests and answers them. Photo descriptions are
@@ -231,8 +233,6 @@ and how to reach it:
   entering the pixel IDs in the admin (landing page tab, "הודעת העוגיות ופיקסלי הפרסום"): the
   cookie banner and the privacy policy's text switch on by themselves. After she enters them,
   Heidi checks once on the live site that the banner shows and a test lead is recorded.
-- **Her hero video:** the requirements (MP4, up to 8MB, a 6-15 second loop, 1080p landscape, no
-  sound, calm framing with the key part in the middle), and where to upload it in the admin.
 - **Cloudflare** (dash.cloudflare.com): hosting, DNS, storage. Her login, and a reminder that
   two-factor authentication is on and Heidi is a Super Administrator there. **The card on file
   is Heidi's** (added 2026-11-23 to switch on R2 storage, free tier): ask her to replace it with
