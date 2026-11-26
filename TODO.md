@@ -133,125 +133,30 @@ the project doesn't wait on her answers.
 
 ## Handover to Merav
 
-When the site is launched, Heidi sends Merav one email (keep a copy) with everything she owns
-and how to reach it:
+**Ready (2026-11-26), send after launch.** Outside the repo, in
+`C:\Users\yatom\Projects\Mirav Hafakot\handover\`:
 
-- **The site:** https://hafakathamerav.co.il
-- **The admin:** https://hafakathamerav.co.il/admin. She signs in with her Google account
-  (Meravi2340@gmail.com), no password of its own. A short guide: editing texts, photos, videos
-  and services, hiding a service, adding another admin, and the reminders the admin shows.
-- **What's waiting on her** (a short list near the top of the email):
-  - **Read the privacy policy and the accessibility statement**, and collect the consents (see
-    "Her responsibility" below). Questions or corrections: to Heidi.
-  - **Accept the Google Cloud owner invitation**, and switch the project's support email to hers.
-  - **After launch:** in a month or two, Search Console (Performance) shows the real searches
-    people used to find the site. Worth a look to adjust the titles and descriptions.
-- **Photo descriptions** (in the guide, plainly): "תיאור התמונה" is what screen readers read out
-  for a photo. It's recommended, not required: when it's empty the site says something general
-  by itself (the type of shot for stills, "צילום מסך של המלצה בוואטסאפ" for testimonial
-  screenshots, the section for other photos), and the accessibility statement says so (changed
-  2026-11-24: "כשלתמונה אין עדיין תיאור מפורט, מוצג תיאור כללי שלה"). If someone asks for a
-  detailed description of a photo, she sends it. Still needed: **"סוג הצילום"** (stills and service
-  page photos: it names the "enlarge photo" button and feeds the general description) and **"שם
-  הסרטון"** for every video (it names the play button). Not needed: service card photos, video
-  covers and backgrounds are decorative.
-- **Services: best practices** (part of the guide, in plain words):
-  - **Adding:** a new service starts hidden. Fill in everything (name, card photo, opening
-    paragraph, videos and/or photos), check it, then untick "hidden" and save.
-  - **The address:** choose it carefully, short, in English, and describing the service
-    (`wedding-clips`, not `new-service-2`). It locks the first time the service is shown, so
-    shared links and Google results keep working.
-  - **Hide rather than delete** when a service pauses (a season, a break): hiding keeps
-    everything and it comes back with one click. Delete only when it's gone for good.
-  - **Deleting:** the card, the page, its videos and photos are gone after saving, and the old
-    address shows "not found". The homepage's selected videos and stills mosaic are their own
-    lists, so they aren't affected.
-  - **Reusing an old address:** fine for an address that was never shown. For one that was live,
-    only for a closely related service: old links and Google results will lead to it.
-  - **Renaming:** only to reword the same service (for example "סרטי תדמית" to "סרטי תדמית
-    לעסקים"). The address stays, and Google's title follows the new name unless she wrote her
-    own in "איך העמוד מופיע בגוגל". **Never turn a service into a different one** (rename it and
-    swap its photos and videos): the old, locked address wouldn't match (wedding clips at
-    `/services/kululam`), old links and Google results would lead to the wrong service, and the
-    old service would be lost. For a new service: add a new one, then hide or delete the old.
-  - **Photos and videos of people:** only with their consent, and the parents' for children.
-  - **One admin tab at a time:** saving from an old tab can overwrite newer changes. Reload
-    before editing if a tab was left open.
-  - **Testimonials:** the section can be hidden (and shown again) in the "המלצות" tab, for
-    example until she has real ones. Only real testimonials, with the client's permission.
-  - **Photos already uploaded** can be used again anywhere without uploading twice: "בחירה
-    מתמונות שהועלו" next to every upload button. A photo removed from the site stays there, so
-    it can be brought back the same way, until it's deleted in the "תמונות שהועלו" tab
-    (deleting is for good).
-- **How pages show in Google** (part of the guide): each page's title and description show in
-  Google's results, in the browser tab and in the preview of a shared link, never on the page
-  itself. The starting wording comes from a search-phrase research pass (2026-11-26). If she does
-  her own research, these are the fields:
-  - Homepage: "פרטים והגדרות" → "גוגל ושיתוף ברשתות".
-  - Landing page: "דף נחיתה: בר/בת מצווה" → "איך העמוד מופיע בגוגל".
-  - Each service: "עמודי שירות" → the service → "איך העמוד מופיע בגוגל (לא חובה)". Left empty,
-    the built-in wording (shown in grey) is used; clearing hers brings it back. The bar/bat
-    mitzvah service can be skipped (it forwards to the landing page).
-  - Service titles get "| הפקת המרב" added by themselves; on the homepage and landing page she
-    writes the whole title, business name included. About 60 characters of a title and 155 of a
-    description show in Google; the preview under the fields shows how it will look.
-  - The page text counts too: headings, the services' opening paragraphs and the FAQ, all
-    editable in the admin. Titles and descriptions mostly decide whether people click.
-- **Content that's hers to replace or keep up** (Heidi provided the starting content):
-  - The landing page's 6th clip title, "[שם הקליפ]".
-  - The homepage testimonials: four samples, two still with `[שם התיאטרון]` and `[שם העסק]`.
-    Until she has real ones she can hide the section (admin → "המלצות" → "הסתרת אזור ההמלצות",
-    it keeps them and hides the menu link too). If she hides it, the FAQ's caption number should
-    change from 06 to 05.
-  - Her social links (none for now), the landing page's quote, and anything else written as a
-    starting point.
-  - **A few questions about search wording** (from the research, 2026-11-26). Her answers may
-    change a title, description or sentence, which she can do in the admin (see "How pages show
-    in Google") or send to Heidi:
-    - Which words do her clients use when they contact her?
-    - Does she work in Rehovot, Gan Yavne, Bnei Ayish or Kiryat Ekron? ("צלמת רחובות" is
-      searched.) If so, add them to the descriptions and to the service area ("פרטים והגדרות").
-    - Does she make year-end clips ("קליפ סיום", יב / כיתה ו)? The event summary page's title
-      and opening mention them; if not, remove "קליפ סיום" / "סיום שנה" there.
-    - Should the site say the clips suit religious families? "דתי" and "צנוע" are common
-      search words.
-    - Where are digital courses filmed (her place, the client's, a studio)?
-  - **FAQ ideas** she may add in the admin (the "שאלות" tab), in her own words: how long editing
-    takes; family photos outdoors or at home, which is better.
-  - **Her hero video:** the requirements (MP4, up to 8MB, a 6-15 second loop, 1080p landscape, no
-    sound, calm framing with the key part in the middle), and where to upload it in the admin.
-- **Her responsibility for what she publishes** (a reminder of Heidi's WhatsApp, 2026-11-24):
-  - The privacy policy and the accessibility statement are in her name: she reads them, she is
-    the contact for privacy and accessibility requests and answers them. Photo descriptions are
-    recommended, not required (see "Photo descriptions").
-  - Written consent from clients whose WhatsApp messages appear as testimonials (on the site
-    and in ads), kept as their reply; parents' consent for children's photos, clips and names
-    in paid ads.
-  - The legal texts were written from how the site works, not reviewed by a lawyer: having a
-    lawyer review them (and the testimonial screenshots question) is her decision.
-- **Advertising:** choosing the platforms, opening Meta Business / Google Ads accounts, and
-  entering the pixel IDs in the admin (landing page tab, "הודעת העוגיות ופיקסלי הפרסום"): the
-  cookie banner and the privacy policy's text switch on by themselves. After she enters them,
-  Heidi checks once on the live site that the banner shows and a test lead is recorded.
-- **Cloudflare** (dash.cloudflare.com): hosting, DNS, storage. Her login, and a reminder that
-  two-factor authentication is on and Heidi is a Super Administrator there. **The card on file
-  is Heidi's** (added 2026-11-23 to switch on R2 storage, free tier): ask her to replace it with
-  her own under Manage Account → Billing → Payment info. The site and stored files aren't
-  affected.
-- **mynames.co.il:** the domain registrar. Her login, the renewal date (22 November 2027,
-  auto-renew on, about 74₪ a year), and that the card on file must stay valid.
-- **Google Search Console** (search.google.com/search-console): with her Google account, no
-  separate login. What it shows, in two lines.
-- **Google Cloud** (console.cloud.google.com): the project behind the admin's Google sign-in,
-  once she has accepted the owner invitation.
-- **GitHub:** where the site's code lives, and who owns the repository.
-- **Who to call:** Heidi's contact details for changes and problems, and what's included.
+- **The email:** `handover-email.html` to copy into Gmail (bold and links survive the paste);
+  its source is `handover-email.txt` (rebuild the page from it after a change).
+- **The guide to attach:** "מדריך לממשק הניהול.pdf", 9 pages with screenshots from the live
+  admin. Its source is `admin-guide.html` (screenshots embedded), printed to PDF with headless
+  Chrome.
+- **Before sending:** type the Cloudflare and mynames logins into the email's blanks, directly
+  in Gmail (Heidi's choice to send them by email). Cloudflare also has two-factor sign-in, so
+  Merav needs the second step too.
 
-**Logins, not in the email body:** don't put passwords in plain email (anyone who gets into her
-inbox gets everything). Share them through a password manager (for example a shared Bitwarden
-or 1Password item), or have her set new passwords herself during a call. The email lists where
-each login is kept. After handover, ask her to turn on two-factor authentication wherever it's
-offered (Google, mynames).
+**What the email covers, kept simple** (Merav doesn't do technical tasks): the site and the
+landing page links; the admin and the attached guide; what's waiting on her (read the legal
+pages, click "accept" on the Google Cloud invitation); content to replace (sample
+testimonials, her own wording and video names, her hero video, "מילות חיפוש בגוגל" with the
+research questions, the FAQ); her responsibility (consents, the legal texts, a lawyer's review
+is her decision); advertising (whoever runs her campaign follows guide section 14, then Heidi
+checks); her accounts (Cloudflare with Heidi's card to replace, Heidi offers to help;
+mynames renewal 22 November 2027); Heidi's phone and email.
+
+**Kept by Heidi, not in the email:** Google Search Console (a look at the real searches after a
+month or two) and the Google Cloud support email (it stays Heidi's; only its owner can set
+their own address there). The code lives on GitHub and isn't mentioned to her.
 
 ## Small cleanups, any time
 
