@@ -12,7 +12,7 @@ import { defaultContent } from "@/content/docs";
 import { MAX_FEATURED_STILLS, MAX_FEATURED_VIDEOS } from "@/content/featured";
 import { photoFile } from "@/lib/asset";
 import { useContent } from "@/content/context";
-import { ServiceSearchFields } from "./SearchFields";
+import { SearchPreview, ServiceSearchFields } from "./SearchFields";
 import { BarMitzvahLandingFields } from "./LandingTab";
 import {
   AddPhotoButton,
@@ -37,6 +37,13 @@ const CONSENT = "מעלים רק עם הסכמה של המצולמים, ושל �
 // Each tab lists the records it edits and renders their fields; field paths are relative to
 // the record named by the <Doc> they sit in (see AdminApp). Only content is editable here:
 // colours, fonts and layout stay in the code.
+
+/** פרטים והגדרות: how the homepage shows in Google, live as the title and description change. */
+function HomeSearchPreview() {
+  const { value: title } = useField<string>("home.title");
+  const { value: description } = useField<string>("home.description");
+  return <SearchPreview title={title ?? ""} description={description ?? ""} />;
+}
 
 export type TabDef = {
   key: string;
@@ -1105,8 +1112,15 @@ export const TABS: TabDef[] = [
         key: "seo",
         render: () => (
           <Card title="גוגל ושיתוף ברשתות" hint="מה שמופיע בתוצאות החיפוש ובתצוגה המקדימה של קישור">
-            <Text path="home.title" label="כותרת" />
-            <Text path="home.description" label="תיאור" multiline rows={3} />
+            <Text path="home.title" label="כותרת" hint="עד כ־60 תווים נראים בגוגל" />
+            <Text
+              path="home.description"
+              label="תיאור"
+              hint="עד כ־155 תווים נראים בגוגל"
+              multiline
+              rows={3}
+            />
+            <HomeSearchPreview />
           </Card>
         ),
       },

@@ -2,10 +2,10 @@
  * Security headers for every page the server renders. Static files (images, fonts, scripts)
  * get the same list from public/_headers, which Cloudflare applies to them; keep both in step.
  *
- * The content policy starts in report-only mode: the browser logs what it would block without
- * blocking it. Once the live site shows no reports (YouTube, fonts and uploaded images all
- * load), rename it to Content-Security-Policy. Uploads served from R2 on another address need
- * adding to img-src and media-src.
+ * The content policy is enforced: the browser blocks anything not listed here (it ran in
+ * report-only mode until the live console was clear). A new outside address (a script, an
+ * embed, uploads served from R2 on another address) needs adding to the matching list, here
+ * and in public/_headers, or it won't load.
  *
  * static.cloudflareinsights.com and cloudflareinsights.com: Cloudflare Web Analytics, which
  * Cloudflare adds to every page (visit counts, no cookies; stated in the privacy policy).
@@ -21,7 +21,7 @@ export const securityHeaders: Record<string, string> = {
   "X-Frame-Options": "DENY",
   "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
   "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-  "Content-Security-Policy-Report-Only": [
+  "Content-Security-Policy": [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://connect.facebook.net https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net",
     "style-src 'self' 'unsafe-inline'",

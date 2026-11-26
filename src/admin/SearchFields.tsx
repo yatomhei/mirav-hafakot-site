@@ -2,6 +2,38 @@ import { autoServiceSeo, serviceSeoFor } from "@/content/seo-pages";
 import type { Service } from "@/content/types";
 import { Text, useDraftContext, useField } from "./fields";
 
+const DOMAIN = "hafakathamerav.co.il";
+
+/**
+ * How a page shows in Google's results: the site's address (with the page's path), the title
+ * in blue and the description. Google cuts a title at about 60 characters and a description
+ * at about 155, so the preview does too, with "...".
+ */
+export function SearchPreview({
+  title,
+  description,
+  path = "/",
+}: {
+  title: string;
+  description: string;
+  /** The page's address on the site, "/" for the homepage. */
+  path?: string;
+}) {
+  const cut = (text: string, max: number) =>
+    text.length > max ? `${text.slice(0, max).replace(/\s+\S*$/, "")}...` : text;
+  const parts = path.startsWith("/") ? path.split("/").filter(Boolean) : [];
+  return (
+    <div aria-label="תצוגה מקדימה בגוגל" className="rounded-lg border border-ink/12 bg-white p-4">
+      <p className="text-[12px] text-ink/60">תצוגה מקדימה בגוגל</p>
+      <p dir="ltr" className="mt-2 text-end text-[13px] text-ink/70">
+        {[DOMAIN, ...parts].join(" › ")}
+      </p>
+      <p className="mt-0.5 text-[19px] leading-snug text-[#1a0dab]">{cut(title, 60)}</p>
+      <p className="mt-1 text-[14px] leading-relaxed text-ink/75">{cut(description, 155)}</p>
+    </div>
+  );
+}
+
 /**
  * Optional search wording for one service page, with a preview of the Google result. Left
  * empty, the automatic wording (shown in grey) is used; the page itself never changes.
@@ -36,11 +68,11 @@ export function ServiceSearchFields({ path }: { path: string }) {
           multiline
           rows={2}
         />
-        <div aria-label="תצוגה מקדימה בגוגל" className="rounded-lg bg-white p-4">
-          <p className="text-[12px] text-ink/60">תצוגה מקדימה</p>
-          <p className="mt-1 text-[18px] leading-snug text-[#1a0dab]">{shown.title}</p>
-          <p className="mt-1 text-[14px] leading-relaxed text-ink/75">{shown.description}</p>
-        </div>
+        <SearchPreview
+          title={shown.title}
+          description={shown.description}
+          path={service.link?.trim() || `/services/${service.slug}`}
+        />
       </div>
     </details>
   );
@@ -74,11 +106,7 @@ export function LandingSearchFields() {
           multiline
           rows={2}
         />
-        <div aria-label="תצוגה מקדימה בגוגל" className="rounded-lg bg-white p-4">
-          <p className="text-[12px] text-ink/60">תצוגה מקדימה</p>
-          <p className="mt-1 text-[18px] leading-snug text-[#1a0dab]">{title}</p>
-          <p className="mt-1 text-[14px] leading-relaxed text-ink/75">{description}</p>
-        </div>
+        <SearchPreview title={title} description={description} path="/bar-mitzvah-clips" />
       </div>
     </details>
   );
