@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { waNumber } from "@/lib/contact";
-import { absUrl, internationalPhone, jsonLd, pageAddress, serviceJsonLd } from "@/lib/seo";
+import {
+  absUrl,
+  internationalPhone,
+  jsonLd,
+  pageAddress,
+  serviceAreas,
+  serviceJsonLd,
+} from "@/lib/seo";
 import { hebrewDate, lastUpdated, legal } from "@/content/legal";
 import { altText, SCREENSHOT_FALLBACK, stillFallback } from "@/lib/alt";
 import { validateDoc, defaultContent } from "@/content/docs";
@@ -157,5 +164,20 @@ describe("photo descriptions with a fallback", () => {
     expect(altText(undefined, SCREENSHOT_FALLBACK)).toBe("צילום מסך של המלצה בוואטסאפ");
     expect(stillFallback("משפחה")).toBe("צילום משפחה");
     expect(stillFallback("")).toBe("צילום סטילס");
+  });
+});
+
+describe("service areas for search", () => {
+  it("lists each place on its own, splitting a last item joined with ו", () => {
+    expect(serviceAreas("יד בנימין, גדרה והסביבה,\nקריית מלאכי, חבל לכיש ואשדוד")).toEqual([
+      "יד בנימין",
+      "גדרה",
+      "קריית מלאכי",
+      "חבל לכיש",
+      "אשדוד",
+    ]);
+  });
+  it("keeps a single name with ו whole", () => {
+    expect(serviceAreas("גבעת ורדים")).toEqual(["גבעת ורדים"]);
   });
 });

@@ -46,13 +46,28 @@ const BUSINESS_ID = "#business";
 const BASE_TOWN = "יד בנימין";
 const id = (hash: string) => `${absUrl("/") ?? "/"}${hash}`;
 
+/**
+ * The places in the footer's service area text, one per item: split at commas and line breaks,
+ * without "והסביבה". A list's last item joined with "ו" ("חבל לכיש ואשדוד") is two places, so
+ * it's split at its last " ו" when the line has a comma (a single name like "גבעת ורדים" on its
+ * own line stays whole).
+ */
+export function serviceAreas(text: string) {
+  return text.split("\n").flatMap((line) => {
+    const items = line
+      .split(",")
+      .map((a) => a.replace(/והסביבה/, "").trim())
+      .filter(Boolean);
+    const last = items.at(-1);
+    const joined = items.length > 1 && last ? last.match(/^(.+) ו(\S.*)$/) : null;
+    return joined ? [...items.slice(0, -1), joined[1]!, joined[2]!] : items;
+  });
+}
+
 /** The business itself: who Merav is, what she does and where she works. */
 export function businessGraph(content: SiteContent) {
   const { site } = content;
-  const areas = site.serviceArea
-    .split(/[,\n]+/)
-    .map((a) => a.replace(/והסביבה/, "").trim())
-    .filter(Boolean);
+  const areas = serviceAreas(site.serviceArea);
   const sameAs = [site.youtubeUrl, site.facebookUrl, site.instagramUrl, site.tiktokUrl].filter(
     (u) => u && !isPlaceholder(u),
   );

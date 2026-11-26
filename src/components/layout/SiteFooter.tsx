@@ -39,7 +39,7 @@ export function SiteFooter() {
             id="f-svc-h"
             className="mb-[18px] text-[17px] font-normal leading-[1.4] tracking-[0.06em]"
           >
-            הפקות סרטים וצילום אמנותי:
+            קליפים, סרטונים וצילומים:
           </h2>
           <ul className="footer-svc m-0 flex max-w-[320px] list-none flex-col p-0 max-[760px]:max-w-none max-[760px]:flex-row max-[760px]:flex-wrap max-[760px]:justify-center max-[760px]:gap-y-1">
             {visibleServices(services).map((s) => (
