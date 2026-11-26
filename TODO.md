@@ -90,26 +90,18 @@ no other changes.
   `src/content/seo-pages.ts`; the homepage and the landing page in the live admin (and their
   defaults in `src/content/site.ts` and `src/content/landing.ts`). Titles now fit Google's
   ~60 characters.
-- **Ask Merav** (her answers may change the wording): the words her clients use; whether she
-  works in Rehovot, Gan Yavne, Bnei Ayish or Kiryat Ekron (add the ones she does to the
-  descriptions); whether she makes year-end clips ("קליפ סיום", now in the event summary title:
-  remove it if not); whether to say the clips suit religious families ("דתי", "צנוע" are
-  common searches); where courses are filmed.
-- **FAQ ideas** (suggest to Merav): how much a bar/bat mitzvah clip costs; a studio clip vs. a
-  clip filmed outdoors; how long editing takes; how much a business video costs; family photos
-  outdoors or at home.
-- **Then optimize the site's copy** with those phrases: headings, service pages' opening
-  paragraphs, the homepage and the FAQ. Suggest first, apply after approval. Copy Merav edits in
-  the admin goes in as suggestions for her.
-- **After launch:** Search Console shows the real searches. Revisit the titles after a month or
-  two of data.
+- ~~**Page copy**~~ Applied 2026-11-26 with the same phrases: the hero heading ("קליפים, סרטוני
+  תדמית / וצילומי משפחה באור טבעי"), the six service openings, the bold sentence in "נעים
+  להכיר", the FAQ's price and filming-location answers, and the footer's services heading
+  ("קליפים, סרטונים וצילומים:"). The service areas in the structured data are now separate
+  places.
+- **Questions for Merav, FAQ ideas and the Search Console review:** moved to the handover email
+  (below).
 
 ## Waiting on Merav
 
-- **Read the privacy policy and the accessibility statement, and the consents:** Heidi sent her a
-  WhatsApp on 2026-11-24 (her responsibility from here; reminded in the handover email). Her
-  questions or corrections go into `src/content/legal.ts` and the two pages.
-- Accepting the Google Cloud owner invitation; switching the support email to hers.
+Everything that waits on her is now in the handover email (below, "What's waiting on her"), so
+the project doesn't wait on her answers.
 
 ## Before launch
 
@@ -148,6 +140,25 @@ and how to reach it:
 - **The admin:** https://hafakathamerav.co.il/admin. She signs in with her Google account
   (Meravi2340@gmail.com), no password of its own. A short guide: editing texts, photos, videos
   and services, hiding a service, adding another admin, and the reminders the admin shows.
+- **What's waiting on her** (a short list near the top of the email):
+  - **Read the privacy policy and the accessibility statement**, and collect the consents (see
+    "Her responsibility" below). Questions or corrections: to Heidi.
+  - **Accept the Google Cloud owner invitation**, and switch the project's support email to hers.
+  - **A few questions about search wording** (from the research, 2026-11-26). Her answers may
+    change a title, description or sentence, which she can do in the admin (see "How pages show
+    in Google") or send to Heidi:
+    - Which words do her clients use when they contact her?
+    - Does she work in Rehovot, Gan Yavne, Bnei Ayish or Kiryat Ekron? ("צלמת רחובות" is
+      searched.) If so, add them to the descriptions and to the service area ("פרטים והגדרות").
+    - Does she make year-end clips ("קליפ סיום", יב / כיתה ו)? The event summary page's title
+      and opening mention them; if not, remove "קליפ סיום" / "סיום שנה" there.
+    - Should the site say the clips suit religious families? "דתי" and "צנוע" are common
+      search words.
+    - Where are digital courses filmed (her place, the client's, a studio)?
+  - **FAQ ideas** she may add in the admin (the "שאלות" tab), in her own words: how long editing
+    takes; family photos outdoors or at home, which is better.
+  - **After launch:** in a month or two, Search Console (Performance) shows the real searches
+    people used to find the site. Worth a look to adjust the titles and descriptions.
 - **Photo descriptions** (in the guide, plainly): "תיאור התמונה" is what screen readers read out
   for a photo. It's recommended, not required: when it's empty the site says something general
   by itself (the type of shot for stills, "צילום מסך של המלצה בוואטסאפ" for testimonial
