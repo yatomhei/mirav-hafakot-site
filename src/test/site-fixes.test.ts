@@ -72,7 +72,7 @@ describe("social links", () => {
 describe("service page titles for search", () => {
   it("use the written wording, or fall back to the name and area", () => {
     const known = serviceSeoFor({ slug: "kululam", title: "קולולם", lead: "x" }, "הפקת המרב");
-    expect(known.title).toBe("צילום קולולם לבית ספר ולקהילה | הפקת המרב");
+    expect(known.title).toBe("צילום שירת המונים (קולולם) לבתי ספר וקהילות | הפקת המרב");
     const other = serviceSeoFor({ slug: "new", title: "שירות חדש", lead: "תיאור" }, "הפקת המרב");
     expect(other).toEqual({ title: `שירות חדש - ${SEO_AREA} | הפקת המרב`, description: "תיאור" });
   });
@@ -85,7 +85,7 @@ describe("service page titles for search", () => {
     );
     expect(typed).toEqual({ title: "קולולם בגדרה | הפקת המרב", description: "תיאור שלי" });
     const blank = serviceSeoFor({ ...base, seoTitle: "  ", seoDescription: "" }, "הפקת המרב");
-    expect(blank.title).toBe("צילום קולולם לבית ספר ולקהילה | הפקת המרב");
+    expect(blank.title).toBe("צילום שירת המונים (קולולם) לבתי ספר וקהילות | הפקת המרב");
 
     const services = defaultContent.services;
     const withTitle = services.map((s, i) => (i === 0 ? { ...s, seoTitle: "כותרת" } : s));

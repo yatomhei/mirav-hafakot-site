@@ -5,7 +5,8 @@ import type { Faq, Photo, IncludeItem, StillPhoto, StripPhoto, Testimonial, Vide
 /** Homepage copy, in page order. Copy is verbatim from the approved canvas. */
 
 export const hero = {
-  title: ["הפקות סרטים", "וצילום אמנותי"],
+  // Non-breaking spaces keep "סרטוני תדמית" and "באור טבעי" together when the lines wrap on phones.
+  title: ["קליפים, סרטוני תדמית", "וצילומי משפחה באור טבעי"],
   video: "video/hero.mp4",
   poster: { name: "hero-poster", alt: "" } as Photo,
 };

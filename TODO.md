@@ -1,6 +1,6 @@
 # To-do
 
-What's still open, grouped by what each item waits on. Updated 2026-11-24.
+What's still open, grouped by what each item waits on. Updated 2026-11-26.
 
 The site is live on https://hafakathamerav.co.il (kept out of Google until launch). Content is
 edited only on the live admin; code goes through GitHub (work on `admin`, merging into `main`
@@ -78,24 +78,26 @@ no other changes.
     doesn't block ChatGPT, Claude and Perplexity.
 - ~~**Ortal**~~ Sent the link and reviewed it on the live site (2026-11-24).
 
-## Search phrases: a research pass before launch
+## Search phrases
 
-The current Google titles and descriptions (homepage in the admin's "גוגל ושיתוף ברשתות",
-services in `src/content/seo-pages.ts`) come from a first keyword plan, not from research.
-
-- **Ask Merav** which words her clients use when they contact her (for example "סרטון לבת
-  מצווה", "קליפ בטבע", "צלמת לברית"), and whether she works in more towns (גן יבנה, בני עי"ש,
-  קריית עקרון, רחובות).
-- **Google's suggestions:** autocomplete, "related searches" and "people also ask" for the main
-  phrase of each page. The questions are also material for the FAQ.
-- **Who ranks now:** search each main phrase with her towns (for example "צלמת בר מצווה
-  אשדוד") and note how the top local businesses word their titles.
-- **Compare wording:** Google Trends for close variants (for example "קליפ בת מצווה" vs "סרט
-  בת מצווה"). Optional: Google Keyword Planner for monthly volumes (needs a Google Ads
-  account; skip the campaign and payment steps).
-- **Result:** suggested adjustments to the homepage and all the service titles and
-  descriptions, one main phrase per page, written for people, plus FAQ ideas. Apply after the
-  user approves.
+- ~~**Research pass**~~ Done 2026-11-26 (Google autocomplete and the live results for each
+  service). Findings: people search "סרטון תדמית לעסק" (not "סרט"), "סרטון שיווקי לעסק",
+  "צילומי משפחה בטבע / בבית"; "קולולם" is mostly searched as the brand (the generic term is
+  "שירת המונים"); "קליפ בר/בת מצווה" results are dominated by recording studios; "קליפ סיום"
+  (יב, כיתה ו) is searched far more than "קליפ סיכום"; "צלמת אשדוד" and "צלמת רחובות" are
+  searched, the smaller towns aren't.
+- ~~**New titles and descriptions**~~ Applied 2026-11-26: the services in
+  `src/content/seo-pages.ts`; the homepage and the landing page in the live admin (and their
+  defaults in `src/content/site.ts` and `src/content/landing.ts`). Titles now fit Google's
+  ~60 characters.
+- **Ask Merav** (her answers may change the wording): the words her clients use; whether she
+  works in Rehovot, Gan Yavne, Bnei Ayish or Kiryat Ekron (add the ones she does to the
+  descriptions); whether she makes year-end clips ("קליפ סיום", now in the event summary title:
+  remove it if not); whether to say the clips suit religious families ("דתי", "צנוע" are
+  common searches); where courses are filmed.
+- **FAQ ideas** (suggest to Merav): how much a bar/bat mitzvah clip costs; a studio clip vs. a
+  clip filmed outdoors; how long editing takes; how much a business video costs; family photos
+  outdoors or at home.
 - **Then optimize the site's copy** with those phrases: headings, service pages' opening
   paragraphs, the homepage and the FAQ. Suggest first, apply after approval. Copy Merav edits in
   the admin goes in as suggestions for her.
@@ -111,10 +113,10 @@ services in `src/content/seo-pages.ts`) come from a first keyword plan, not from
 
 ## Before launch
 
-- Switch the content policy from report-only to enforced (`src/config/security-headers.ts` and
-  `public/_headers`). No report address (decided 2026-11-24): first open the main pages on the
-  live site (home, a service page, the landing page with a clip playing, privacy, the admin) and
-  check the browser console shows no policy errors, then enforce and check them again.
+- ~~**Switch the content policy to enforced**~~ Done 2026-11-26: checked the main pages on the
+  live site (home, a service page, the landing page with a clip playing, privacy, the admin)
+  with no policy errors, then enforced in `src/config/security-headers.ts` and
+  `public/_headers`; checked again on the live site, nothing blocked.
 
 ## At launch
 
@@ -183,6 +185,20 @@ and how to reach it:
     מתמונות שהועלו" next to every upload button. A photo removed from the site stays there, so
     it can be brought back the same way, until it's deleted in the "תמונות שהועלו" tab
     (deleting is for good).
+- **How pages show in Google** (part of the guide): each page's title and description show in
+  Google's results, in the browser tab and in the preview of a shared link, never on the page
+  itself. The starting wording comes from a search-phrase research pass (2026-11-26). If she does
+  her own research, these are the fields:
+  - Homepage: "פרטים והגדרות" → "גוגל ושיתוף ברשתות".
+  - Landing page: "דף נחיתה: בר/בת מצווה" → "איך העמוד מופיע בגוגל".
+  - Each service: "עמודי שירות" → the service → "איך העמוד מופיע בגוגל (לא חובה)". Left empty,
+    the built-in wording (shown in grey) is used; clearing hers brings it back. The bar/bat
+    mitzvah service can be skipped (it forwards to the landing page).
+  - Service titles get "| הפקת המרב" added by themselves; on the homepage and landing page she
+    writes the whole title, business name included. About 60 characters of a title and 155 of a
+    description show in Google; the preview under the fields shows how it will look.
+  - The page text counts too: headings, the services' opening paragraphs and the FAQ, all
+    editable in the admin. Titles and descriptions mostly decide whether people click.
 - **Content that's hers to replace or keep up** (Heidi provided the starting content):
   - The landing page's 6th clip title, "[שם הקליפ]".
   - The homepage testimonials: four samples, two still with `[שם התיאטרון]` and `[שם העסק]`.
